@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng nhập</title>
+    <!-- Tham chiếu file CSS trong thư mục static -->
+    <link rel="stylesheet" type="text/css" href="css/login.css">
+</head>
+<body>
+<div class="login-form-container">
+    <h2>Đăng nhập</h2>
+    <form id="loginForm" onsubmit="return validateForm()">
+        <div class="form-group">
+            <label for="username">Tên đăng nhập</label>
+            <input type="text" id="username" name="username" class="form-control" placeholder="Nhập tên đăng nhập" required>
+        </div>
+
+        <div class="form-group">
+            <label for="password">Mật khẩu</label>
+            <input type="password" id="password" name="password" class="form-control" placeholder="Nhập mật khẩu" required>
+        </div>
+
+        <div class="form-group">
+            <button type="submit" class="btn btn-primary">Đăng nhập</button>
+        </div>
+
+        <div class="form-footer">
+            <a href="#">Quên mật khẩu?</a>
+            <span> | </span>
+            <a href="#">Đăng ký</a>
+        </div>
+    </form>
+</div>
+
+
+<script>
+    // Hàm kiểm tra tính hợp lệ của form
+    function validateForm() {
+        const username = document.getElementById("username").value;
+        const password = document.getElementById("password").value;
+        const errorMessage = document.getElementById("error-message");
+
+        if (username === "" || password === "") {
+            errorMessage.style.display = "block";
+            return false;
+        }
+
+        errorMessage.style.display = "none";
+        alert("Đăng nhập thành công!");
+        return true;
+    }
+</script>
+</body>
+</html>

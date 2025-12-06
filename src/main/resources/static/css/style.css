@@ -1,0 +1,370 @@
+/* General Styles */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+
+}
+
+/* CSS cho Header */
+#header {
+    background-color: #fff;
+    padding: 10px 0;
+    border-top: 50px solid #0B3D2E; /* viền trên màu xanh đậm */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15); /* Đổ bóng nhẹ */
+    z-index: 1000;
+    position: relative;
+}
+
+.navbar-container {
+    display: flex;
+    justify-content: space-between; /* Căn đều các phần tử */
+    align-items: center; /* Căn giữa các phần tử theo chiều dọc */
+    flex-wrap: nowrap; /* Đảm bảo các phần tử không xuống dòng */
+
+
+}
+
+.logo {
+    margin-right: 20px; /* Khoảng cách giữa logo và phần tiếp theo */
+}
+
+/* Điều chỉnh kích thước logo */
+.logo img {
+    height: 200px; /* Tăng kích thước logo */
+    width: auto;  /* Đảm bảo tỷ lệ của logo không bị biến dạng */
+}
+
+
+.navbar-menu {
+    display: flex; /* Sử dụng Flexbox để xếp các menu items theo chiều ngang */
+    align-items: center; /* Căn giữa các item trong menu theo chiều dọc */
+    gap: 20px; /* Khoảng cách giữa các menu items */
+    margin-left: 20px; /* Khoảng cách từ menu tới các phần tử khác trong header */
+
+}
+
+.navbar-nav {
+    display: flex; /* Đảm bảo các phần tử li nằm trên cùng một hàng */
+    list-style-type: none; /* Bỏ dấu chấm ở mỗi item */
+    padding: 0; /* Loại bỏ padding mặc định của ul */
+    margin: 0; /* Loại bỏ margin mặc định của ul */
+
+}
+
+.navbar-nav .nav-item {
+    /* Đảm bảo rằng các item trong menu được căn chỉnh đúng */
+    list-style-type: none;
+}
+
+.navbar-nav .nav-link {
+    text-decoration: none;
+    color: #388e3c; /* Màu chữ cho các liên kết */
+    font-size: 16px; /* Cỡ chữ */
+    padding: 8px 16px; /* Khoảng cách trong mỗi liên kết */
+    border-radius: 5px; /* Bo tròn góc */
+    transition: background-color 0.3s ease; /* Thêm hiệu ứng chuyển màu nền khi hover */
+}
+
+.navbar-nav .nav-link:hover {
+    background-color: #e8f5e9; /* Màu nền khi hover */
+    color: #388e3c; /* Giữ màu chữ khi hover */
+}
+
+
+/* Search Bar */
+.search-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.search-bar input {
+    padding: 8px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    width: 250px; /* Chiều rộng của thanh tìm kiếm */
+}
+
+.search-bar button {
+    background-color: #388e3c;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 8px 12px;
+    cursor: pointer;
+}
+
+.search-bar button:hover {
+    background-color: #2c6f3b; /* Màu tối hơn khi hover */
+}
+
+/* User Options (Giỏ hàng, Đăng nhập, Đăng ký) */
+.user-options {
+    display: flex;
+    align-items: center;
+    gap: 20px; /* Khoảng cách giữa các liên kết */
+}
+
+.user-options .nav-item {
+    list-style-type: none;
+    padding: 5px;
+}
+
+.user-options .nav-link {
+    text-decoration: none;
+    color: white;
+    font-size: 16px;
+    padding: 8px 16px;
+    border-radius: 5px;
+    background-color: #0B3D2E;
+}
+
+.user-options .nav-link:hover {
+    background-color: #e8f5e9; /* Hiệu ứng khi hover */
+}
+
+
+/* Book list container */
+.books-list {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* Chia thành 4 cột */
+    gap: 30px; /* Khoảng cách giữa các cột và hàng */
+    padding: 50px 400px; /* Chừa lề trái và phải cho container */
+    box-sizing: border-box; /* Đảm bảo padding không làm tràn nội dung */
+}
+
+/* Book item */
+.book-item {
+    text-align: center;
+}
+
+/* Hình ảnh sách */
+.book-item .book-image img {
+    width: 100%; /* Đảm bảo ảnh sách chiếm toàn bộ chiều rộng */
+    height: auto;
+}
+
+/* Tên sách */
+.book-item h3 {
+    font-size: 16px;
+    margin: 10px 0;
+}
+
+/* Giá sách */
+.book-item p {
+    font-size: 14px;
+    color: #777;
+}
+
+
+/*!* Preloader *!*/
+/*.preloader {*/
+/*    position: fixed;*/
+/*    top: 0;*/
+/*    left: 0;*/
+/*    width: 100%;*/
+/*    height: 100%;*/
+/*    background: rgba(255, 255, 255, 0.7);*/
+/*    display: flex;*/
+/*    justify-content: center;*/
+/*    align-items: center;*/
+/*    z-index: 9999;*/
+/*}*/
+
+/*.spinner {*/
+/*    width: 50px;*/
+/*    height: 50px;*/
+/*    border: 5px solid #f3f3f3;*/
+/*    border-top: 5px solid #3498db;*/
+/*    border-radius: 50%;*/
+/*    animation: spin 2s linear infinite;*/
+/*}*/
+
+/*@keyframes spin {*/
+/*    0% { transform: rotate(0deg); }*/
+/*    100% { transform: rotate(360deg); }*/
+/*}*/
+
+/*!* Home Section *!*/
+/*#home-area {*/
+/*    padding: 80px 0;*/
+/*    background-color: #fff;*/
+/*}*/
+
+/*#home-area .caption {*/
+/*    text-align: left;*/
+/*}*/
+
+/*#home-area .caption h1 {*/
+/*    font-size: 36px;*/
+/*    color: #333;*/
+/*}*/
+
+/*#home-area .caption p {*/
+/*    font-size: 18px;*/
+/*    color: #666;*/
+/*}*/
+
+/*#home-area .caption a {*/
+/*    background-color: #007bff;*/
+/*    color: white;*/
+/*    padding: 10px 20px;*/
+/*    font-size: 16px;*/
+/*    text-decoration: none;*/
+/*    border-radius: 5px;*/
+/*    margin-top: 20px;*/
+/*}*/
+
+/*#home-area .caption a:hover {*/
+/*    background-color: #0056b3;*/
+/*}*/
+
+/*#home-area .caption-img {*/
+/*    text-align: right;*/
+/*}*/
+
+/*#home-area .caption-img img {*/
+/*    max-width: 100%;*/
+/*    animation: bounce 1s ease-in-out infinite;*/
+/*}*/
+
+/*@keyframes bounce {*/
+/*    0%, 100% { transform: translateY(0); }*/
+/*    50% { transform: translateY(-20px); }*/
+/*}*/
+
+/* Chatbot container */
+#chatBotIframe {
+    position: fixed;
+    bottom: 10px;
+    right: 10px;
+    width: 300px;
+    height: 400px;
+    border: none;
+    border-radius: 8px;
+    z-index: 1000;
+    display: none; /* Ẩn mặc định */
+}
+
+/* Hiệu ứng nhảy chỉ áp dụng cho hình ảnh nút */
+#openChatBotBtn {
+    cursor: pointer;
+    position: fixed;
+    width: 220px;
+    height: 100px;
+    z-index: 9999; /* Đảm bảo nút luôn hiển thị trên các phần tử khác */
+    border-radius: 10%; /* Bo tròn hình ảnh */
+    animation: bounce 2s infinite; /* Thêm hiệu ứng nhảy cho nút */
+}
+
+/* Hiệu ứng nhảy cho nút */
+@keyframes bounce {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-10px); /* Điều chỉnh độ nhảy */
+    }
+}
+
+/* Footer */
+/* ===== FOOTER ===== */
+
+#footer {
+    background: linear-gradient(135deg, #0B3D2E 0%, seagreen 100%);
+    color: #fff;
+    padding: 60px 40px 20px 40px;
+    margin-top: 60px;
+    font-family: "Poppins", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+/* Căn giữa khối 3 cột, tăng khoảng cách giữa cột */
+.footer-content {
+    max-width: 1200px;                 /* giới hạn chiều rộng footer */
+    margin: 0 auto 40px auto;          /* căn giữa */
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 60px;                         /* khoảng cách giữa các cột */
+}
+
+.footer-column {
+    text-align: left;
+}
+
+.footer-column h4 {
+    font-weight: 700;
+    margin-bottom: 20px;
+    font-size: 1.1rem;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;             /* cho heading nhìn sang hơn */
+}
+.footer-about p {
+    text-align: justify;   /* chỉ áp dụng cho đoạn mô tả này */
+}
+
+.footer-column p {
+    font-size: 0.95rem;
+    line-height: 1.7;                   /* chữ thoáng hơn */
+    opacity: 0.95;
+    margin: 0 0 10px 0;
+    text-indent: 0;
+}
+
+/* List link trong footer */
+.footer-column ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.footer-column ul li {
+    margin-bottom: 10px;
+}
+
+.footer-column ul li a {
+    color: #fff;
+    text-decoration: none;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.footer-column ul li a:hover {
+    color: #ffd700;
+    transform: translateX(5px);
+}
+
+.footer-column ul li a::before {
+    content: "→";
+    opacity: 0;
+    transition: all 0.3s ease;
+}
+
+.footer-column ul li a:hover::before {
+    opacity: 1;
+}
+
+/* Liên hệ: icon + text */
+.contact-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+    font-size: 0.95rem;
+}
+
+.contact-info i {
+    font-size: 1.1rem;
+    color: #ffd700;
+}
+
+/* Dòng cuối footer */
+.footer-bottom {
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+    padding-top: 20px;
+    text-align: center;
+    font-size: 0.9rem;
+    opacity: 0.9;
+}

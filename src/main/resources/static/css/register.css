@@ -1,0 +1,64 @@
+/* CSS cho form Đăng ký */
+.register-form-container {
+    width: 100%;
+    max-width: 400px;
+    margin: 50px auto;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+h2 {
+    text-align: center;
+    margin-bottom: 25px;
+    color: darkgreen; /* Màu xanh lá đậm */
+}
+
+.input-group {
+    margin-bottom: 15px;
+}
+
+.input-group label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 6px;
+    color: darkgreen; /* Màu xanh lá đậm */
+}
+
+.input-group input {
+    width: 100%;
+    padding: 10px;
+    border-radius: 6px;
+    border: 1px solid #c8e6c9;
+    font-size: 16px;
+}
+
+button {
+    width: 100%;
+    padding: 12px;
+    background: #2c6f3b; /* Màu nền xanh lá */
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+button:hover {
+    background: darkgreen; /* Màu tối hơn khi hover */
+}
+
+.login {
+    text-align: center;
+    margin-top: 15px;
+}
+
+.login a {
+    color: darkgreen;
+    text-decoration: none;
+}
+
+.login a:hover {
+    text-decoration: underline;
+}
