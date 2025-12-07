@@ -6,6 +6,8 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "books")
@@ -52,6 +54,9 @@ public class Books {
     @ManyToOne
     @JoinColumn(name = "categoryId")
     private Category category;
+
+    @OneToMany(mappedBy = "book", fetch =  FetchType.LAZY)
+    private List<OrderDetail>  orderDetail_Book = new ArrayList<>();
 
     public Books() {
     }

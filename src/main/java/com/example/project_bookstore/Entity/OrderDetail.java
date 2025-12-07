@@ -1,9 +1,6 @@
 package com.example.project_bookstore.Entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.EmbeddedId;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 
@@ -26,6 +23,15 @@ public class OrderDetail {
     @Min(0)
     private BigDecimal unitPrice;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "orderId", referencedColumnName = "orderId", foreignKey = @ForeignKey(name = "FK_OrderDetail_Order"))
+    @NotNull
+    private Orders order;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "bookId", referencedColumnName = "bookId", foreignKey = @ForeignKey(name = "FK_OrderDetail_Book"))
+    private Books book;
+
     public OrderDetail() {
     }
 
@@ -33,6 +39,30 @@ public class OrderDetail {
         this.orderDetailId = orderDetailId;
         this.quantity = quantity;
         this.unitPrice = unitPrice;
+    }
+
+    public OrderDetail(OrderdetailId orderDetailId, int quantity, BigDecimal unitPrice, Orders order, Books book) {
+        this.orderDetailId = orderDetailId;
+        this.quantity = quantity;
+        this.unitPrice = unitPrice;
+        this.order = order;
+        this.book = book;
+    }
+
+    public Orders getOrder() {
+        return order;
+    }
+
+    public void setOrder(Orders order) {
+        this.order = order;
+    }
+
+    public Books getBook() {
+        return book;
+    }
+
+    public void setBook(Books book) {
+        this.book = book;
     }
 
     public OrderdetailId getOrderDetailId() {
