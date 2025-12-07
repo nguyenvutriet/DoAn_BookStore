@@ -2,8 +2,8 @@ package com.example.project_bookstore.Entity;
 
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 
-import javax.management.relation.Role;
 import java.util.Date;
 
 @Entity
@@ -15,24 +15,24 @@ public class Users {
     private String userName;
 
     @Column( length = 255)
-    @Notnull
+    @NotNull
     private String password;
 
     @Column( length = 20)
-    @Notnull
-    @Enumerated(EnumType.STRING)
-    private Role role;
+    @NotNull
+    private String role;
 
     @Column(name = "fullName", length = 50)
-    @Notnull
+    @NotNull
     private String fullName;
 
     @Column(name = "registrationDate")
+    @Temporal(TemporalType.DATE)
     private Date registrationDate;
 
     public Users() {}
 
-    public Users(String userName, String password, Role role, String fullName, Date registrationDate) {
+    public Users(String userName, String password, String role, String fullName, Date registrationDate) {
         this.userName = userName;
         this.password = password;
         this.role = role;
@@ -52,10 +52,10 @@ public class Users {
     public void setPassword(String password) {
         this.password = password;
     }
-    public Role getRole() {
+    public String getRole() {
         return role;
     }
-    public void setRole(Role role) {
+    public void setRole(String role) {
         this.role = role;
     }
     public String getFullName() {
@@ -70,5 +70,4 @@ public class Users {
     public void setRegistrationDate(Date registrationDate) {
         this.registrationDate = registrationDate;
     }
-
 }

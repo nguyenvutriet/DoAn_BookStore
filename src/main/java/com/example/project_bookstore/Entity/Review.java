@@ -2,6 +2,9 @@ package com.example.project_bookstore.Entity;
 
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -15,7 +18,9 @@ public class Review {
     @Column(name = "reviewId", length = 10)
     private String reviewId;
 
-    @Notnull
+    @NotNull
+    @Min(0)
+    @Max(5)
     private int rating;
 
     @Column(columnDefinition = "TEXT")
