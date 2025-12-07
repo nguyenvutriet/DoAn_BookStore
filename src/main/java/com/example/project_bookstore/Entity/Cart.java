@@ -1,13 +1,13 @@
 package com.example.project_bookstore.Entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Entity
@@ -20,7 +20,7 @@ public class Cart {
 
     @Column(name = "quantity")
     @NotNull
-    @Min(0)
+    @DecimalMin(value = "0.00", inclusive = true)
     private int quantity;
 
     @Column(name = "totalAmount", precision = 12, scale = 2)
@@ -29,16 +29,29 @@ public class Cart {
     private BigDecimal  totalAmount;
 
 
-    //private Customers customers;
+    //customer
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(
+            name = "customerId",
+            nullable = false,
+            referencedColumnName = "customerId",
+            foreignKey = @ForeignKey(name = "FK_Cart_Customer")
+    )
+    private Customers customer;
+
+    //cartdetail
+    @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<CartDetail> cartDetails = new ArrayList<>();
+
 
     public Cart() {
     }
 
-    public Cart(String cartId, int quantity, BigDecimal totalAmount, Customers customers) {
+    public Cart(String cartId, int quantity, BigDecimal totalAmount, Customers customer) {
         this.cartId = cartId;
         this.quantity = quantity;
         this.totalAmount = totalAmount;
-//        this.customers = customers;
+        this.customer = customer;
     }
 
     public String getCartId() {
@@ -65,11 +78,17 @@ public class Cart {
         this.totalAmount = totalAmount;
     }
 
-//    public Customers getCustomers() {
-//        return customers;
+    public Customers getCustomer() {
+        return customer;
+    }
+    public void setCustomer(Customers customer) {
+        this.customer = customer;
+    }
+//    public List<CartDetail> getCartDetails() {
+//        return cartDetails;
 //    }
-//
-//    public void setCustomers(Customers customers) {
-//        this.customers = customers;
+//    public void setCartDetails(List<CartDetail> cartDetails) {
+//        this.cartDetails = cartDetails;
 //    }
+
 }

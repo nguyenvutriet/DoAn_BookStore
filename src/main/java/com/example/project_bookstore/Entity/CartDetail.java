@@ -3,6 +3,8 @@ package com.example.project_bookstore.Entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.DecimalMin;
+
 
 import java.math.BigDecimal;
 
@@ -11,22 +13,44 @@ import java.math.BigDecimal;
 public class CartDetail {
 
     @EmbeddedId
-    private CartDetalId cartDetailId;
+    private CartDetailId cartDetailId;
 
     @Column(name = "quantity")
     @NotNull
-    @Min(0)
+    @Min(1)
     private int quantity;
 
     @Column(name = "unitPrice")
     @NotNull
-    @Min(0)
+    @DecimalMin(value = "0.00", inclusive = false)
     private BigDecimal unitPrice;
+
+    //cart
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(
+            name = "cartId",
+            insertable = false,
+            updatable = false,
+            referencedColumnName = "cartId",
+            foreignKey = @ForeignKey(name = "FK_CartDetail_Cart")
+    )
+    private Cart cart;
+
+    //book
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(
+            name = "bookId",
+            insertable = false,
+            updatable = false,
+            referencedColumnName = "bookId",
+            foreignKey = @ForeignKey(name = "FK_CartDetail_Book")
+    )
+    private Books book;
 
     public CartDetail() {
     }
 
-    public CartDetail(BigDecimal unitPrice, CartDetalId cartDetailId, int quantity) {
+    public CartDetail(BigDecimal unitPrice, CartDetailId cartDetailId, int quantity) {
         this.unitPrice = unitPrice;
         this.cartDetailId = cartDetailId;
         this.quantity = quantity;
@@ -37,11 +61,11 @@ public class CartDetail {
         this.unitPrice = unitPrice;
     }
 
-    public CartDetalId getCartDetailId() {
+    public CartDetailId getCartDetailId() {
         return cartDetailId;
     }
 
-    public void setCartDetailId(CartDetalId cartDetailId) {
+    public void setCartDetailId(CartDetailId cartDetailId) {
         this.cartDetailId = cartDetailId;
     }
 

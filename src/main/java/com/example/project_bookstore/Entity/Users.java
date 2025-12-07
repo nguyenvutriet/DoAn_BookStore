@@ -7,7 +7,7 @@ import jakarta.validation.constraints.NotNull;
 import java.util.Date;
 
 @Entity
-@Table(name = "users")
+@Table(name = "Users")
 public class Users {
 
     @Id
@@ -29,6 +29,15 @@ public class Users {
     @Column(name = "registrationDate")
     @Temporal(TemporalType.DATE)
     private Date registrationDate;
+
+    @OneToOne
+    @JoinColumn(
+            name = "customerId",
+            referencedColumnName = "customerId",
+            foreignKey = @ForeignKey(name = "FK_User_Customer")
+    )
+    private Customers customer;
+
 
     public Users() {}
 
@@ -69,5 +78,14 @@ public class Users {
     }
     public void setRegistrationDate(Date registrationDate) {
         this.registrationDate = registrationDate;
+    }
+
+
+    //
+    public Customers getCustomer() {
+        return customer;
+    }
+    public void setCustomer(Customers customer) {
+        this.customer = customer;
     }
 }

@@ -6,7 +6,7 @@ import jakarta.persistence.Embeddable;
 import java.io.Serializable;
 
 @Embeddable
-public class CartDetalId implements Serializable {
+public class CartDetailId implements Serializable {
 
     @Column(name = "cartId", length = 10)
     private String cartId;
@@ -14,10 +14,10 @@ public class CartDetalId implements Serializable {
     @Column(name = "bookId", length = 10)
     private String bookId;
 
-    public CartDetalId() {
+    public CartDetailId() {
     }
 
-    public CartDetalId(String cartId, String bookId) {
+    public CartDetailId(String cartId, String bookId) {
         this.cartId = cartId;
         this.bookId = bookId;
     }
@@ -36,5 +36,24 @@ public class CartDetalId implements Serializable {
 
     public void setBookId(String bookId) {
         this.bookId = bookId;
+    }
+
+    //
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (!(obj instanceof CartDetailId)) return false;
+
+        CartDetailId other = (CartDetailId) obj;
+
+        return cartId.equals(other.cartId) &&
+                bookId.equals(other.bookId);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = cartId.hashCode();
+        result = 31 * result + bookId.hashCode();
+        return result;
     }
 }

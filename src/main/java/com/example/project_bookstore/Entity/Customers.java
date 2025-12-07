@@ -1,12 +1,11 @@
 package com.example.project_bookstore.Entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "customers")
@@ -33,6 +32,18 @@ public class Customers {
 
     @Column(name = "dateOfBirth")
     private Date dateOfBirth;
+
+    // review
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Review> reviews = new ArrayList<>();
+
+    //cart
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Cart> carts = new ArrayList<>();
+
+    // users
+    @OneToOne(mappedBy = "customer")
+    private Users user;
 
     public Customers() {
     }

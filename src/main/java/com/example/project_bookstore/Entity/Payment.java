@@ -18,11 +18,22 @@ public class Payment {
     @Temporal(TemporalType.TIMESTAMP)
     private Date paymentTime;
 
+    // orders
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(
+            name = "orderId",
+            nullable = false,
+            referencedColumnName = "orderId",
+            foreignKey = @ForeignKey(name = "FK_Payment_Order")
+    )
+    private Orders order;
+
     public Payment() {}
 
-    public Payment(String paymentId, Date paymentTime) {
+    public Payment(String paymentId, Date paymentTime, Orders order) {
         this.paymentId = paymentId;
         this.paymentTime = paymentTime;
+        this.order = order;
     }
 
     public String getPaymentId() {
@@ -38,4 +49,12 @@ public class Payment {
         this.paymentTime = paymentTime;
     }
 
+
+    //
+    public Orders getOrder() {
+        return order;
+    }
+    public void setOrder(Orders order) {
+        this.order = order;
+    }
 }

@@ -31,13 +31,35 @@ public class Review {
     @Temporal(TemporalType.DATE)
     private Date creationDate;
 
+    // customers
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(
+            name = "customerId",
+            nullable = false,
+            referencedColumnName = "customerId",
+            foreignKey = @ForeignKey(name = "FK_Review_Customer")
+    )
+    private Customers customer;
+
+    // books
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(
+            name = "bookId",
+            nullable = false,
+            referencedColumnName = "bookId",
+            foreignKey = @ForeignKey(name = "FK_Review_Book")
+    )
+    private Books book;
+
     public Review() {}
 
-    public Review(String reviewId, int rating, String comment, Date creationDate) {
+    public Review(String reviewId, int rating, String comment, Date creationDate, Customers customer, Books book) {
         this.reviewId = reviewId;
         this.rating = rating;
         this.comment = comment;
         this.creationDate = creationDate;
+        this.customer = customer;
+        this.book = book;
     }
 
     public String getReviewId() {
@@ -63,6 +85,20 @@ public class Review {
     }
     public void setCreationDate(Date creationDate) {
         this.creationDate = creationDate;
+    }
+
+    //
+    public Customers getCustomer() {
+        return customer;
+    }
+    public void setCustomer(Customers customer) {
+        this.customer = customer;
+    }
+    public Books getBook() {
+        return book;
+    }
+    public void setBook(Books book) {
+        this.book = book;
     }
 
 }

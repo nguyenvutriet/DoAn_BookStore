@@ -51,12 +51,25 @@ public class Books {
     @NotNull
     private String picture;
 
+    //category
     @ManyToOne
-    @JoinColumn(name = "categoryId")
+    @JoinColumn(
+            name = "categoryId",
+            referencedColumnName = "categoryId",
+            foreignKey = @ForeignKey(name = "FK_Book_Category")
+    )
     private Category category;
 
     @OneToMany(mappedBy = "book", fetch =  FetchType.LAZY)
     private List<OrderDetail>  orderDetail_Book = new ArrayList<>();
+    //review
+    @OneToMany(mappedBy = "book", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Review> reviews = new ArrayList<>();
+
+
+    //cartdetail
+    @OneToMany(mappedBy = "book", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<CartDetail> cartDetails = new ArrayList<>();
 
     public Books() {
     }
@@ -153,4 +166,5 @@ public class Books {
     public void setCategory(Category category) {
         this.category = category;
     }
+
 }
