@@ -10,7 +10,6 @@ import java.util.Date;
 @Table(name = "orders")
 public class Orders {
 
-
     @Id
     @Column(name = "orderId", length = 10)
     private String orderId;
