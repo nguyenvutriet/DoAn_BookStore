@@ -2,6 +2,7 @@ package com.example.project_bookstore.Entity;
 
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 
 import javax.management.relation.Role;
 import java.util.Date;
@@ -15,16 +16,16 @@ public class Users {
     private String userName;
 
     @Column( length = 255)
-    @Notnull
+    @NotNull
     private String password;
 
     @Column( length = 20)
-    @Notnull
+    @NotNull
     @Enumerated(EnumType.STRING)
     private Role role;
 
     @Column(name = "fullName", length = 50)
-    @Notnull
+    @NotNull
     private String fullName;
 
     @Column(name = "registrationDate")

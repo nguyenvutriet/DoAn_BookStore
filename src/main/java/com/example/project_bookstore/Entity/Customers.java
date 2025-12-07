@@ -13,7 +13,7 @@ import java.util.Date;
 public class Customers {
 
     @Id
-    @Column(name = "customerId")
+    @Column(name = "customerId", length = 10)
     private String customerId;
 
     @Column(name = "fullName", length = 50)

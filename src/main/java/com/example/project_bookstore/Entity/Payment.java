@@ -1,6 +1,7 @@
 package com.example.project_bookstore.Entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 
 import java.util.Date;
 
@@ -13,7 +14,7 @@ public class Payment {
     private String paymentId;
 
     @Column(name = "paymentTime")
-    @Notnull
+    @NotNull
     @Temporal(TemporalType.TIMESTAMP)
     private Date paymentTime;
 

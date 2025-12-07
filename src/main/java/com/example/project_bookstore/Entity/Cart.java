@@ -15,7 +15,7 @@ import java.math.BigDecimal;
 public class Cart {
 
     @Id
-    @Column(name = "cartId")
+    @Column(name = "cartId", length = 10)
     private String cartId;
 
     @Column(name = "quantity")
