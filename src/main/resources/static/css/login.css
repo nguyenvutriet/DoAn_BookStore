@@ -1,78 +1,294 @@
-/* Container cho form đăng nhập */
-.login-form-container {
+/* General Styles */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+
+}
+
+/* CSS cho Header */
+#header {
+    background-color: #fff;
+    padding: 5px 0; /* Thu hẹp thanh xanh lá phía trên */
+    border-top: 30px solid #0B3D2E; /* Giảm chiều cao của viền trên */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15); /* Đổ bóng nhẹ */
+    z-index: 1000;
+    position: relative;
+}
+
+.navbar-container {
+    display: flex;
+    justify-content: space-between; /* Căn đều các phần tử */
+    align-items: center; /* Căn giữa các phần tử theo chiều dọc */
+    flex-wrap: nowrap; /* Đảm bảo các phần tử không xuống dòng */
     width: 100%;
-    max-width: 400px;
-    margin: 50px auto;
-    padding: 20px;
-    background-color: #f9f9f9;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-h2 {
-    text-align: center;
-    font-size: 24px;
-    margin-bottom: 20px;
-    color: darkgreen;
+.logo {
+    margin-right: 20px; /* Khoảng cách giữa logo và phần tiếp theo */
 }
 
-/* Các nhóm form */
-.form-group {
-    margin-bottom: 50px;
+/* Thu nhỏ kích thước logo */
+.logo img {
+    height: 60px; /* Giảm kích thước logo */
+    width: auto;  /* Đảm bảo tỷ lệ của logo không bị biến dạng */
 }
 
-label {
-    font-size: 14px;
-    color: #333;
-    display: block;
-    margin-bottom: 5px;
+.navbar-menu {
+    display: flex; /* Sử dụng Flexbox để xếp các menu items theo chiều ngang */
+    align-items: center; /* Căn giữa các item trong menu theo chiều dọc */
+    gap: 10px; /* Giảm khoảng cách giữa các menu items */
+    margin-left: 20px; /* Khoảng cách từ menu tới các phần tử khác trong header */
 }
 
-.form-control {
-    width: 100%;
-    padding: 12px;
-    border: 1px solid #ccc;
+.navbar-nav {
+    display: flex; /* Đảm bảo các phần tử li nằm trên cùng một hàng */
+    list-style-type: none; /* Bỏ dấu chấm ở mỗi item */
+    padding: 0; /* Loại bỏ padding mặc định của ul */
+    margin: 0; /* Loại bỏ margin mặc định của ul */
+}
+
+.navbar-nav .nav-item {
+    list-style-type: none;
+}
+
+.navbar-nav .nav-link {
+    text-decoration: none;
+    color: #388e3c; /* Màu chữ cho các liên kết */
+    font-size: 14px; /* Giảm cỡ chữ */
+    padding: 6px 12px; /* Khoảng cách trong mỗi liên kết */
+    border-radius: 5px; /* Bo tròn góc */
+    transition: background-color 0.3s ease; /* Thêm hiệu ứng chuyển màu nền khi hover */
+}
+
+.navbar-nav .nav-link:hover {
+    background-color: #e8f5e9; /* Màu nền khi hover */
+    color: #388e3c; /* Giữ màu chữ khi hover */
+}
+
+/* Thanh tìm kiếm */
+.search-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.search-bar input {
+    padding: 6px; /* Giảm khoảng cách trong input */
     border-radius: 5px;
-    font-size: 16px;
-    box-sizing: border-box;
+    border: 1px solid #ccc;
+    width: 200px; /* Giảm chiều rộng của thanh tìm kiếm */
 }
 
-.form-control:focus {
-    border-color: green;
-    outline: none;
-}
-
-/* Nút đăng nhập */
-.btn {
-    width: 100%;
-    padding: 12px;
-    background-color: green;
+.search-bar button {
+    background-color: #388e3c;
     color: white;
     border: none;
     border-radius: 5px;
-    font-size: 16px;
+    padding: 6px 10px; /* Giảm kích thước nút */
     cursor: pointer;
-    transition: background-color 0.3s;
 }
 
-.btn:hover {
-    background-color: green;
+.search-bar button:hover {
+    background-color: #2c6f3b; /* Màu tối hơn khi hover */
 }
 
-/* Footer với liên kết */
-.form-footer {
-    text-align: center;
-    font-size: 14px;
-    margin-top: 10px;
+/* Tùy chọn người dùng (Giỏ hàng, Đăng nhập, Đăng ký) */
+.user-options {
+    display: flex;
+    align-items: center;
+    gap: 15px; /* Giảm khoảng cách giữa các liên kết */
 }
 
-.form-footer a {
-    color: darkgreen;
+.user-options .nav-item {
+    list-style-type: none;
+    padding: 5px;
+}
+
+.user-options .nav-link {
     text-decoration: none;
+    color: white;
+    font-size: 14px; /* Giảm cỡ chữ */
+    padding: 6px 12px; /* Giảm khoảng cách trong mỗi liên kết */
+    border-radius: 5px;
+    background-color: #0B3D2E;
 }
 
-.form-footer a:hover {
-    text-decoration: underline;
+.user-options .nav-link:hover {
+    background-color: #e8f5e9; /* Hiệu ứng khi hover */
+}
+/* Footer */
+/* ===== FOOTER ===== */
+/* Footer */
+/* Thu gọn footer */
+#footer {
+    background: linear-gradient(135deg, #0B3D2E 0%, seagreen 100%);
+    color: #fff;
+    padding: 15px 10px;  /* Giảm padding trên và dưới để footer gọn gàng hơn */
+    margin-top: 40px;
+    font-family: "Arial", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    position: relative;
+    width: 100%;
+    box-sizing: border-box;
+    height: auto; /* Đảm bảo chiều cao của footer phù hợp với nội dung bên trong */
+}
+
+/* Căn giữa footer với 3 cột */
+.footer-content {
+    max-width: 1300px;             /* Giới hạn chiều rộng của footer */
+    margin: 0 auto 20px auto;      /* Căn giữa */
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);  /* 3 cột */
+    gap: 120px;                     /* Tăng khoảng cách giữa các cột thêm */
+    box-sizing: border-box;
+}
+
+/* Cột trong footer */
+.footer-column {
+    text-align: left;
+}
+
+.footer-column h4 {
+    font-weight: 700;
+    margin-bottom: 5px;
+    font-size: 0.95rem;                    /* Giảm cỡ chữ tiêu đề */
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Đoạn văn trong footer */
+.footer-column p {
+    font-size: 0.75rem;                 /* Giảm cỡ chữ chung trong footer */
+    line-height: 1.4;                   /* Giảm khoảng cách giữa các dòng */
+    margin: 0 0 5px 0;
+}
+
+/* Liên kết trong footer */
+.footer-column ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.footer-column ul li {
+    margin-bottom: 6px;                /* Giảm khoảng cách giữa các mục */
+}
+
+.footer-column ul li a {
+    color: #fff;
+    text-decoration: none;
+    font-size: 0.75rem;                 /* Giảm cỡ chữ của liên kết */
+    transition: all 0.3s ease;
+}
+
+.footer-column ul li a:hover {
+    color: #ffd700;
+    transform: translateX(2px);        /* Giảm hiệu ứng khi hover */
+}
+
+/* Liên hệ: icon + text */
+.contact-info {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 5px;
+    font-size: 0.75rem;                 /* Giảm cỡ chữ */
+}
+
+.contact-info i {
+    font-size: 1rem;                   /* Giảm kích thước icon */
+    color: #ffd700;
+}
+
+/* Dòng cuối footer */
+.footer-bottom {
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+    padding-top: 10px;
+    text-align: center;
+    font-size: 0.7rem;                  /* Giảm kích thước chữ dòng cuối */
+    opacity: 0.8;
+}
+
+/* Đẩy footer xuống dưới nếu content không đủ dài */
+body, html {
+    height: 100%;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+main {
+    flex: 1;
 }
 
 
+/* Căn giữa form */
+#main-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 75vh;
+    padding: 30px 10px;
+    background: #f5f6fa;
+    font-family: 'Arial', sans-serif !important;
+}
+
+/* Hộp form */
+.login-box {
+    width: 500px;
+    background: #fff;
+    padding: 35px 40px;
+    border-radius: 18px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+}
+
+/* Tiêu đề */
+.login-box h2 {
+    text-align: center;
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 30px;
+    color: #000;
+}
+
+/* Label */
+.login-box label {
+    display: block;
+    font-size: 15px;
+    margin-bottom: 8px;
+    font-weight: 500;
+}
+
+/* Input */
+.login-box input {
+    width: 100%;
+    padding: 14px;
+    font-size: 15px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    margin-bottom: 22px;
+    transition: all .25s ease;
+}
+
+.login-box input:focus {
+    border-color: #388e3c;
+    box-shadow: 0 0 6px rgba(26,115,232,0.3);
+    outline: none;
+}
+
+/* Nút */
+.login-box button {
+    width: 100%;
+    padding: 14px;
+    font-size: 16px;
+    background: #388e3c;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s ease-in-out;
+}
+
+.login-box button:hover {
+    background: #388e3c;
+}

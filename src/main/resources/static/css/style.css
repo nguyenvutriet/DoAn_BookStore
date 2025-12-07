@@ -253,48 +253,51 @@ body {
 
 /* Footer */
 /* ===== FOOTER ===== */
-
+/* Footer */
+/* Thu gọn footer */
 #footer {
     background: linear-gradient(135deg, #0B3D2E 0%, seagreen 100%);
     color: #fff;
-    padding: 60px 40px 20px 40px;
-    margin-top: 60px;
+    padding: 15px 10px;  /* Giảm padding trên và dưới để footer gọn gàng hơn */
+    margin-top: 40px;
     font-family: "Poppins", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    position: relative;
+    width: 100%;
+    box-sizing: border-box;
+    height: auto; /* Đảm bảo chiều cao của footer phù hợp với nội dung bên trong */
 }
 
-/* Căn giữa khối 3 cột, tăng khoảng cách giữa cột */
+/* Căn giữa footer với 3 cột */
 .footer-content {
-    max-width: 1200px;                 /* giới hạn chiều rộng footer */
-    margin: 0 auto 40px auto;          /* căn giữa */
+    max-width: 1300px;             /* Giới hạn chiều rộng của footer */
+    margin: 0 auto 20px auto;      /* Căn giữa */
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 60px;                         /* khoảng cách giữa các cột */
+    grid-template-columns: repeat(3, 1fr);  /* 3 cột */
+    gap: 120px;                     /* Tăng khoảng cách giữa các cột thêm */
+    box-sizing: border-box;
 }
 
+/* Cột trong footer */
 .footer-column {
     text-align: left;
 }
 
 .footer-column h4 {
     font-weight: 700;
-    margin-bottom: 20px;
-    font-size: 1.1rem;
+    margin-bottom: 5px;
+    font-size: 0.95rem;                    /* Giảm cỡ chữ tiêu đề */
     text-transform: uppercase;
-    letter-spacing: 1.5px;             /* cho heading nhìn sang hơn */
-}
-.footer-about p {
-    text-align: justify;   /* chỉ áp dụng cho đoạn mô tả này */
+    letter-spacing: 1px;
 }
 
+/* Đoạn văn trong footer */
 .footer-column p {
-    font-size: 0.95rem;
-    line-height: 1.7;                   /* chữ thoáng hơn */
-    opacity: 0.95;
-    margin: 0 0 10px 0;
-    text-indent: 0;
+    font-size: 0.75rem;                 /* Giảm cỡ chữ chung trong footer */
+    line-height: 1.4;                   /* Giảm khoảng cách giữa các dòng */
+    margin: 0 0 5px 0;
 }
 
-/* List link trong footer */
+/* Liên kết trong footer */
 .footer-column ul {
     list-style: none;
     padding: 0;
@@ -302,53 +305,54 @@ body {
 }
 
 .footer-column ul li {
-    margin-bottom: 10px;
+    margin-bottom: 6px;                /* Giảm khoảng cách giữa các mục */
 }
 
 .footer-column ul li a {
     color: #fff;
     text-decoration: none;
-    font-size: 0.95rem;
+    font-size: 0.75rem;                 /* Giảm cỡ chữ của liên kết */
     transition: all 0.3s ease;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
 }
 
 .footer-column ul li a:hover {
     color: #ffd700;
-    transform: translateX(5px);
-}
-
-.footer-column ul li a::before {
-    content: "→";
-    opacity: 0;
-    transition: all 0.3s ease;
-}
-
-.footer-column ul li a:hover::before {
-    opacity: 1;
+    transform: translateX(2px);        /* Giảm hiệu ứng khi hover */
 }
 
 /* Liên hệ: icon + text */
 .contact-info {
     display: flex;
     align-items: center;
-    gap: 8px;
-    margin-bottom: 10px;
-    font-size: 0.95rem;
+    gap: 6px;
+    margin-bottom: 5px;
+    font-size: 0.75rem;                 /* Giảm cỡ chữ */
 }
 
 .contact-info i {
-    font-size: 1.1rem;
+    font-size: 1rem;                   /* Giảm kích thước icon */
     color: #ffd700;
 }
 
 /* Dòng cuối footer */
 .footer-bottom {
     border-top: 1px solid rgba(255, 255, 255, 0.2);
-    padding-top: 20px;
+    padding-top: 10px;
     text-align: center;
-    font-size: 0.9rem;
-    opacity: 0.9;
+    font-size: 0.7rem;                  /* Giảm kích thước chữ dòng cuối */
+    opacity: 0.8;
 }
+
+/* Đẩy footer xuống dưới nếu content không đủ dài */
+body, html {
+    height: 100%;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+main {
+    flex: 1;
+}
+
+

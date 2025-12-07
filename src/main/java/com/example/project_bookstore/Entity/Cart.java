@@ -29,7 +29,7 @@ public class Cart {
     private BigDecimal  totalAmount;
 
     
-    private Customers customers;
+   // private Customers customers;
 
     public Cart() {
     }
@@ -38,7 +38,7 @@ public class Cart {
         this.cartId = cartId;
         this.quantity = quantity;
         this.totalAmount = totalAmount;
-        this.customers = customers;
+        //this.customers = customers;
     }
 
     public String getCartId() {
@@ -65,11 +65,11 @@ public class Cart {
         this.totalAmount = totalAmount;
     }
 
-    public Customers getCustomers() {
-        return customers;
-    }
+    //public Customers getCustomers() {
+      //  return customers;
+    //}
 
-    public void setCustomers(Customers customers) {
-        this.customers = customers;
-    }
+    //public void setCustomers(Customers customers) {
+      //  this.customers = customers;
+    //}
 }

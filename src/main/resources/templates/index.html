@@ -84,8 +84,8 @@
                 <div class="user-options">
                     <ul class="navbar-nav">
                         <li class="nav-item"><a class="nav-link" href="#">🛒</a></li>
-                        <li class="nav-item"><a class="nav-link" href="javascript:void(0);" onclick="loadLoginForm()">Đăng nhập</a></li>
-                        <li class="nav-item"><a class="nav-link" href="javascript:void(0);" onclick="loadRegisterForm()">Đăng ký</a></li>
+                        <li class="nav-item"><a class="nav-link" href="login_form.html">Đăng nhập</a></li> <!-- Thêm liên kết tới trang login-form.html -->
+                        <li class="nav-item"><a class="nav-link" href="register-form.html">Đăng ký</a></li> <!-- Thêm liên kết tới trang login-form.html -->
                     </ul>
                 </div>
             </div>
@@ -260,47 +260,48 @@
 <script src="/assets/js/bootstrap.min.js"></script>
 
 <!-- Fetch nội dung động cho body -->
-<script>
-    function loadLoginForm() {
-        // Thay đổi đường dẫn để gọi controller thay vì file trực tiếp
-        fetch('/login')
-            .then(response => response.text())
-            .then(data => {
-                document.getElementById("main-content").innerHTML = data;
-            })
-            .catch(error => {
-                console.error('Có lỗi khi tải form đăng nhập:', error);
-            });
-    }
+<!--<script>-->
+<!--    function loadLoginForm() {-->
+<!--        // Thay đổi đường dẫn để gọi controller thay vì file trực tiếp-->
+<!--        fetch('/login')-->
+<!--            .then(response => response.text())-->
+<!--            .then(data => {-->
+<!--                document.getElementById("main-content").innerHTML = data;-->
+<!--            })-->
+<!--            .catch(error => {-->
+<!--                console.error('Có lỗi khi tải form đăng nhập:', error);-->
+<!--            });-->
+<!--    }-->
 
-    function loadRegisterForm() {
-        // Thay đổi đường dẫn để gọi controller thay vì file trực tiếp
-        fetch('/register')
-            .then(response => response.text())
-            .then(data => {
-                document.getElementById("main-content").innerHTML = data;
-            })
-            .catch(error => {
-                console.error('Có lỗi khi tải form đăng nhập:', error);
-            });
-    }
+<!--    function loadRegisterForm() {-->
+<!--        // Thay đổi đường dẫn để gọi controller thay vì file trực tiếp-->
+<!--        fetch('/register')-->
+<!--            .then(response => response.text())-->
+<!--            .then(data => {-->
+<!--                document.getElementById("main-content").innerHTML = data;-->
+<!--            })-->
+<!--            .catch(error => {-->
+<!--                console.error('Có lỗi khi tải form đăng nhập:', error);-->
+<!--            });-->
+<!--    }-->
 
 
-    function loadContent(page) {
-        // Tạo URL để tải nội dung
-        let url = page + '.html'; // Ví dụ: home.html, about.html
+<!--    function loadContent(page) {-->
+<!--        // Tạo URL để tải nội dung-->
+<!--        let url = page + '.html'; // Ví dụ: home.html, about.html-->
 
-        // Sử dụng Fetch API để tải nội dung
-        fetch(url)
-            .then(response => response.text())
-            .then(data => {
-                document.getElementById('main-content').innerHTML = data;
-            })
-            .catch(error => {
-                console.error('Error loading page:', error);
-            });
-    }
-</script>
+<!--        // Sử dụng Fetch API để tải nội dung-->
+<!--        fetch(url)-->
+<!--            .then(response => response.text())-->
+<!--            .then(data => {-->
+<!--                document.getElementById('main-content').innerHTML = data;-->
+<!--            })-->
+<!--            .catch(error => {-->
+<!--                console.error('Error loading page:', error);-->
+<!--            });-->
+<!--    }-->
+<!--</script>-->
+
 
 </body>
 </html>
