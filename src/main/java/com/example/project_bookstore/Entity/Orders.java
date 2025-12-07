@@ -1,6 +1,8 @@
 package com.example.project_bookstore.Entity;
 
 import jakarta.persistence.*;
+
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 
 import java.math.BigDecimal;
@@ -19,12 +21,12 @@ public class Orders {
     private String paymentMethod;
 
     @Column(name = "orderDate")
-    @NotNull
     @Temporal(TemporalType.TIMESTAMP)
     private Date orderDate;
 
-    @Column(name = "totalAmount")
+    @Column(name = "totalAmount", precision = 12, scale = 2)
     @NotNull
+    @Min(0)
     private BigDecimal totalAmount;
 
     @Column(name = "address", length = 100)
