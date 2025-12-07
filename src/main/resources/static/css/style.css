@@ -8,8 +8,8 @@ body {
 /* CSS cho Header */
 #header {
     background-color: #fff;
-    padding: 10px 0;
-    border-top: 50px solid #0B3D2E; /* viền trên màu xanh đậm */
+    padding: 5px 0; /* Thu hẹp thanh xanh lá phía trên */
+    border-top: 30px solid #0B3D2E; /* Giảm chiều cao của viền trên */
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15); /* Đổ bóng nhẹ */
     z-index: 1000;
     position: relative;
@@ -20,27 +20,24 @@ body {
     justify-content: space-between; /* Căn đều các phần tử */
     align-items: center; /* Căn giữa các phần tử theo chiều dọc */
     flex-wrap: nowrap; /* Đảm bảo các phần tử không xuống dòng */
-
-
+    width: 100%;
 }
 
 .logo {
     margin-right: 20px; /* Khoảng cách giữa logo và phần tiếp theo */
 }
 
-/* Điều chỉnh kích thước logo */
+/* Thu nhỏ kích thước logo */
 .logo img {
-    height: 200px; /* Tăng kích thước logo */
+    height: 60px; /* Giảm kích thước logo */
     width: auto;  /* Đảm bảo tỷ lệ của logo không bị biến dạng */
 }
-
 
 .navbar-menu {
     display: flex; /* Sử dụng Flexbox để xếp các menu items theo chiều ngang */
     align-items: center; /* Căn giữa các item trong menu theo chiều dọc */
-    gap: 20px; /* Khoảng cách giữa các menu items */
+    gap: 10px; /* Giảm khoảng cách giữa các menu items */
     margin-left: 20px; /* Khoảng cách từ menu tới các phần tử khác trong header */
-
 }
 
 .navbar-nav {
@@ -48,19 +45,17 @@ body {
     list-style-type: none; /* Bỏ dấu chấm ở mỗi item */
     padding: 0; /* Loại bỏ padding mặc định của ul */
     margin: 0; /* Loại bỏ margin mặc định của ul */
-
 }
 
 .navbar-nav .nav-item {
-    /* Đảm bảo rằng các item trong menu được căn chỉnh đúng */
     list-style-type: none;
 }
 
 .navbar-nav .nav-link {
     text-decoration: none;
     color: #388e3c; /* Màu chữ cho các liên kết */
-    font-size: 16px; /* Cỡ chữ */
-    padding: 8px 16px; /* Khoảng cách trong mỗi liên kết */
+    font-size: 14px; /* Giảm cỡ chữ */
+    padding: 6px 12px; /* Khoảng cách trong mỗi liên kết */
     border-radius: 5px; /* Bo tròn góc */
     transition: background-color 0.3s ease; /* Thêm hiệu ứng chuyển màu nền khi hover */
 }
@@ -70,8 +65,7 @@ body {
     color: #388e3c; /* Giữ màu chữ khi hover */
 }
 
-
-/* Search Bar */
+/* Thanh tìm kiếm */
 .search-bar {
     display: flex;
     align-items: center;
@@ -79,10 +73,10 @@ body {
 }
 
 .search-bar input {
-    padding: 8px;
+    padding: 6px; /* Giảm khoảng cách trong input */
     border-radius: 5px;
     border: 1px solid #ccc;
-    width: 250px; /* Chiều rộng của thanh tìm kiếm */
+    width: 200px; /* Giảm chiều rộng của thanh tìm kiếm */
 }
 
 .search-bar button {
@@ -90,7 +84,7 @@ body {
     color: white;
     border: none;
     border-radius: 5px;
-    padding: 8px 12px;
+    padding: 6px 10px; /* Giảm kích thước nút */
     cursor: pointer;
 }
 
@@ -98,11 +92,11 @@ body {
     background-color: #2c6f3b; /* Màu tối hơn khi hover */
 }
 
-/* User Options (Giỏ hàng, Đăng nhập, Đăng ký) */
+/* Tùy chọn người dùng (Giỏ hàng, Đăng nhập, Đăng ký) */
 .user-options {
     display: flex;
     align-items: center;
-    gap: 20px; /* Khoảng cách giữa các liên kết */
+    gap: 15px; /* Giảm khoảng cách giữa các liên kết */
 }
 
 .user-options .nav-item {
@@ -113,24 +107,14 @@ body {
 .user-options .nav-link {
     text-decoration: none;
     color: white;
-    font-size: 16px;
-    padding: 8px 16px;
+    font-size: 14px; /* Giảm cỡ chữ */
+    padding: 6px 12px; /* Giảm khoảng cách trong mỗi liên kết */
     border-radius: 5px;
     background-color: #0B3D2E;
 }
 
 .user-options .nav-link:hover {
     background-color: #e8f5e9; /* Hiệu ứng khi hover */
-}
-
-
-/* Book list container */
-.books-list {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr); /* Chia thành 4 cột */
-    gap: 30px; /* Khoảng cách giữa các cột và hàng */
-    padding: 50px 400px; /* Chừa lề trái và phải cho container */
-    box-sizing: border-box; /* Đảm bảo padding không làm tràn nội dung */
 }
 
 /* Book item */
