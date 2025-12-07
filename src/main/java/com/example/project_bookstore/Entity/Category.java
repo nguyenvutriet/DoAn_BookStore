@@ -2,6 +2,9 @@ package com.example.project_bookstore.Entity;
 
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Table(name = "category")
 public class Category {
@@ -13,14 +16,8 @@ public class Category {
     @Column(name = "categoryName", length = 50)
     private String categoryName;
 
-    // books
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(
-            name = "categoryId",
-            referencedColumnName = "categoryId",
-            foreignKey = @ForeignKey(name = "FK_Book_Category")
-    )
-    private Category category;
+    @OneToMany(mappedBy = "category", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<Books>  books =  new ArrayList<Books>();
 
     public Category() {
     }

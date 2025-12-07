@@ -18,7 +18,6 @@ public class Payment {
     @Temporal(TemporalType.TIMESTAMP)
     private Date paymentTime;
 
-    // orders
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(
             name = "orderId",

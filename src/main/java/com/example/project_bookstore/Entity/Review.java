@@ -31,24 +31,22 @@ public class Review {
     @Temporal(TemporalType.DATE)
     private Date creationDate;
 
-    // customers
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(
             name = "customerId",
-            nullable = false,
             referencedColumnName = "customerId",
             foreignKey = @ForeignKey(name = "FK_Review_Customer")
     )
+    @NotNull
     private Customers customer;
 
-    // books
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(
             name = "bookId",
-            nullable = false,
             referencedColumnName = "bookId",
             foreignKey = @ForeignKey(name = "FK_Review_Book")
     )
+    @NotNull
     private Books book;
 
     public Review() {}

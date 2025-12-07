@@ -25,7 +25,6 @@ public class CartDetail {
     @DecimalMin(value = "0.00", inclusive = false)
     private BigDecimal unitPrice;
 
-    //cart
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(
             name = "cartId",
@@ -36,7 +35,6 @@ public class CartDetail {
     )
     private Cart cart;
 
-    //book
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(
             name = "bookId",

@@ -51,7 +51,6 @@ public class Books {
     @NotNull
     private String picture;
 
-    //category
     @ManyToOne
     @JoinColumn(
             name = "categoryId",
@@ -62,12 +61,10 @@ public class Books {
 
     @OneToMany(mappedBy = "book", fetch =  FetchType.LAZY)
     private List<OrderDetail>  orderDetail_Book = new ArrayList<>();
-    //review
+
     @OneToMany(mappedBy = "book", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Review> reviews = new ArrayList<>();
 
-
-    //cartdetail
     @OneToMany(mappedBy = "book", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<CartDetail> cartDetails = new ArrayList<>();
 

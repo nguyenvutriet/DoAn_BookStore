@@ -33,17 +33,17 @@ public class Customers {
     @Column(name = "dateOfBirth")
     private Date dateOfBirth;
 
-    // review
     @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Review> reviews = new ArrayList<>();
 
-    //cart
-    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Cart> carts = new ArrayList<>();
+    @OneToOne(mappedBy = "customer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Cart cart;
 
-    // users
-    @OneToOne(mappedBy = "customer")
+    @OneToOne(mappedBy = "customer", fetch =  FetchType.LAZY, cascade = CascadeType.ALL)
     private Users user;
+
+    @OneToMany(mappedBy = "customer", fetch = FetchType.LAZY, cascade =  CascadeType.ALL)
+    private List<Orders>  orders = new ArrayList<>();
 
     public Customers() {
     }

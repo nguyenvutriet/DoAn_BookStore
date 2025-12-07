@@ -28,9 +28,7 @@ public class Cart {
     @Min(0)
     private BigDecimal  totalAmount;
 
-
-    //customer
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(
             name = "customerId",
             nullable = false,
@@ -39,7 +37,6 @@ public class Cart {
     )
     private Customers customer;
 
-    //cartdetail
     @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<CartDetail> cartDetails = new ArrayList<>();
 
