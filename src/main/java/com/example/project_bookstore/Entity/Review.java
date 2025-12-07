@@ -18,12 +18,13 @@ public class Review {
     @Column(name = "reviewId", length = 10)
     private String reviewId;
 
+    @Column(name = "rating")
     @NotNull
     @Min(0)
     @Max(5)
     private int rating;
 
-    @Column(columnDefinition = "TEXT")
+    @Column(name = "comment", columnDefinition = "TEXT")
     private String comment;
 
     @Column(name = "creationDate", nullable = false)

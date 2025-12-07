@@ -14,11 +14,11 @@ public class Users {
     @Column(name = "userName", length = 100)
     private String userName;
 
-    @Column( length = 255)
+    @Column(name = "password", length = 255)
     @NotNull
     private String password;
 
-    @Column( length = 20)
+    @Column(name = "role", length = 20)
     @NotNull
     private String role;
 
