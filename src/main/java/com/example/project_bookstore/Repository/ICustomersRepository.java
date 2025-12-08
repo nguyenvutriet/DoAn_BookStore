@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ICustomersRepository extends JpaRepository<Customers, String> {
+    long count();
 }

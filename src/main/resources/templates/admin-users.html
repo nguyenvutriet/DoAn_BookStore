@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link rel="stylesheet" href="/css/admin.css">
+    <title>Users Management</title>
+</head>
+<body>
+
+<header th:replace="admin-dashboard :: header"></header>
+
+<h1 class="dashboard-title">Quản lý tài khoản</h1>
+
+<div class="frame-box">
+    <table border="1" width="100%" cellpadding="10">
+        <tr style="background:#0B3D2E; color:white;">
+            <th>Tài khoản</th>
+            <th>Họ và tên</th>
+            <th>Loại tài khoản</th>
+            <th>Hành động</th>
+        </tr>
+
+        <tr th:each="u : ${users}">
+            <td th:text="${u.userName}"></td>
+            <td th:text="${u.fullName}"></td>
+            <td th:text="${u.role}"></td>
+
+            <td>
+                <a th:href="@{'/admin/users/' + ${u.userName}}">Xem thông tin</a> |
+                <a th:href="@{'/admin/users/delete/' + ${u.userName}}"
+                   onclick="return confirm('Xóa tài khoản này?')"
+                   style="color:red;">Xóa</a>
+            </td>
+        </tr>
+    </table>
+</div>
+
+<footer class="admin-footer">© 2025 UTE BookStore Admin</footer>
+
+</body>
+</html>

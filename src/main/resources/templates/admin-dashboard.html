@@ -1,0 +1,74 @@
+<link rel="stylesheet" href="/css/style.css">   <!-- CSS user -->
+<link rel="stylesheet" href="/css/admin.css">   <!-- CSS admin -->
+
+<body>
+
+<!-- HEADER ADMIN -->
+<header class="admin-header">
+
+    <!-- LEFT: logo + navbar -->
+    <div class="admin-left">
+        <div class="logo">
+            <img src="/images/logo.png">
+        </div>
+
+        <nav class="admin-navbar">
+            <a href="/admin/users">Tài khoản</a>
+            <a href="/admin/categories">Thể loại</a>
+            <a href="/admin/books">Sách</a>
+            <a href="/admin/orders">Đơn hàng</a>
+            <a href="/admin/reviews">Đánh giá</a>
+        </nav>
+
+    </div>
+
+    <!-- RIGHT: user info -->
+    <div class="admin-right">
+        <span class="welcome">Xin chào, admin</span>
+        <a class="logout-btn" href="#">Đăng xuất</a>
+    </div>
+
+</header>
+
+
+<h1 class="dashboard-title">ADMIN UTE BOOK STORE</h1>
+
+<div class="quick-actions">
+    <a href="#">Sách mới</a>
+    <a href="#">Tài khoản mới</a>
+    <a href="#">Thể loại mới</a>
+    <a href="#">Khách hàng mới</a>
+</div>
+
+<div class="frame-box">
+    <h3 class="frame-title">Đã bán gần đây</h3>
+</div>
+
+<div class="frame-box">
+    <h3 class="frame-title">Đánh giá gần đây</h3>
+</div>
+
+<div class="stats">
+    <h3>Thống kê</h3>
+
+    <div class="stat-grid">
+<!--        <div class="stat-item"><span>Users</span><strong>0</strong></div>-->
+<!--        <div class="stat-item"><span>Books</span><strong>0</strong></div>-->
+<!--        <div class="stat-item"><span>Customers</span><strong>0</strong></div>-->
+<!--        <div class="stat-item"><span>Orders</span><strong>0</strong></div>-->
+<!--        <div class="stat-item"><span>Reviews</span><strong>0</strong></div>-->
+        <div class="stat-item"><span>Tài khoản</span><strong th:text="${totalUsers}">0</strong></div>
+        <div class="stat-item"><span>Sách</span><strong th:text="${totalBooks}">0</strong></div>
+        <div class="stat-item"><span>Khách hàng</span><strong th:text="${totalCustomers}">0</strong></div>
+        <div class="stat-item"><span>Đơn hàng</span><strong th:text="${totalOrders}">0</strong></div>
+        <div class="stat-item"><span>Đánh giá</span><strong th:text="${totalReviews}">0</strong></div>
+
+    </div>
+</div>
+
+<!-- FOOTER -->
+<footer class="admin-footer">
+    © 2025 UTE BookStore Admin. All rights reserved.
+</footer>
+
+</body>

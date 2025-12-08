@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface IReviewRepository extends JpaRepository<Review, String> {
+    long count();
 }

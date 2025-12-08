@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface IBooksRepository extends JpaRepository<Books, String> {
+    long count();
 }
