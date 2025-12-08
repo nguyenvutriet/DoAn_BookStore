@@ -48,8 +48,8 @@
                 <div class="user-options">
                     <ul class="navbar-nav">
                         <li class="nav-item"><a class="nav-link" href="#">🛒</a></li>
-                        <li class="nav-item"><a class="nav-link" href="login_form.html">Đăng nhập</a></li>
-                        <li class="nav-item"><a class="nav-link" href="register-form.html">Đăng ký</a></li>
+                        <li class="nav-item"><a class="nav-link" th:href="@{/login}">Đăng nhập</a></li>
+                        <li class="nav-item"><a class="nav-link" th:href="@{/register}">Đăng ký</a></li>
                     </ul>
                 </div>
 
@@ -64,8 +64,12 @@
     <div class="login-box">
         <h2>Đăng nhập</h2>
 
+<<<<<<< HEAD
 
         <form action="/process-login" method="POST">
+=======
+        <form action="#" th:action="@{/process-login}" method="POST">
+>>>>>>> f228e5160404ec2b501527462122e75c578eee24
 
             <label for="username">Tên đăng nhập</label>
             <input type="text" id="username" name="username" placeholder="Nhập tên đăng nhập">
