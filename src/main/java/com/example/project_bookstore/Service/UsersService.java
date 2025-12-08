@@ -23,8 +23,14 @@ public class UsersService implements UserDetailsService {
     @Autowired
     private IUsersRepository repo;
 
-    public void saveUser(String userName, String password, String fullName, String role, Customers cus){
-        repo.save(new Users(userName, password, role, fullName, cus, new Date()));
+    public boolean saveUser(String userName, String password, String fullName, String role, Customers cus){
+        Users us = repo.findById(userName).orElse(null);
+        if(us!=null){
+            return false;
+        }
+        Users user = new Users(userName, password, role, fullName, cus, new Date());
+        repo.save(user);
+        return true;
     }
 
 

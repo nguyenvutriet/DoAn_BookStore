@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -16,10 +17,9 @@ public class CustomersService {
     @Autowired
     private ICustomersRepository repo;
 
-    public boolean save(String fullName, String email, String address, Date dateOfBirth, String phone) {
+    public void save(String fullName, String email, String address, Date dateOfBirth, String phone) {
 
         List<Customers> dsId = repo.findAll();
-
         List<Integer> dsSo = new ArrayList();
 
         for(Customers c : dsId){
@@ -27,19 +27,22 @@ public class CustomersService {
             dsSo.add(id);
         }
 
-        Customers cus = repo.getLastCustomer();
-        System.out.println(cus.toString());
-        String id;
-        if (cus == null) {
-            id = "CU01";
-        } else {
-            String lastId = cus.getCustomerId();
-            int num = Integer.parseInt(lastId.substring(2));
-            id = String.format("CU%02d", num + 1);
+        int idMax = Collections.max(dsSo);
+        Customers cus2 = new Customers();
+        do{
+            idMax = idMax+1;
+            cus2 = repo.findById("CU"+idMax).orElse(null);
         }
+        while(cus2 != null);
 
-        repo.save(new Customers(id, fullName, email, phone, address, dateOfBirth));
-        return true;
+        Customers cus = new Customers();
+        cus.setCustomerId("CU" + idMax);
+        cus.setFullName(fullName);
+        cus.setEmail(email);
+        cus.setAddress(address);
+        cus.setDateOfBirth(dateOfBirth);
+        cus.setPhone(phone);
+        repo.save(cus);
     }
 
 

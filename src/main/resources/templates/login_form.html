@@ -23,9 +23,10 @@
     <div class="container">
         <nav class="navbar navbar-expand-lg">
             <div class="navbar-container">
+                <!-- Logo -->
+                <a class="logo" href="/home"><img src="/images/logo.png" alt="logo"></a>
 
-                <a class="logo" href="/"><img src="/images/logo.png" alt="logo"></a>
-
+                <!-- Menu -->
                 <div class="navbar-menu">
                     <ul class="navbar-nav">
                         <li class="nav-item"><a class="nav-link" href="/category?category=kinhdoanh">Kinh doanh</a></li>
@@ -40,19 +41,39 @@
                     </ul>
                 </div>
 
+                <!-- Search Bar -->
                 <div class="search-bar">
                     <input type="text" placeholder="Tìm kiếm sản phẩm..." class="form-control">
                     <button type="submit" class="btn btn-primary">Tìm</button>
                 </div>
 
+                <!-- User Options (Giỏ hàng, Đăng nhập, Đăng ký) -->
                 <div class="user-options">
                     <ul class="navbar-nav">
-                        <li class="nav-item"><a class="nav-link" href="#">🛒</a></li>
-                        <li class="nav-item"><a class="nav-link" th:href="@{/login}">Đăng nhập</a></li>
-                        <li class="nav-item"><a class="nav-link" th:href="@{/register}">Đăng ký</a></li>
+
+                        <li class="nav-item">
+                            <a class="nav-link" href="/gio_hang">🛒</a>
+                        </li>
+                        <!-- Nếu chưa đăng nhập -->
+                        <li class="nav-item" sec:authorize="isAnonymous()">
+                            <a class="nav-link" th:href="@{/login}">Đăng nhập</a>
+                        </li>
+                        <li class="nav-item" sec:authorize="isAnonymous()">
+                            <a class="nav-link" th:href="@{/register}">Đăng ký</a>
+                        </li>
+
+                        <!-- Nút Logout dạng POST (chuẩn Security) -->
+                        <li class="nav-item" sec:authorize="isAuthenticated()">
+                            <span>Xin chào <b sec:authentication="principal.username"></b></span>
+                            <form action="#" th:action="@{/logout}" method="post">
+                                <button class="btn btn-outline-primary btn-sm ml-2">
+                                    Đăng xuất
+                                </button>
+                            </form>
+                        </li>
+
                     </ul>
                 </div>
-
             </div>
         </nav>
     </div>
@@ -64,12 +85,7 @@
     <div class="login-box">
         <h2>Đăng nhập</h2>
 
-<<<<<<< HEAD
-
-        <form action="/process-login" method="POST">
-=======
         <form action="#" th:action="@{/process-login}" method="POST">
->>>>>>> f228e5160404ec2b501527462122e75c578eee24
 
             <label for="username">Tên đăng nhập</label>
             <input type="text" id="username" name="username" placeholder="Nhập tên đăng nhập">

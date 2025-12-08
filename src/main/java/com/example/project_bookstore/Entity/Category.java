@@ -11,7 +11,7 @@ public class Category {
 
     @Id
     @Column(name = "categoryId", length = 10)
-    private String catagoryId;
+    private String categoryId;
 
     @Column(name = "categoryName", length = 50)
     private String categoryName;
@@ -23,16 +23,16 @@ public class Category {
     }
 
     public Category(String catagoryId, String categoryName) {
-        this.catagoryId = catagoryId;
+        this.categoryId = catagoryId;
         this.categoryName = categoryName;
     }
 
     public String getCatagoryId() {
-        return catagoryId;
+        return categoryId;
     }
 
     public void setCatagoryId(String catagoryId) {
-        this.catagoryId = catagoryId;
+        this.categoryId = catagoryId;
     }
 
     public String getCategoryName() {

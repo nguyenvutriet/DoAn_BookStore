@@ -50,14 +50,12 @@
 </div>
 <!--End Preloader-->
 
-<!-- Start Header -->
-<!-- Start Header -->
 <header id="header">
     <div class="container">
         <nav class="navbar navbar-expand-lg">
             <div class="navbar-container">
                 <!-- Logo -->
-                <a class="logo" href="/"><img src="/images/logo.png" alt="logo"></a>
+                <a class="logo" href="/home"><img src="/images/logo.png" alt="logo"></a>
 
                 <!-- Menu -->
                 <div class="navbar-menu">
@@ -83,11 +81,32 @@
                 <!-- User Options (Giỏ hàng, Đăng nhập, Đăng ký) -->
                 <div class="user-options">
                     <ul class="navbar-nav">
-                        <li class="nav-item"><a class="nav-link" href="gio_hang">🛒</a></li>
-                        <li class="nav-item"><a class="nav-link" href="login_form.html">Đăng nhập</a></li> <!-- Thêm liên kết tới trang login-form.html -->
-                        <li class="nav-item"><a class="nav-link" href="register-form.html">Đăng ký</a></li> <!-- Thêm liên kết tới trang login-form.html -->
+
+                        <li class="nav-item">
+                            <a class="nav-link" href="/gio_hang">🛒</a>
+                        </li>
+                        <!-- Nếu chưa đăng nhập -->
+                        <li class="nav-item" sec:authorize="isAnonymous()">
+                            <a class="nav-link" th:href="@{/login}">Đăng nhập</a>
+                        </li>
+                        <li class="nav-item" sec:authorize="isAnonymous()">
+                            <a class="nav-link" th:href="@{/register}">Đăng ký</a>
+                        </li>
+
+                        <!-- Nút Logout dạng POST (chuẩn Security) -->
+                        <li class="nav-item" sec:authorize="isAuthenticated()">
+                            <span>Xin chào <b sec:authentication="principal.username"></b></span>
+                            <form action="#" th:action="@{/logout}" method="post">
+                                <button class="btn btn-outline-primary btn-sm ml-2">
+                                    Đăng xuất
+                                </button>
+                            </form>
+                        </li>
+
                     </ul>
                 </div>
+
+
             </div>
         </nav>
     </div>
@@ -151,8 +170,10 @@
                         </div>
                     </td>
 
-                    <!-- SUBTOTAL -->
-                    <td class="subtotal" th:text="${item.unitPrice * item.quantity}"></td>
+                    <td class="subtotal"
+                        th:data-value="${item.unitPrice * item.quantity}"
+                        th:text="${#numbers.formatInteger(item.unitPrice * item.quantity, 0, 'COMMA')} + ' ₫'">
+                    </td>>
 
                     <!-- REMOVE -->
                     <td>
@@ -192,7 +213,7 @@
 
                 <button class="checkout-btn">Mua hàng</button>
 
-                <a href="/" class="continue-shopping">← Tiếp tục mua sắm</a>
+                <a href="/home" class="continue-shopping">← Tiếp tục mua sắm</a>
 
             </div>
         </div>

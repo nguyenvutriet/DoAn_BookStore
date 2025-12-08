@@ -34,20 +34,22 @@ public class RegisterController {
     public String saveUser(@RequestParam String fullName, @RequestParam String email, @RequestParam String phone, @RequestParam String address, @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Date dateOfBirth, @RequestParam String userName, @RequestParam String password, @RequestParam String confirm, @RequestParam String role, Model model){
         if(!password.equals(confirm)){
             model.addAttribute("error","Passwords do not match");
-            return "register";
+            return "/register";
         }
-        boolean flag = customersService.save(fullName, email, address, dateOfBirth, phone);
-
-        if(!flag){
-            model.addAttribute("error","Customer not found");
-            return "register";
-        }
+        customersService.save(fullName, email, address, dateOfBirth, phone);
 
         Customers cus = customersService.getCustomerByEmail(email);
-        System.out.println(cus.toString());
-
-        usersService.saveUser(userName, password, fullName, role, cus);
-
+        boolean flag = usersService.saveUser(userName, password, fullName, role, cus);
+        if(!flag){
+            model.addAttribute("error","User already exists");
+            model.addAttribute("fullName",fullName);
+            model.addAttribute("email",email);
+            model.addAttribute("phone",phone);
+            model.addAttribute("address",address);
+            model.addAttribute("role",role);
+            model.addAttribute("dateOfBirth",dateOfBirth);
+            return "register-form";
+        }
         return "redirect:/login";
     }
 }

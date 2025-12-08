@@ -8,6 +8,8 @@ import com.example.project_bookstore.Repository.IUsersRepository;
 import com.example.project_bookstore.Service.CartDetailService;
 import com.example.project_bookstore.Service.CartService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -39,13 +41,13 @@ public class CartController {
 
     // ========================= HIỂN THỊ GIỎ HÀNG =============================
     @GetMapping("/gio_hang")
-    public String showCart(Model model) {
+    public String showCart(Model model, @AuthenticationPrincipal UserDetails userDetails) {
 
-        String username = "userA";   // TEST
+        String username = userDetails.getUsername();
 
         Users user = usersRepository.findById(username).orElse(null);
         if (user == null) {
-            return "redirect:/login_form.html";
+            return "redirect:/login";
         }
 
         String customerId = user.getCustomer().getCustomerId();
