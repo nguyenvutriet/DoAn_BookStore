@@ -49,6 +49,15 @@ public class Users {
         this.registrationDate = registrationDate;
     }
 
+    public Users(String userName, String password, String role, String fullName, Customers customer, Date registrationDate) {
+        this.userName = userName;
+        this.password = password;
+        this.role = role;
+        this.fullName = fullName;
+        this.customer = customer;
+        this.registrationDate = registrationDate;
+    }
+
     public String getUserName() {
         return userName;
     }
