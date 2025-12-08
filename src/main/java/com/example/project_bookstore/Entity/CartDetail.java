@@ -28,8 +28,6 @@ public class CartDetail {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(
             name = "cartId",
-            insertable = false,
-            updatable = false,
             referencedColumnName = "cartId",
             foreignKey = @ForeignKey(name = "FK_CartDetail_Cart")
     )
@@ -38,8 +36,6 @@ public class CartDetail {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(
             name = "bookId",
-            insertable = false,
-            updatable = false,
             referencedColumnName = "bookId",
             foreignKey = @ForeignKey(name = "FK_CartDetail_Book")
     )
