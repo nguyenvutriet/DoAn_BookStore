@@ -19,11 +19,11 @@ public class BookStoreSecurity {
         return new BCryptPasswordEncoder();
     }
 
+    @Bean
     public DaoAuthenticationProvider authenticationProvider(UsersService usersService) {
         DaoAuthenticationProvider dao = new DaoAuthenticationProvider(usersService);
         dao.setPasswordEncoder(passwordEncoder());
         return dao;
-
     }
 
     @Bean
@@ -49,15 +49,10 @@ public class BookStoreSecurity {
                         .deleteCookies("JSESSIONID")
                         .invalidateHttpSession(true)
                         .permitAll()
-                ).exceptionHandling(
-                        configurer -> configurer.accessDeniedPage("/error403")
                 ).sessionManagement(
                         session -> session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
                 );
 
         return http.build();
     }
-
-
-
 }

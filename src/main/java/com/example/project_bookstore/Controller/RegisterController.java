@@ -6,6 +6,7 @@ import com.example.project_bookstore.Service.CustomersService;
 import com.example.project_bookstore.Service.UsersService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -39,6 +40,10 @@ public class RegisterController {
         customersService.save(fullName, email, address, dateOfBirth, phone);
 
         Customers cus = customersService.getCustomerByEmail(email);
+
+        BCryptPasswordEncoder  passwordEncoder = new BCryptPasswordEncoder();
+        password = passwordEncoder.encode(password);
+
         boolean flag = usersService.saveUser(userName, password, fullName, role, cus);
         if(!flag){
             model.addAttribute("error","User already exists");
