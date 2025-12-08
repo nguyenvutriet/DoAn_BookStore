@@ -24,12 +24,14 @@ public class OrderDetail {
     private BigDecimal unitPrice;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "orderId", referencedColumnName = "orderId", foreignKey = @ForeignKey(name = "FK_OrderDetail_Order"))
+    @MapsId("orderId")
+    @JoinColumn(name = "orderId", referencedColumnName = "orderId", columnDefinition = "VARCHAR(10)")
     @NotNull
     private Orders order;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "bookId", referencedColumnName = "bookId", foreignKey = @ForeignKey(name = "FK_OrderDetail_Book"))
+    @MapsId("bookId")
+    @JoinColumn(name = "bookId", referencedColumnName = "bookId", columnDefinition = "VARCHAR(10)")
     private Books book;
 
     public OrderDetail() {

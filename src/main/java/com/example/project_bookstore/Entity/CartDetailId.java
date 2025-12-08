@@ -38,7 +38,6 @@ public class CartDetailId implements Serializable {
         this.bookId = bookId;
     }
 
-    //
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;

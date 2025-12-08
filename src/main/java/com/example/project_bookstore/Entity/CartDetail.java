@@ -26,19 +26,13 @@ public class CartDetail {
     private BigDecimal unitPrice;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(
-            name = "cartId",
-            referencedColumnName = "cartId",
-            foreignKey = @ForeignKey(name = "FK_CartDetail_Cart")
-    )
+    @MapsId("cartId")
+    @JoinColumn(name = "cartId", referencedColumnName = "cartId", columnDefinition = "VARCHAR(10)")
     private Cart cart;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(
-            name = "bookId",
-            referencedColumnName = "bookId",
-            foreignKey = @ForeignKey(name = "FK_CartDetail_Book")
-    )
+    @MapsId("bookId")
+    @JoinColumn(name = "bookId", referencedColumnName = "bookId", columnDefinition = "VARCHAR(10)")
     private Books book;
 
     public CartDetail() {
