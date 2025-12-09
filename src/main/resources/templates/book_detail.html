@@ -34,52 +34,52 @@
           <ul class="navbar-nav">
             <!-- Tất cả -->
             <li class="nav-item">
-              <a class="nav-link" th:href="@{/}">Tất cả</a>
+              <a class="nav-link" th:href="@{/home}">Tất cả</a>
             </li>
 
             <!-- Kinh doanh -->
             <li class="nav-item">
-              <a class="nav-link" th:href="@{/(categoryId='C01')}">Kinh doanh</a>
+              <a class="nav-link" th:href="@{/home(categoryId='C01')}">Kinh doanh</a>
             </li>
 
             <!-- Sức khỏe -->
             <li class="nav-item">
-              <a class="nav-link" th:href="@{/(categoryId='C02')}">Sức khỏe</a>
+              <a class="nav-link" th:href="@{/home(categoryId='C02')}">Sức khỏe</a>
             </li>
 
             <!-- Marketing -->
             <li class="nav-item">
-              <a class="nav-link" th:href="@{/(categoryId='C03')}">Marketing</a>
+              <a class="nav-link" th:href="@{/home(categoryId='C03')}">Marketing</a>
             </li>
 
             <!-- Lập trình -->
             <li class="nav-item">
-              <a class="nav-link" th:href="@{/(categoryId='C04')}">Lập trình</a>
+              <a class="nav-link" th:href="@{/home(categoryId='C04')}">Lập trình</a>
             </li>
 
             <!-- Truyện tranh -->
             <li class="nav-item">
-              <a class="nav-link" th:href="@{/(categoryId='C05')}">Truyện tranh</a>
+              <a class="nav-link" th:href="@{/home(categoryId='C05')}">Truyện tranh</a>
             </li>
 
             <!-- Công nghệ -->
             <li class="nav-item">
-              <a class="nav-link" th:href="@{/(categoryId='C06')}">Công nghệ</a>
+              <a class="nav-link" th:href="@{/home(categoryId='C06')}">Công nghệ</a>
             </li>
 
             <!-- Đời sống -->
             <li class="nav-item">
-              <a class="nav-link" th:href="@{/(categoryId='C07')}">Đời sống</a>
+              <a class="nav-link" th:href="@{/home(categoryId='C07')}">Đời sống</a>
             </li>
 
             <!-- Lịch sử -->
             <li class="nav-item">
-              <a class="nav-link" th:href="@{/(categoryId='C08')}">Lịch sử</a>
+              <a class="nav-link" th:href="@{/home(categoryId='C08')}">Lịch sử</a>
             </li>
 
             <!-- Giáo dục -->
             <li class="nav-item">
-              <a class="nav-link" th:href="@{/(categoryId='C09')}">Giáo dục</a>
+              <a class="nav-link" th:href="@{/home(categoryId='C09')}">Giáo dục</a>
             </li>
           </ul>
         </div>
@@ -130,20 +130,130 @@
     <div class="row">
       <div class="col-md-4 text-center">
         <img th:src="@{'/images/books/' + ${book.picture}}"
+             th:alt="${book.title}"
              style="width: 250px; height: 360px; object-fit: cover;">
       </div>
+
       <div class="col-md-8">
         <h2 th:text="${book.title}">Tên sách</h2>
-        <p class="text-muted" th:text="'by ' + ${book.author}"></p>
+        <p class="text-muted" th:text="'by ' + ${book.author}">by Tác giả</p>
         <p class="h4 text-danger"
-           th:text="${#numbers.formatDecimal(book.price,1,2)} + ' VND'"></p>
+           th:text="${#numbers.formatDecimal(book.price,1,2)} + ' VND'">
+          0 VND
+        </p>
+
         <p th:text="${book.description}">Mô tả sách...</p>
-        <button class="btn btn-success mt-3">Thêm vào giỏ</button>
-      </div>
-    </div>
-  </div>
+
+        <!-- Nút Thêm vào giỏ -->
+        <form th:action="@{/gio_hang/add}" method="post" class="d-inline">
+          <input type="hidden" name="bookId" th:value="${book.bookId}">
+          <input type="hidden" name="quantity" value="1">
+          <button type="submit" class="btn btn-success mt-3">Thêm vào giỏ</button>
+        </form>
+
+        <!-- Nút Mua ngay -->
+        <form th:action="@{/gio_hang/buy-now}" method="post" class="d-inline">
+          <input type="hidden" name="bookId" th:value="${book.bookId}">
+          <input type="hidden" name="quantity" value="1">
+          <button type="submit" class="btn btn-warning mt-3 ml-2">Mua ngay</button>
+        </form>
+
+
+        <!-- ===== KHU ĐÁNH GIÁ SÁCH ===== -->
+        <hr class="my-4">
+
+        <!-- Tóm tắt rating -->
+        <div class="rating-summary d-flex align-items-center mb-2">
+          <div class="mr-3">
+            <strong th:text="${#numbers.formatDecimal(avgRating,1,1)} + ' / 5'">0 / 5</strong>
+          </div>
+
+          <!-- Hiển thị icon sao theo avgRatingRounded -->
+          <div class="stars mr-3">
+            <span th:each="i : ${#numbers.sequence(1,5)}"
+                  th:text="${i <= avgRatingRounded} ? '★' : '☆'"
+                  style="color: gold; font-size: 1.2rem; margin-right: 2px;">
+              ★
+            </span>
+          </div>
+
+          <div>
+            <small>
+              (<span th:text="${reviewCount}">0</span> lượt đánh giá)
+            </small>
+          </div>
+        </div>
+
+        <!-- Nút mở log đánh giá -->
+        <button id="toggleReviewLog" class="btn btn-outline-primary btn-sm mt-2">
+          Xem log đánh giá
+        </button>
+
+        <!-- Khu LOG ĐÁNH GIÁ (ẩn/hiện) -->
+        <div id="reviewLog" class="mt-3" style="display: none;">
+          <h5 class="mb-3">Log đánh giá</h5>
+
+          <!-- Nếu không có review -->
+          <p class="text-muted" th:if="${reviewCount == 0}">
+            Chưa có đánh giá nào cho cuốn sách này.
+          </p>
+
+          <!-- Danh sách review -->
+          <div th:if="${reviewCount > 0}">
+            <div class="review-item border rounded p-3 mb-2"
+                 th:each="r : ${reviews}">
+              <div class="d-flex justify-content-between">
+                <div>
+                  <!-- Sao của từng review -->
+                  <span th:each="i : ${#numbers.sequence(1,5)}"
+                        th:text="${i <= r.rating} ? '★' : '☆'"
+                        style="color: gold; font-size: 1rem; margin-right: 1px;">
+                    ★
+                  </span>
+                </div>
+                <div>
+                  <small class="text-muted"
+                         th:text="${#dates.format(r.creationDate, 'dd/MM/yyyy')}">
+                    01/01/2024
+                  </small>
+                </div>
+              </div>
+
+              <p class="mb-1 mt-2" th:text="${r.comment}">Nội dung đánh giá...</p>
+
+              <small class="text-muted">
+                Khách hàng:
+                <span th:text="${r.customer.fullName}">Tên khách</span>
+              </small>
+
+            </div>
+          </div>
+        </div>
+
+      </div> <!-- end col-md-8 -->
+    </div> <!-- end row -->
+  </div> <!-- end book-detail -->
 
 </main>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const btn = document.getElementById('toggleReviewLog');
+    const log = document.getElementById('reviewLog');
+
+    if (btn && log) {
+      btn.addEventListener('click', function () {
+        if (log.style.display === 'none' || log.style.display === '') {
+          log.style.display = 'block';
+          btn.textContent = 'Ẩn log đánh giá';
+        } else {
+          log.style.display = 'none';
+          btn.textContent = 'Xem log đánh giá';
+        }
+      });
+    }
+  });
+</script>
 
 
 <!-- ===== FOOTER GIỮ NGUYÊN ===== -->
@@ -153,7 +263,7 @@
 
       <div class="footer-column footer-about">
         <h4>UTE BookStore</h4>
-        <p>Chào mừng bạn đến với UTE BookStore, cửa hàng sách trực tuyến uy tín...</p>
+        <p>Chào mừng bạn đến với UTE BookStore, cửa hàng sách trực tuyến uy tín, nơi bạn có thể khám phá bộ sưu tập sách phong phú dành cho mọi đối tượng đọc giả. Từ các loại sách phổ biên đến các tác phẩm kinh điển, chúng tôi luôn có những lựa chọn tuyệt vời cho bạn. Khám phá ngay bộ sưu tập của chúng tôi và nếu cần trợ giúp, chatbox của chúng tôi luôn sẵn sàng hỗ trợ bạn!</p>
       </div>
 
       <div class="footer-column">
