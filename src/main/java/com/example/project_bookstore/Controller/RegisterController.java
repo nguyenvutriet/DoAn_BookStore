@@ -31,8 +31,47 @@ public class RegisterController {
     @Autowired
     private CartService cartService;
 
-    @GetMapping
-    public String registerUser(){
+    @GetMapping("/infor")
+    public String registerInfor(){
+
+        return "register-infor";
+    }
+
+    @GetMapping("/back")
+    public String back(@RequestParam("fullName") String fullName, @RequestParam("email") String email, @RequestParam("phone") String phone, @RequestParam("address") String address, @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Date dateOfBirth, Model model){
+        model.addAttribute("fullName",fullName);
+        model.addAttribute("email",email);
+        model.addAttribute("phone",phone);
+        model.addAttribute("address",address);
+        model.addAttribute("dateOfBirth",dateOfBirth);
+        return "register-infor";
+    }
+
+    @PostMapping("/infor")
+    public String registerUser(@RequestParam("fullName") String fullName, @RequestParam("email") String email, @RequestParam("phone") String phone, @RequestParam("address") String address, @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Date dateOfBirth, Model model){
+        Customers cu = customersService.getCustomerByEmail(email);
+        if(cu!=null){
+            model.addAttribute("error","Email đã tồn tại");
+            return "register-infor";
+        }
+
+        cu = customersService.getCustomerByPhone(phone);
+        if(cu!=null){
+            model.addAttribute("error","Số điện thoại đã tồn tại");
+            return "register-infor";
+        }
+
+        if(phone.length()!=10){
+            model.addAttribute("error", "Số điện thoại không hợp lệ");
+            return "register-infor";
+        }
+
+        model.addAttribute("fullName",fullName);
+        model.addAttribute("email",email);
+        model.addAttribute("phone",phone);
+        model.addAttribute("address",address);
+        model.addAttribute("dateOfBirth",dateOfBirth);
+
         return "register-form";
     }
 
@@ -41,17 +80,20 @@ public class RegisterController {
 
         if(!password.equals(confirm)){
             model.addAttribute("error","Passwords do not match");
-            return "redirect:/register";
-        }
-        Customers cu = customersService.getCustomerByEmail(email);
-        if(cu!=null){
-            model.addAttribute("error","Email already exists");
-            return "redirect:/register";
+            model.addAttribute("fullName",fullName);
+            model.addAttribute("email",email);
+            model.addAttribute("phone",phone);
+            model.addAttribute("address",address);
+            model.addAttribute("dateOfBirth",dateOfBirth);
+            model.addAttribute("error", "mật khẩu chưa khớp");
+            return "register-form";
         }
 
         customersService.save(fullName, email, address, dateOfBirth, phone);
 
         Customers cus = customersService.getCustomerByEmail(email);
+
+        System.out.println(cus.toString());
 
         BCryptPasswordEncoder  passwordEncoder = new BCryptPasswordEncoder();
         password = passwordEncoder.encode(password);

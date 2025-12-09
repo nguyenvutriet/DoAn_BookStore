@@ -29,7 +29,11 @@
     <!-- Animate CSS -->
     <link rel="stylesheet" type="text/css" href="/css/animate.css">
 
+    <!-- Load style.css instead of cart.css to ensure consistent header styling -->
     <!-- Main CSS -->
+    <link rel="stylesheet" type="text/css" href="/css/style.css">
+
+    <!-- Cart specific CSS (load after style.css to override if needed) -->
     <link rel="stylesheet" type="text/css" href="/css/cart.css">
 
     <!-- Responsive CSS -->
@@ -112,7 +116,6 @@
                     </ul>
                 </div>
 
-
                 <!-- Search Bar -->
                 <div class="search-bar">
                     <input type="text" placeholder="Tìm kiếm sản phẩm..." class="form-control">
@@ -131,7 +134,7 @@
                             <a class="nav-link" th:href="@{/login}">Đăng nhập</a>
                         </li>
                         <li class="nav-item" sec:authorize="isAnonymous()">
-                            <a class="nav-link" th:href="@{/register}">Đăng ký</a>
+                            <a class="nav-link" th:href="@{/register/infor}">Đăng ký</a>
                         </li>
 
                         <!-- Nút Logout dạng POST (chuẩn Security) -->
@@ -143,8 +146,8 @@
                                 </div>
 
                                 <div class="user-menu">
-                                    <a href="/user/profile">👤 Hồ sơ của tôi</a>
-                                    <a href="/user/profile">📦 Đơn hàng của tôi</a>
+                                    <a th:href="@{/user/profile/{username}(username=${#authentication.name})}">👤 Hồ sơ của tôi</a>
+                                    <a href="/user/order">📦 Đơn hàng của tôi</a>
                                     <hr>
                                     <a href="/user/change-password">🔑 Đổi mật khẩu</a>
 
@@ -157,8 +160,13 @@
 
                         </li>
 
+
+
+
                     </ul>
                 </div>
+
+
             </div>
         </nav>
     </div>
@@ -274,11 +282,6 @@
 
     </div>
 </main>
-
-
-
-
-
 
 <footer id="footer">
     <div class="container">

@@ -27,8 +27,9 @@ public class UserController {
     @Autowired
     private CustomersService customersService;
 
-    @GetMapping("/profile/{username}")
-    public String inforCustomer(@PathVariable("username") String username, Model model){
+    @GetMapping("/profile")
+    public String inforCustomer(@AuthenticationPrincipal UserDetails userDetails, Model model){
+        String username =  userDetails.getUsername();
         Users user = usersService.getUserByUserName(username);
         Customers cus = customersService.getCustomerById(user.getCustomer().getCustomerId());
 
