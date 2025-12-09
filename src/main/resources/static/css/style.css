@@ -117,29 +117,72 @@ body {
     background-color: #e8f5e9; /* Hiệu ứng khi hover */
 }
 
-/* Book item */
+/* Section wrapper */
+.books-section {
+    padding-top: 20px;
+    padding-bottom: 10px;
+}
+
+/* Title có vạch xanh bên trái */
+.section-title {
+    font-weight: 600;
+    font-size: 1.4rem;
+    border-left: 4px solid darkgreen;
+    padding-left: 10px;
+}
+
+/* GRID CHÍNH – max 4 cột, căn giữa */
+.books-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr)); /* tối đa 4 cột */
+    gap: 24px;
+    max-width: 1200px;         /* bề rộng tối đa của grid */
+    margin: 0 auto;            /* căn giữa màn hình */
+    padding: 10px 0;
+}
+
+/* Mỗi item trong grid */
 .book-item {
-    text-align: center;
+    display: flex;
 }
 
-/* Hình ảnh sách */
-.book-item .book-image img {
-    width: 100%; /* Đảm bảo ảnh sách chiếm toàn bộ chiều rộng */
-    height: auto;
+/* Card đẹp hơn một xíu */
+.book-card {
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+    transition: all 0.25s ease;
+    background-color: #fff;
+    width: 100%;
 }
 
-/* Tên sách */
-.book-item h3 {
-    font-size: 16px;
-    margin: 10px 0;
+.book-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
 }
 
-/* Giá sách */
-.book-item p {
-    font-size: 14px;
-    color: #777;
+.book-image img {
+    border-radius: 8px;
 }
 
+/* Text trong card */
+.book-card .card-title {
+    font-size: 1rem;
+    min-height: 48px; /* giữ chiều cao ổn khi tiêu đề 1–2 dòng */
+}
+
+.book-card .card-text {
+    font-size: 0.9rem;
+}
+
+.book-card .text-danger.font-weight-bold {
+    font-size: 1rem;
+}
+
+/* Ô “không có sách” chiếm full width */
+.book-empty {
+    grid-column: 1 / -1;
+}
 
 /*!* Preloader *!*/
 /*.preloader {*/

@@ -1,5 +1,7 @@
 <!doctype html>
-<html lang="vi">
+<!--<html lang="vi">-->
+<html lang="vi" xmlns:th="http://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -27,19 +29,61 @@
                 <a class="logo" href="/home"><img src="/images/logo.png" alt="logo"></a>
 
                 <!-- Menu -->
+                <!-- Menu -->
                 <div class="navbar-menu">
                     <ul class="navbar-nav">
-                        <li class="nav-item"><a class="nav-link" href="/category?category=kinhdoanh">Kinh doanh</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#">Sức khỏe</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#">Marketing</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#">Lập trình</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#">Truyện tranh</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#">Công nghệ</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#">Đời sống</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#">Lịch sử</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#">Giáo dục</a></li>
+                        <!-- Tất cả -->
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/}">Tất cả</a>
+                        </li>
+
+                        <!-- Kinh doanh -->
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/(categoryId='C01')}">Kinh doanh</a>
+                        </li>
+
+                        <!-- Sức khỏe -->
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/(categoryId='C02')}">Sức khỏe</a>
+                        </li>
+
+                        <!-- Marketing -->
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/(categoryId='C03')}">Marketing</a>
+                        </li>
+
+                        <!-- Lập trình -->
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/(categoryId='C04')}">Lập trình</a>
+                        </li>
+
+                        <!-- Truyện tranh -->
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/(categoryId='C05')}">Truyện tranh</a>
+                        </li>
+
+                        <!-- Công nghệ -->
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/(categoryId='C06')}">Công nghệ</a>
+                        </li>
+
+                        <!-- Đời sống -->
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/(categoryId='C07')}">Đời sống</a>
+                        </li>
+
+                        <!-- Lịch sử -->
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/(categoryId='C08')}">Lịch sử</a>
+                        </li>
+
+                        <!-- Giáo dục -->
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/(categoryId='C09')}">Giáo dục</a>
+                        </li>
                     </ul>
                 </div>
+
 
                 <!-- Search Bar -->
                 <div class="search-bar">

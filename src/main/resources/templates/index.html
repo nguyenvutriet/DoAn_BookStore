@@ -61,15 +61,55 @@
                 <!-- Menu -->
                 <div class="navbar-menu">
                     <ul class="navbar-nav">
-                        <li class="nav-item"><a class="nav-link" href="/category?category=kinhdoanh">Kinh doanh</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#">Sức khỏe</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#">Marketing</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#">Lập trình</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#">Truyện tranh</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#">Công nghệ</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#">Đời sống</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#">Lịch sử</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#">Giáo dục</a></li>
+                        <!-- Tất cả -->
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/}">Tất cả</a>
+                        </li>
+
+                        <!-- Kinh doanh -->
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/(categoryId='C01')}">Kinh doanh</a>
+                        </li>
+
+                        <!-- Sức khỏe -->
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/(categoryId='C02')}">Sức khỏe</a>
+                        </li>
+
+                        <!-- Marketing -->
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/(categoryId='C03')}">Marketing</a>
+                        </li>
+
+                        <!-- Lập trình -->
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/(categoryId='C04')}">Lập trình</a>
+                        </li>
+
+                        <!-- Truyện tranh -->
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/(categoryId='C05')}">Truyện tranh</a>
+                        </li>
+
+                        <!-- Công nghệ -->
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/(categoryId='C06')}">Công nghệ</a>
+                        </li>
+
+                        <!-- Đời sống -->
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/(categoryId='C07')}">Đời sống</a>
+                        </li>
+
+                        <!-- Lịch sử -->
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/(categoryId='C08')}">Lịch sử</a>
+                        </li>
+
+                        <!-- Giáo dục -->
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/(categoryId='C09')}">Giáo dục</a>
+                        </li>
                     </ul>
                 </div>
 
@@ -116,21 +156,111 @@
 <!-- End Header -->
 
 <!-- Start Main Content -->
-<main id="main-content">
+<main id="main-content" class="container mt-4">
 
-    <div class="books-list">
-        <!-- Sử dụng Thymeleaf để lặp qua danh sách sách -->
-        <div th:each="book : ${books}" class="book-item">
-            <div class="book-image">
-                <!-- Hiển thị ảnh sách -->
-                <img th:src="'/images/' + ${book.image}" alt="Book Image"/>
+    <section class="books-section mb-5">
+        <h2 class="section-title mb-3">New Books</h2>
+
+        <!-- Grid container -->
+        <div class="books-grid">
+            <div class="book-item" th:each="book : ${newBooks}">
+                <a th:href="@{/books/{id}(id=${book.bookId})}"
+                   class="card h-100 text-center book-card text-decoration-none text-dark">
+                    <div class="card-body d-flex flex-column align-items-center">
+                        <div class="book-image mb-3">
+                            <img th:src="@{'/images/books/' + ${book.picture}}"
+                                 alt="Book Image"
+                                 style="width: 150px; height: 220px; object-fit: cover;">
+                        </div>
+                        <h5 class="card-title mb-2" th:text="${book.title}">Tên sách</h5>
+                        <p class="card-text mb-1 text-muted"
+                           th:text="'by ' + ${book.author}">by Tác giả</p>
+                        <p class="card-text text-danger font-weight-bold mt-auto"
+                           th:text="${#numbers.formatDecimal(book.price, 1, 2)} + ' VND'">
+                            0 VND
+                        </p>
+                    </div>
+                </a>
             </div>
-            <div class="book-details">
-                <h3 th:text="${book.name}">Tên sách</h3>
-                <p th:text="'Giá: ' + ${book.price} + ' VNĐ'">Giá sách</p>
+
+            <!-- Khi không có sách -->
+            <div class="book-empty" th:if="${#lists.isEmpty(newBooks)}">
+                <p class="text-muted text-center">
+                    Hiện chưa có sách mới trong danh mục này.
+                </p>
             </div>
         </div>
-    </div>
+    </section>
+
+
+    <section class="books-section mb-5">
+        <h2 class="section-title mb-3">New Books</h2>
+
+        <!-- Grid container -->
+        <div class="books-grid">
+            <div class="book-item" th:each="book : ${newBooks}">
+                <a th:href="@{/books/{id}(id=${book.bookId})}"
+                   class="card h-100 text-center book-card text-decoration-none text-dark">
+                    <div class="card-body d-flex flex-column align-items-center">
+                        <div class="book-image mb-3">
+                            <img th:src="@{'/images/books/' + ${book.picture}}"
+                                 alt="Book Image"
+                                 style="width: 150px; height: 220px; object-fit: cover;">
+                        </div>
+                        <h5 class="card-title mb-2" th:text="${book.title}">Tên sách</h5>
+                        <p class="card-text mb-1 text-muted"
+                           th:text="'by ' + ${book.author}">by Tác giả</p>
+                        <p class="card-text text-danger font-weight-bold mt-auto"
+                           th:text="${#numbers.formatDecimal(book.price, 1, 2)} + ' VND'">
+                            0 VND
+                        </p>
+                    </div>
+                </a>
+            </div>
+
+            <!-- Khi không có sách -->
+            <div class="book-empty" th:if="${#lists.isEmpty(newBooks)}">
+                <p class="text-muted text-center">
+                    Hiện chưa có sách mới trong danh mục này.
+                </p>
+            </div>
+        </div>
+    </section>
+
+
+
+    <section class="books-section mb-5">
+        <h2 class="section-title mb-3">Most-favored Books</h2>
+
+        <div class="books-grid">
+            <div class="book-item" th:each="book : ${favoriteBooks}">
+                <a th:href="@{/books/{id}(id=${book.bookId})}"
+                   class="card h-100 text-center book-card text-decoration-none text-dark">
+                    <div class="card-body d-flex flex-column align-items-center">
+                        <div class="book-image mb-3">
+                            <img th:src="@{'/images/books/' + ${book.picture}}"
+                                 alt="Book Image"
+                                 style="width: 150px; height: 220px; object-fit: cover;">
+                        </div>
+                        <h5 class="card-title mb-2" th:text="${book.title}">Tên sách</h5>
+                        <p class="card-text mb-1 text-muted"
+                           th:text="'by ' + ${book.author}">by Tác giả</p>
+                        <p class="card-text text-danger font-weight-bold mt-auto"
+                           th:text="${#numbers.formatDecimal(book.price, 1, 2)} + ' VND'">
+                            0 VND
+                        </p>
+                    </div>
+                </a>
+            </div>
+
+            <div class="book-empty" th:if="${#lists.isEmpty(favoriteBooks)}">
+                <p class="text-muted text-center">
+                    Chưa có sách yêu thích nào trong danh mục này.
+                </p>
+            </div>
+        </div>
+    </section>
+
 </main>
 
 <div class="col-md-6">
@@ -154,89 +284,8 @@
         chatBotIframe.style.display = chatBotIframe.style.display === 'block' ? 'none' : 'block'; // Toggle hiển thị
     });
 
-    // Hàm thay đổi nội dung của main-content khi nhấn vào menu
-    function loadContent(contentType) {
-        const mainContent = document.getElementById('main-content');
-
-        if (contentType === 'kinhdoanh') {
-            mainContent.innerHTML = `
-                    <h1>Kinh doanh</h1>
-                    <p>Danh mục sách về Kinh doanh, Marketing, và các kỹ năng lãnh đạo.</p>
-                `;
-        } else if (contentType === 'suckhoe') {
-            mainContent.innerHTML = `
-                    <h1>Sức khỏe</h1>
-                    <p>Danh mục sách về Sức khỏe, Y học, và chăm sóc cơ thể.</p>
-                `;
-        } else if (contentType === 'giaoduc') {
-            mainContent.innerHTML = `
-                    <h1>Giáo dục</h1>
-                    <p>Danh mục sách về giáo dục, phương pháp giảng dạy và học tập hiệu quả.</p>
-                `;
-        }
-    }
-
-    // Thêm sự kiện cho các mục menu
-    document.getElementById('kinhdoanh').addEventListener('click', function(e) {
-        e.preventDefault();
-        loadContent('kinhdoanh');
-    });
-
-    document.getElementById('suckhoe').addEventListener('click', function(e) {
-        e.preventDefault();
-        loadContent('suckhoe');
-    });
-
-    document.getElementById('giaoduc').addEventListener('click', function(e) {
-        e.preventDefault();
-        loadContent('giaoduc');
-    });
 </script>
 
-<!-- End Main Content -->
-<!--&lt;!&ndash; Start Home Area &ndash;&gt;-->
-<!--<section id="home-area">-->
-<!--    <div class="container">-->
-<!--        <div class="row">-->
-<!--&lt;!&ndash;            &lt;!&ndash; Start Caption Content &ndash;&gt;&ndash;&gt;-->
-<!--&lt;!&ndash;            <div class="col-md-6">&ndash;&gt;-->
-<!--&lt;!&ndash;                <div class="caption d-table">&ndash;&gt;-->
-<!--&lt;!&ndash;                    <div class="d-table-cell align-middle">&ndash;&gt;-->
-<!--&lt;!&ndash;                        <h1>Welcome to Our Online Bookstore</h1>&ndash;&gt;-->
-<!--&lt;!&ndash;                        <p>Find a wide variety of books ranging from fiction to non-fiction, self-help to children's books.</p>&ndash;&gt;-->
-<!--&lt;!&ndash;                        <a href="books.html">Browse Books</a>&ndash;&gt;-->
-<!--&lt;!&ndash;                    </div>&ndash;&gt;-->
-<!--&lt;!&ndash;                </div>&ndash;&gt;-->
-<!--&lt;!&ndash;            </div>&ndash;&gt;-->
-<!--&lt;!&ndash;            &lt;!&ndash; End Caption Content &ndash;&gt;&ndash;&gt;-->
-
-<!--            &lt;!&ndash; Start Caption Image &ndash;&gt;-->
-<!--            <div class="col-md-6">-->
-<!--                <div class="caption-img text-right">-->
-<!--                    &lt;!&ndash; Nhấn vào hình ảnh để mở chatbot &ndash;&gt;-->
-<!--                    <img src="/assets/images/advise.png" class="img-fluid" alt="" id="openChatBotBtn" style="cursor: pointer;">-->
-<!--                </div>-->
-<!--            </div>-->
-<!--            &lt;!&ndash; End Caption Image &ndash;&gt;-->
-<!--        </div>-->
-<!--    </div>-->
-<!--</section>-->
-<!--&lt;!&ndash; End Home Area &ndash;&gt;-->
-
-<!-- Chatbot iframe -->
-<!--<iframe id="chatBotIframe" src="chatbot.html" style="display:none; position: fixed; bottom: 10px; right: 10px; width: 300px; height: 400px; border: none; border-radius: 8px; z-index: 1000;"></iframe>-->
-
-<!-- JavaScript để mở chatbot -->
-<!--<script>-->
-<!--    // Lấy các phần tử-->
-<!--    const openChatBotBtn = document.getElementById('openChatBotBtn');-->
-<!--    const chatBotIframe = document.getElementById('chatBotIframe');-->
-
-<!--    // Mở chatbot khi nhấn vào hình ảnh-->
-<!--    openChatBotBtn.addEventListener('click', function() {-->
-<!--        chatBotIframe.style.display = 'block'; // Hiển thị iframe chứa chatbot-->
-<!--    });-->
-<!--</script>-->
 <footer id="footer">
     <div class="container">
         <div class="footer-content">
@@ -279,48 +328,31 @@
 <!-- Bootstrap js -->
 <script src="/assets/js/bootstrap.min.js"></script>
 
-<!-- Fetch nội dung động cho body -->
-<!--<script>-->
-<!--    function loadLoginForm() {-->
-<!--        // Thay đổi đường dẫn để gọi controller thay vì file trực tiếp-->
-<!--        fetch('/login')-->
-<!--            .then(response => response.text())-->
-<!--            .then(data => {-->
-<!--                document.getElementById("main-content").innerHTML = data;-->
-<!--            })-->
-<!--            .catch(error => {-->
-<!--                console.error('Có lỗi khi tải form đăng nhập:', error);-->
-<!--            });-->
-<!--    }-->
+ Fetch nội dung động cho body
+<script>
+    // Khi click nút Đăng nhập trên navbar
+    document.addEventListener('DOMContentLoaded', function () {
+        const mainContent = document.getElementById('main-content');
+        // CLICK VÀO SẢN PHẨM (CARD SÁCH)
+        document.addEventListener('click', function (e) {
+            const card = e.target.closest('.book-card');
+            if (!card) return; // không click trong card thì bỏ
 
-<!--    function loadRegisterForm() {-->
-<!--        // Thay đổi đường dẫn để gọi controller thay vì file trực tiếp-->
-<!--        fetch('/register')-->
-<!--            .then(response => response.text())-->
-<!--            .then(data => {-->
-<!--                document.getElementById("main-content").innerHTML = data;-->
-<!--            })-->
-<!--            .catch(error => {-->
-<!--                console.error('Có lỗi khi tải form đăng nhập:', error);-->
-<!--            });-->
-<!--    }-->
+            const bookId = card.getAttribute('data-id');
+            if (!bookId) return;
 
-
-<!--    function loadContent(page) {-->
-<!--        // Tạo URL để tải nội dung-->
-<!--        let url = page + '.html'; // Ví dụ: home.html, about.html-->
-
-<!--        // Sử dụng Fetch API để tải nội dung-->
-<!--        fetch(url)-->
-<!--            .then(response => response.text())-->
-<!--            .then(data => {-->
-<!--                document.getElementById('main-content').innerHTML = data;-->
-<!--            })-->
-<!--            .catch(error => {-->
-<!--                console.error('Error loading page:', error);-->
-<!--            });-->
-<!--    }-->
-<!--</script>-->
+            fetch('/books/' + bookId)   // endpoint trả về HTML chi tiết sách
+                .then(response => response.text())
+                .then(html => {
+                    mainContent.innerHTML = html;
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                })
+                .catch(err => {
+                    console.error('Lỗi khi tải chi tiết sách:', err);
+                });
+        });
+    });
+</script>
 
 
 </body>

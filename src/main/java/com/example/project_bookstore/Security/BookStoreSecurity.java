@@ -31,8 +31,8 @@ public class BookStoreSecurity {
 
         http.csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers( "/home", "/register/**","/login", "/css/**", "/js/**", "/images/**").permitAll()
-                        .requestMatchers("/").denyAll()
+                        .requestMatchers( "/books/**","/home", "/register/**","/login", "/css/**", "/js/**", "/images/**").permitAll()
+                        //.requestMatchers("/").denyAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/home/order").hasRole("USER")
                         .anyRequest().authenticated()
