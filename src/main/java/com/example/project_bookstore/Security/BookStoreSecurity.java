@@ -32,7 +32,6 @@ public class BookStoreSecurity {
         http.csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers( "/home", "/register/**","/login", "/css/**", "/js/**", "/images/**").permitAll()
-                        .requestMatchers("/").denyAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/home/order").hasRole("USER")
                         .requestMatchers("/gio_hang/**").hasRole("USER")

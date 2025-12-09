@@ -170,16 +170,18 @@
                         </div>
                     </td>
 
+                    <!-- SUBTOTAL -->
                     <td class="subtotal"
                         th:data-value="${item.unitPrice * item.quantity}"
                         th:text="${#numbers.formatInteger(item.unitPrice * item.quantity, 0, 'COMMA')} + ' ₫'">
-                    </td>>
+                    </td>
+
 
                     <!-- REMOVE -->
                     <td>
                         <a  class="remove-btn"
-                           th:data-book="${item.bookId}"
-                           th:data-cart="${item.cartId}">
+                            th:data-book="${item.bookId}"
+                            th:data-cart="${item.cartId}">
                             Xóa
                         </a>
 
@@ -213,7 +215,7 @@
 
                 <button class="checkout-btn">Mua hàng</button>
 
-                <a href="/home" class="continue-shopping">← Tiếp tục mua sắm</a>
+                <a href="/" class="continue-shopping">← Tiếp tục mua sắm</a>
 
             </div>
         </div>
@@ -267,35 +269,48 @@
 <script>
     document.addEventListener("DOMContentLoaded", function () {
 
-        // ==== UPDATE TỔNG TIỀN ====
+        // =============================
+        // 🔹 HÀM FORMAT TIỀN
+        // =============================
+        function fmt(n) {
+            return Number(n).toLocaleString("vi-VN") + " ₫";
+        }
+
+        // =============================
+        // 🔹 TÍNH LẠI TỔNG THEO CHECKBOX
+        // =============================
         function recalcSummary() {
             let sum = 0;
+
             document.querySelectorAll(".cart-row").forEach(row => {
                 const cb = row.querySelector(".check-item");
-                if (cb.checked) {
-                    const sub = Number(row.querySelector(".subtotal").innerText);
+                if (cb && cb.checked) {
+                    const sub = Number(row.querySelector(".subtotal").dataset.value);
                     sum += sub;
                 }
             });
 
-            document.getElementById("subtotal").innerText = sum.toLocaleString("vi-VN") + " ₫";
-            document.getElementById("total").innerText    = sum.toLocaleString("vi-VN") + " ₫";
+            document.getElementById("subtotal").innerText = fmt(sum);
+            document.getElementById("total").innerText = fmt(sum);
         }
 
-        // ==== GỬI REQUEST LÊN SERVER ====
-        function sendUpdate(cartId, bookId, qty) {
-            console.log("Saving:", cartId, bookId, qty);
+        // =============================
+        // 🔹 SỰ KIỆN CHECK / UNCHECK
+        // =============================
+        document.querySelectorAll(".check-item").forEach(cb => {
+            cb.addEventListener("change", recalcSummary);
+        });
 
-            fetch("/gio_hang/update", {
-                method: "POST",
-                headers: { "Content-Type": "application/x-www-form-urlencoded" },
-                body: `cartId=${cartId}&bookId=${bookId}&quantity=${qty}`
-            })
-                .then(r => r.text())
-                .then(t => console.log("Server:", t))
-                .catch(err => console.error("Error:", err));
-        }
+        // Check all
+        document.querySelector(".check-all").addEventListener("change", function () {
+            let st = this.checked;
+            document.querySelectorAll(".check-item").forEach(cb => cb.checked = st);
+            recalcSummary();
+        });
 
+        // =============================
+        // 🔹 UPDATE SỐ LƯỢNG + GỬI LÊN SERVER
+        // =============================
         document.querySelectorAll(".qty-box").forEach(box => {
 
             let minusBtn = box.querySelector(".btn-minus");
@@ -316,14 +331,17 @@
                     .then(res => res.json())
                     .then(data => {
                         if (data.success) {
-                            // Update subtotal
-                            box.closest("tr").querySelector(".subtotal").innerText = data.subtotal + " ₫";
 
-                            // Update total
-                            document.getElementById("subtotal").innerText = data.total + " ₫";
-                            document.getElementById("total").innerText = data.total + " ₫";
+                            // Cập nhật subtotal
+                            const row = box.closest(".cart-row");
+                            row.querySelector(".subtotal").innerText = fmt(data.subtotal);
+                            row.querySelector(".subtotal").dataset.value = data.subtotal;
+
+                            // Nếu checkbox item đang CHECK → cập nhật tổng
+                            recalcSummary();
                         }
-                    });
+                    })
+                    .catch(err => console.error(err));
             }
 
             minusBtn.onclick = () => {
@@ -337,41 +355,40 @@
             };
         });
 
+        // =============================
+        // 🔹 XÓA SẢN PHẨM
+        // =============================
+        document.querySelectorAll(".remove-btn").forEach(btn => {
+            btn.addEventListener("click", function (e) {
+                e.preventDefault();
 
+                const bookId = this.dataset.book;
+                const cartId = this.dataset.cart;
+
+                if (!confirm("Bạn có chắc muốn xóa sản phẩm này?")) return;
+
+                fetch("/cart/delete", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ cartId, bookId })
+                })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.success) {
+                            // Xóa hàng
+                            this.closest(".cart-row").remove();
+
+                            recalcSummary(); // tính lại tổng
+                        }
+                    })
+                    .catch(err => console.error(err));
+            });
+        });
+
+        // Chạy khi load trang
         recalcSummary();
     });
 </script>
-<script>
-    document.querySelectorAll(".remove-btn").forEach(btn => {
-        btn.addEventListener("click", function (e) {
-            e.preventDefault();
-
-            const bookId = this.dataset.book;
-            const cartId = this.dataset.cart;
-
-            if (!confirm("Bạn có chắc muốn xóa sản phẩm này?")) return;
-
-            fetch("/cart/delete", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ cartId, bookId })
-            })
-                .then(res => res.json())
-                .then(data => {
-                    if (data.success) {
-                        // Xóa hàng khỏi giao diện
-                        this.closest(".cart-row").remove();
-
-                        // Cập nhật lại tổng tiền
-                        document.getElementById("subtotal").textContent = data.subtotal + " ₫";
-                        document.getElementById("total").textContent = data.total + " ₫";
-                    }
-                })
-                .catch(err => console.error(err));
-        });
-    });
-</script>
-
 
 
 </body>
