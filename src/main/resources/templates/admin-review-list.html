@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Review Management</title>
+    <link rel="stylesheet" href="/css/admin.css">
+</head>
+<body>
+
+<header th:replace="admin-dashboard :: header"></header>
+
+<h1 class="dashboard-title">Review Management</h1>
+
+<div class="frame-box">
+    <table border="1" width="100%" cellpadding="10">
+        <tr style="background:#0B3D2E;color:white;">
+            <th>Review ID</th>
+            <th>Rating</th>
+            <th>Customer</th>
+            <th>Book</th>
+            <th>Action</th>
+        </tr>
+
+        <tr th:each="r : ${reviews}">
+            <td th:text="${r.reviewId}"></td>
+            <td th:text="${r.rating}"></td>
+            <td th:text="${r.customer.customerId}"></td>
+            <td th:text="${r.book.title}"></td>
+
+            <td>
+                <a th:href="@{'/admin/reviews/' + ${r.reviewId}}">View</a> |
+                <a th:href="@{'/admin/reviews/delete/' + ${r.reviewId}}"
+                   style="color:red;"
+                   onclick="return confirm('Delete this review?')">
+                    Delete
+                </a>
+            </td>
+        </tr>
+    </table>
+</div>
+
+<footer th:replace="admin-dashboard :: footer"></footer>
+
+</body>
+</html>

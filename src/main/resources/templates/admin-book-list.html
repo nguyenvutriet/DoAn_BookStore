@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <link rel="stylesheet" href="/css/admin.css">
+  <title>Book Management</title>
+</head>
+<body>
+
+<header th:replace="admin-dashboard :: header"></header>
+
+<h1 class="dashboard-title">Quản lý Sách</h1>
+
+<div class="frame-box">
+
+  <!-- THÔNG BÁO LỖI -->
+  <p th:if="${error}" style="color:red; font-weight:bold;">
+    <span th:text="${error}"></span>
+  </p>
+
+  <div class="quick-actions">
+    <a href="/admin/books/new">+ Thêm sách mới</a>
+  </div>
+
+  <table border="1" width="100%" cellpadding="10">
+    <tr style="background:#0B3D2E;color:white;">
+      <th>ID</th>
+      <th>Tiêu đề</th>
+      <th>Tác giả</th>
+      <th>Nhà xuất bản</th>
+      <th>Giá</th>
+      <th>Số lượng</th> <!-- NEW COLUMN -->
+      <th>Thể loại</th>
+      <th>Hành động</th>
+    </tr>
+
+    <tr th:each="b : ${books}">
+      <td th:text="${b.bookId}"></td>
+      <td th:text="${b.title}"></td>
+      <td th:text="${b.author}"></td>
+      <td th:text="${b.publisher}"></td>
+      <td th:text="${b.price}"></td>
+      <td th:text="${b.quantity}"
+          th:style="${b.quantity == 0} ? 'color:green;font-weight:bold;' : 'color:red;font-weight:bold;'">
+      </td>
+      <td th:text="${b.category.categoryName}"></td>
+
+      <td>
+        <a th:href="@{'/admin/books/' + ${b.bookId}}">Xem</a> |
+        <a th:href="@{'/admin/books/delete/' + ${b.bookId}}"
+           onclick="return confirm('Xóa sách này?')"
+           style="color:red;">Xóa</a>
+      </td>
+    </tr>
+  </table>
+</div>
+
+<footer th:replace="admin-dashboard :: footer"></footer>
+
+</body>
+</html>

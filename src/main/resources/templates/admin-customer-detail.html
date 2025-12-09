@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <link rel="stylesheet" href="/css/admin.css">
+  <title>Customer Detail</title>
+</head>
+<body>
+
+<header th:replace="admin-dashboard :: header"></header>
+
+<h1 class="dashboard-title">Customer Detail</h1>
+
+<div class="frame-box" style="width: 60%; margin:auto;">
+
+  <p><strong>ID:</strong> <span th:text="${customer.customerId}"></span></p>
+  <p><strong>Name:</strong> <span th:text="${customer.fullName}"></span></p>
+  <p><strong>Email:</strong> <span th:text="${customer.email}"></span></p>
+  <p><strong>Phone:</strong> <span th:text="${customer.phone}"></span></p>
+  <p><strong>Address:</strong> <span th:text="${customer.address}"></span></p>
+  <p><strong>Birthdate:</strong> <span th:text="${customer.dateOfBirth}"></span></p>
+
+  <p>
+    <a href="/admin/customers">Back</a> |
+    <a th:href="@{'/admin/customers/delete/' + ${customer.customerId}}"
+       onclick="return confirm('Delete this customer?')"
+       style="color:red;">Delete</a>
+  </p>
+</div>
+
+<footer class="admin-footer">© 2025 UTE BookStore Admin</footer>
+
+</body>
+</html>

@@ -225,3 +225,17 @@ body {
     margin-top: 40px;
     font-size: 0.8rem;
 }
+
+/*nút save*/
+.btn-submit {
+    background-color: #0B3D2E;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+}
+
+.btn-submit:hover {
+    background-color: #09533f;
+}

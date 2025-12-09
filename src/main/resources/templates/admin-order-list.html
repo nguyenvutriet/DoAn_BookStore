@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link rel="stylesheet" href="/css/admin.css">
+    <title>Order Management</title>
+</head>
+<body>
+
+<header th:replace="admin-dashboard :: header"></header>
+
+<h1 class="dashboard-title">Quản lý đơn hàng</h1>
+
+<div class="frame-box">
+    <table border="1" width="100%" cellpadding="10">
+        <tr style="background:#0B3D2E;color:white;">
+            <th>Mã đơn</th>
+            <th>Khách hàng</th>
+            <th>Địa chỉ</th>
+            <th>Phương thức</th>
+            <th>Trạng thái</th>
+            <th>Tổng tiền</th>
+            <th>Hành động</th>
+        </tr>
+
+        <tr th:each="o : ${orders}">
+            <td th:text="${o.orderId}"></td>
+            <td th:text="${o.customer.fullName}"></td>
+            <td th:text="${o.address}"></td>
+            <td th:text="${o.paymentMethod}"></td>
+            <td th:text="${o.status}"></td>
+            <td th:text="${o.totalAmount}"></td>
+
+            <td>
+                <a th:href="@{'/admin/orders/' + ${o.orderId}}">Xem</a>
+                <a th:href="@{'/admin/orders/delete/' + ${o.orderId}}"
+                   onclick="return confirm('Xóa đơn này?')"
+                   style="color:red;">Xóa</a>
+            </td>
+        </tr>
+
+    </table>
+</div>
+
+<footer th:replace="admin-dashboard :: footer"></footer>
+
+</body>
+</html>
