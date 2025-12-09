@@ -140,6 +140,9 @@
             <button type="submit">Đăng nhập</button>
 
         </form>
+        <div th:if="${param.error}">
+            <p class="alert alert-danger" style="color: red">Tài khoản hoặc mật khẩu không đúng vui lòng kiểm tra lại!</p>
+        </div>
     </div>
 
 </main>

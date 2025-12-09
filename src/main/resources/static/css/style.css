@@ -398,4 +398,11 @@ main {
     flex: 1;
 }
 
-
+/* Thông báo lỗi */
+.login-box .alert {
+    text-align: center;
+    margin-top: 15px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    font-size: 14px;
+}

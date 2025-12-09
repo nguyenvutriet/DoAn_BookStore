@@ -36,7 +36,7 @@ public class HomeController {
         model.addAttribute("favoriteBooks", favoriteBooks);
         model.addAttribute("selectedCategoryId", categoryId);
 
-        return "index"; // templates/index.html
+        return "index";
     }
 
     @GetMapping("/books/{id}")

@@ -31,16 +31,17 @@ public class BookStoreSecurity {
 
         http.csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers( "/books/**","/home", "/register/**","/login", "/css/**", "/js/**", "/images/**").permitAll()
-                        //.requestMatchers("/").denyAll()
+                        .requestMatchers( "/home","/books/**","/home/books/**", "/register/**","/login", "/css/**", "/js/**", "/images/**").permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/home/order").hasRole("USER")
+                        .requestMatchers("/gio_hang/**").hasRole("USER")
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
                         .loginPage("/login")
                         .loginProcessingUrl("/process-login")
                         .defaultSuccessUrl("/home", true)
+                        .failureUrl("/login?error=true")
                         .permitAll()
                 )
                 .logout(logout -> logout
@@ -49,7 +50,10 @@ public class BookStoreSecurity {
                         .deleteCookies("JSESSIONID")
                         .invalidateHttpSession(true)
                         .permitAll()
-                ).sessionManagement(
+                ).exceptionHandling(
+                        auth -> auth.accessDeniedPage("/error403")
+                )
+                .sessionManagement(
                         session -> session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
                 );
 
