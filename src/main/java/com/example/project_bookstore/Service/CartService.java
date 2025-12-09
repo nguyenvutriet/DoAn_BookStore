@@ -10,9 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public class CartService {
@@ -20,9 +18,6 @@ public class CartService {
     @Autowired
     private ICartRepository repo;
 
-    public Cart getCartByCustomer(String customerId) {
-        return repo.findByCustomer_CustomerId(customerId);
-    }
 
     @Autowired
     private ICartDetailRepository cartDetailRepository;
@@ -35,6 +30,24 @@ public class CartService {
     /**
      * HÀM MỚI: Thêm sách vào giỏ của user đang đăng nhập
      */
+    public Cart getCartByCustomer(String customerId) {
+        return repo.findByCustomer_CustomerId(customerId);
+    }
+
+    public void createCart(Customers cus){
+        List<Cart> dsCart = repo.findAll();
+        List<Integer> dsId = new ArrayList<>();
+        for(Cart cart : dsCart){
+            int id = Integer.parseInt(cart.getCartId().substring(2));
+            dsId.add(id);
+        }
+        int idMax = Collections.max(dsId);
+        idMax = idMax+1;
+        String id = "CA"+idMax;
+        Cart cart = new Cart(id, 0, BigDecimal.ZERO, cus);
+        repo.save(cart);
+    }
+
     @Transactional
     public void addToCart(String username, String bookId, int quantity) {
 
