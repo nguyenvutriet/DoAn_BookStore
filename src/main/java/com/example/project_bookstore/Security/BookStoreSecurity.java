@@ -35,6 +35,7 @@ public class BookStoreSecurity {
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/home/order").hasRole("USER")
                         .requestMatchers("/gio_hang/**").hasRole("USER")
+                        .requestMatchers("/user/**").hasRole("USER")
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form

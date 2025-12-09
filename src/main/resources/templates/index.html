@@ -6,6 +6,7 @@
     <meta name="keywords" content="books, book store, online shop, best books">
     <meta name="description" content="Welcome to our online book store, where you can find a wide range of books for all ages and interests.">
     <title>Online Bookstore</title>
+
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap" rel="stylesheet">
 
     <!-- Favicon -->
@@ -136,13 +137,29 @@
 
                         <!-- Nút Logout dạng POST (chuẩn Security) -->
                         <li class="nav-item" sec:authorize="isAuthenticated()">
-                            <span>Xin chào <b sec:authentication="principal.username"></b></span>
-                            <form action="#" th:action="@{/logout}" method="post">
-                                <button class="btn btn-outline-primary btn-sm ml-2">
-                                    Đăng xuất
-                                </button>
-                            </form>
+                            <div class="user-dropdown">
+                                <div class="user-name">
+                                    <span sec:authentication="principal.username"></span>
+                                    <i class="fa fa-caret-down"></i>
+                                </div>
+
+                                <div class="user-menu">
+                                    <a th:href="@{/user/profile/{username}(username=${#authentication.name})}">👤 Hồ sơ của tôi</a>
+                                    <a href="/user/order">📦 Đơn hàng của tôi</a>
+                                    <hr>
+                                    <a href="/user/change-password">🔑 Đổi mật khẩu</a>
+
+                                    <form th:action="@{/logout}" method="post">
+                                        <button type="submit">🚪 Đăng xuất</button>
+                                    </form>
+                                </div>
+
+                            </div>
+
                         </li>
+
+
+
 
                     </ul>
                 </div>

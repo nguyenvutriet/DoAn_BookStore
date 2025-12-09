@@ -50,6 +50,14 @@ public class CustomersService {
         return repo.findByEmail(email);
     }
 
+    public Customers getCustomerById(String id){
+        return repo.findById(id).orElse(null);
+    }
+
+    public void update(Customers cus){
+        repo.updateCus(cus.getCustomerId(), cus.getFullName(), cus.getPhone(), cus.getEmail(), cus.getAddress(), cus.getDateOfBirth());
+    }
+
 
 
 

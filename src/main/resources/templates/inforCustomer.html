@@ -11,7 +11,7 @@
 
     <link rel="shortcut icon" type="image/png" href="/images/logo.png" />
     <link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css">
-    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" type="text/css" href="/css/style.css">
     <link rel="stylesheet" type="text/css" href="/css/responsive.css">
 
     <!-- Login form riêng -->
@@ -19,6 +19,8 @@
 </head>
 
 <body>
+
+<!-- ===== HEADER GIỮ NGUYÊN ===== -->
 <header id="header">
     <div class="container">
         <nav class="navbar navbar-expand-lg">
@@ -114,7 +116,7 @@
 
                                 <div class="user-menu">
                                     <a href="/user/profile">👤 Hồ sơ của tôi</a>
-                                    <a href="/user/profile">📦 Đơn hàng của tôi</a>
+                                    <a href="/user/myOrder">📦 Đơn hàng của tôi</a>
                                     <hr>
                                     <a href="/user/change-password">🔑 Đổi mật khẩu</a>
 
@@ -134,69 +136,67 @@
     </div>
 </header>
 
+<main class="profile-container">
 
-<div class="register-form-container">
-    <h2>Đăng ký tài khoản</h2>
+    <h2 class="profile-title">Thông tin khách hàng</h2>
 
-    <div class="alert alert-danger">
-        <span th:text="${error}" style="color: red"></span>
-    </div>
+    <form id="profileForm" th:action="@{/user/profile/update}" method="post" class="profile-box">
 
-    <form th:action="@{/register/save}" method="post">
+        <input type="hidden" th:value="${customer.getCustomerId()}" name="customerId"/>
 
-        <div class="input-group">
-            <label for="fullName">Họ và tên</label>
-            <input type="text" id="fullName" name="fullName" th:value="${fullName}" required>
+        <!-- Họ tên -->
+        <div class="form-row">
+            <label>Họ tên</label>
+            <input type="text" name="fullName"
+                   th:value="${customer.getFullName()}" readonly>
         </div>
 
-        <div class="input-group">
-            <label for="email">Email</label>
-            <input type="email" id="email" name="email" th:value="${email}" required placeholder="example@gmail.com">
+        <!-- Số điện thoại -->
+        <div class="form-row">
+            <label>Số điện thoại</label>
+            <input type="text" name="phone"
+                   th:value="${customer.getPhone()}" readonly>
         </div>
 
-        <div class="input-group">
-            <label for="phone">Số điện thoại</label>
-            <input type="text" id="phone" name="phone" th:value="${phone}" required maxlength="10">
+        <!-- Email -->
+        <div class="form-row">
+            <label>Email</label>
+            <input type="email" name="email"
+                   th:value="${customer.getEmail()}" readonly>
         </div>
 
-        <div class="input-group">
-            <label for="address">Địa chỉ</label>
-            <input type="text" id="address" name="address" th:value="${address}" required>
+        <!-- Địa chỉ -->
+        <div class="form-row">
+            <label>Địa chỉ</label>
+            <input type="text" name="address"
+                   th:value="${customer.getAddress()}" readonly>
         </div>
 
-        <div class="input-group">
-            <label for="dateOfBirth">Ngày sinh</label>
-            <input type="date" id="dateOfBirth" name="dateOfBirth" th:value="${dateOfBirth}">
+        <!-- Ngày sinh -->
+        <div class="form-row">
+            <label>Ngày sinh</label>
+            <input type="date" name="birthDate"
+                   th:value="${#dates.format(customer.getDateOfBirth(), 'yyyy-MM-dd')}" readonly>
         </div>
 
-        <!-- ===== THÔNG TIN USER ===== -->
-        <div class="input-group">
-            <label for="userName">Tên đăng nhập</label>
-            <input type="text" id="userName" name="userName" required>
+        <!-- Nút -->
+        <div class="button-group" id="actionButtons">
+            <a href="/home" class="btn btn-secondary">⬅ Quay lại</a>
+            <button type="button" id="editBtn" class="btn btn-primary">✏ Cập nhật</button>
         </div>
 
-        <div class="input-group">
-            <label for="password">Mật khẩu</label>
-            <input type="password" id="password" name="password" required>
+        <div class="button-group" id="saveButtons" style="display:none;">
+            <button type="submit" class="btn btn-success">💾 Lưu</button>
+            <button type="button" id="cancelBtn" class="btn btn-danger">✖ Hủy</button>
         </div>
 
-        <div class="input-group">
-            <label for="confirm">Nhập lại mật khẩu</label>
-            <input type="password" id="confirm" name="confirm" required>
-        </div>
-
-        <!-- Ẩn role mặc định USER -->
-        <input type="hidden" name="role" value="ROLE_USER">
-
-        <button type="submit">Đăng ký</button>
-
-        <div class="login">
-            Đã có tài khoản? <a href="/login">Đăng nhập</a>
-        </div>
     </form>
+</main>
 
-</div>
 
+
+
+<!-- ===== FOOTER GIỮ NGUYÊN ===== -->
 <footer id="footer">
     <div class="container">
         <div class="footer-content">
@@ -229,5 +229,29 @@
         <p>&copy; 2025 UTE BookStore. All rights reserved.</p>
     </div>
 </footer>
+
+<script>
+    const editBtn = document.getElementById("editBtn");
+    const cancelBtn = document.getElementById("cancelBtn");
+    const actionButtons = document.getElementById("actionButtons");
+    const saveButtons = document.getElementById("saveButtons");
+    const inputs = document.querySelectorAll("#profileForm input");
+
+    // Nhấn Cập nhật
+    editBtn.addEventListener("click", () => {
+        inputs.forEach(i => i.removeAttribute("readonly"));
+        actionButtons.style.display = "none";
+        saveButtons.style.display = "block";
+    });
+
+    // Nhấn Hủy
+    cancelBtn.addEventListener("click", () => {
+        inputs.forEach(i => i.setAttribute("readonly", "readonly"));
+        saveButtons.style.display = "none";
+        actionButtons.style.display = "block";
+    });
+</script>
+
+
 </body>
 </html>
