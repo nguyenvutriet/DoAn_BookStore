@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link rel="stylesheet" href="/css/admin.css">
+    <title>Customers</title>
+</head>
+<body>
+
+<header th:replace="admin-dashboard :: header"></header>
+
+<h1 class="dashboard-title">Customer Management</h1>
+
+<div class="frame-box">
+    <table border="1" width="100%" cellpadding="10">
+        <tr style="background:#0B3D2E;color:white;">
+            <th>ID</th>
+            <th>Full Name</th>
+            <th>Email</th>
+            <th>Phone</th>
+            <th>Action</th>
+        </tr>
+
+        <tr th:each="c : ${customers}">
+            <td th:text="${c.customerId}"></td>
+            <td th:text="${c.fullName}"></td>
+            <td th:text="${c.email}"></td>
+            <td th:text="${c.phone}"></td>
+
+            <td>
+                <a th:href="@{'/admin/customers/' + ${c.customerId}}">View</a> |
+                <a th:href="@{'/admin/customers/delete/' + ${c.customerId}}"
+                   onclick="return confirm('Delete this customer?')"
+                   style="color:red;">Delete</a>
+            </td>
+        </tr>
+    </table>
+</div>
+
+<footer th:replace="admin-dashboard :: footer"></footer>
+
+</body>
+</html>

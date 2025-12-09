@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link rel="stylesheet" href="/css/admin.css">
+    <title>Categories</title>
+</head>
+<body>
+
+<header th:replace="admin-dashboard :: header"></header>
+
+<h1 class="dashboard-title">Category Management</h1>
+
+<p th:if="${errorMessage}" style="color:red; font-weight:bold; text-align:center;">
+    <span th:text="${errorMessage}"></span>
+</p>
+
+
+<div class="quick-actions">
+    <a href="/admin/categories/new">New Category</a>
+</div>
+
+<div class="frame-box">
+    <table border="1" width="100%" cellpadding="10">
+        <tr style="background:#0B3D2E;color:white;">
+            <th>ID</th>
+            <th>Name</th>
+            <th>Total Books</th>
+            <th>Sold Books</th>
+            <th>Action</th>
+        </tr>
+
+        <tr th:each="c : ${categories}">
+            <td th:text="${c.categoryId}"></td>
+            <td th:text="${c.categoryName}"></td>
+            <td th:text="${totalBooksMap[c.categoryId]}"></td>
+            <td th:text="${soldBooksMap[c.categoryId]}"></td>
+
+            <td>
+                <a th:href="@{'/admin/categories/' + ${c.categoryId}}">View</a> |
+                <a th:href="@{'/admin/categories/delete/' + ${c.categoryId}}"
+                   onclick="return confirm('Delete this category?')"
+                   style="color:red;">Delete</a>
+            </td>
+        </tr>
+    </table>
+</div>
+
+<footer th:replace="admin-dashboard :: footer"></footer>
+
+</body>
+</html>

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="/css/admin.css">
+    <title>Order Detail</title>
+</head>
+<body>
+
+<header th:replace="admin-dashboard :: header"></header>
+
+<h1 class="dashboard-title">Chi tiết đơn hàng</h1>
+
+<div class="frame-box" style="width: 70%; margin: auto;">
+
+    <!-- Order Info -->
+    <h3>Thông tin đơn hàng</h3>
+
+    <p><strong>Mã đơn hàng:</strong>
+        <span th:text="${order.orderId}"></span>
+    </p>
+
+    <p><strong>Khách hàng:</strong>
+        <span th:text="${order.customer != null ? order.customer.fullName : 'Không xác định'}"></span>
+        (<span th:text="${order.customer != null ? order.customer.customerId : ''}"></span>)
+    </p>
+
+    <p><strong>Địa chỉ giao hàng:</strong>
+        <span th:text="${order.address}"></span>
+    </p>
+
+    <p><strong>Hình thức thanh toán:</strong>
+        <span th:text="${order.paymentMethod}"></span>
+    </p>
+
+    <p><strong>Trạng thái:</strong>
+        <span th:text="${order.status}"></span>
+    </p>
+
+    <p><strong>Ngày đặt:</strong>
+        <span th:text="${#dates.format(order.orderDate, 'dd/MM/yyyy HH:mm')}"></span>
+    </p>
+
+    <p><strong>Tổng tiền:</strong>
+        <span th:text="${order.totalAmount}"></span>
+    </p>
+
+    <hr>
+
+    <!-- Order Details -->
+    <h3>Sản phẩm trong đơn</h3>
+
+    <table border="1" width="100%" cellpadding="10">
+        <thead>
+        <tr style="background:#0B3D2E; color:white;">
+            <th>Mã sách</th>
+            <th>Tên sách</th>
+            <th>Số lượng</th>
+            <th>Đơn giá</th>
+            <th>Thành tiền</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr th:each="d : ${details}">
+            <td th:text="${d.book.bookId}"></td>
+            <td th:text="${d.book.title}"></td>
+            <td th:text="${d.quantity}"></td>
+            <td th:text="${d.unitPrice}"></td>
+            <td th:text="${d.unitPrice * d.quantity}"></td>
+        </tr>
+        </tbody>
+    </table>
+
+    <p style="margin-top:20px;">
+        <a href="/admin/orders">Back</a> |
+        <a th:href="@{'/admin/orders/delete/' + ${order.orderId}}"
+           onclick="return confirm('Bạn có chắc chắn muốn xóa đơn hàng này?')"
+           style="color:red;">Delete</a>
+    </p>
+
+</div>
+
+<footer th:replace="admin-dashboard :: footer"></footer>
+
+</body>
+</html>

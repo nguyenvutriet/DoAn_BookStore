@@ -117,4 +117,12 @@ public class Orders {
         this.status = status;
     }
 
+    public Customers getCustomer() {
+        return customer;
+    }
+
+    public void setCustomer(Customers customer) {
+        this.customer = customer;
+    }
+
 }

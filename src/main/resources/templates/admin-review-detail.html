@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Review Detail</title>
+    <link rel="stylesheet" href="/css/admin.css">
+</head>
+<body>
+
+<header th:replace="admin-dashboard :: header"></header>
+
+<h1 class="dashboard-title">Review Detail</h1>
+
+<div class="frame-box" style="width:60%; margin:auto;">
+
+    <p><strong>ID:</strong> <span th:text="${review.reviewId}"></span></p>
+    <p><strong>Rating:</strong> <span th:text="${review.rating}"></span></p>
+    <p><strong>Comment:</strong> <span th:text="${review.comment}"></span></p>
+    <p><strong>Created:</strong> <span th:text="${review.creationDate}"></span></p>
+
+    <hr>
+
+    <h3>Customer Information</h3>
+    <p><strong>ID:</strong> <span th:text="${review.customer.customerId}"></span></p>
+    <p><strong>Name:</strong> <span th:text="${review.customer.fullName}"></span></p>
+
+    <hr>
+
+    <h3>Book Information</h3>
+    <p><strong>ID:</strong> <span th:text="${review.book.bookId}"></span></p>
+    <p><strong>Title:</strong> <span th:text="${review.book.title}"></span></p>
+
+    <p style="margin-top:20px;">
+        <a href="/admin/reviews">Back</a> |
+        <a th:href="@{'/admin/reviews/delete/' + ${review.reviewId}}"
+           style="color:red;"
+           onclick="return confirm('Delete this review?')">Delete</a>
+    </p>
+
+</div>
+
+<footer th:replace="admin-dashboard :: footer"></footer>
+
+</body>
+</html>

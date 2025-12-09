@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link rel="stylesheet" href="/css/admin.css">
+    <title>Add Category</title>
+</head>
+<body>
+
+<header th:replace="admin-dashboard :: header"></header>
+
+<h1 class="dashboard-title">Add New Category</h1>
+
+<div class="frame-box" style="width:50%; margin:auto;">
+
+    <form method="post" action="/admin/categories/save">
+
+        <label>ID:</label>
+        <input type="text" name="categoryId"
+               th:value="${category.categoryId}" required>
+
+        <label>Name:</label>
+        <input type="text" name="categoryName"
+               th:value="${category.categoryName}" required>
+
+        <button type="submit" class="btn-submit">Save</button>
+
+        <a href="/admin/categories" style="margin-left:20px;">Cancel</a>
+    </form>
+
+</div>
+
+<footer th:replace="admin-dashboard :: footer"></footer>
+
+</body>
+</html>

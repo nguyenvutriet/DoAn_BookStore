@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <link rel="stylesheet" href="/css/admin.css">
+  <title>Category Detail</title>
+</head>
+<body>
+
+<header th:replace="admin-dashboard :: header"></header>
+
+<h1 class="dashboard-title">Category Detail</h1>
+
+<div class="frame-box" style="width: 60%; margin:auto;">
+
+  <p><strong>ID:</strong> <span th:text="${category.categoryId}"></span></p>
+  <p><strong>Name:</strong> <span th:text="${category.categoryName}"></span></p>
+
+  <p><strong>Total Books:</strong> <span th:text="${totalBooks}"></span></p>
+  <p><strong>Sold Books:</strong> <span th:text="${soldBooks}"></span></p>
+
+  <p>
+    <a href="/admin/categories">Back</a> |
+    <a th:href="@{'/admin/categories/delete/' + ${category.categoryId}}"
+       style="color:red;"
+       onclick="return confirm('Delete this category?')">
+      Delete
+    </a>
+  </p>
+</div>
+
+<footer th:replace="admin-dashboard :: footer"></footer>
+
+</body>
+</html>

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link rel="stylesheet" href="/css/admin.css">
+    <title>Book Detail</title>
+</head>
+<body>
+
+<header th:replace="admin-dashboard :: header"></header>
+
+<h1 class="dashboard-title">Thông tin chi tiết Sách</h1>
+
+<div class="frame-box" style="width: 70%; margin:auto;">
+
+    <img th:src="@{'/images/' + ${book.picture}}"
+         style="width:180px; height:auto; float:right; margin-left:20px;">
+
+    <p><strong>Mã sách:</strong> <span th:text="${book.bookId}"></span></p>
+    <p><strong>Tiêu đề:</strong> <span th:text="${book.title}"></span></p>
+    <p><strong>Tác giả:</strong> <span th:text="${book.author}"></span></p>
+    <p><strong>Nhà xuất bản:</strong> <span th:text="${book.publisher}"></span></p>
+    <p><strong>Năm xuất bản:</strong> <span th:text="${book.publicationYear}"></span></p>
+    <p><strong>Giá:</strong> <span th:text="${book.price}"></span></p>
+    <p><strong>Số lượng tồn:</strong> <span th:text="${book.quantity}"></span></p>
+    <p><strong>Thể loại:</strong> <span th:text="${book.category.categoryName}"></span></p>
+
+    <p><strong>Mô tả:</strong></p>
+    <div style="background:#f9f9f9; padding:10px; border-radius:5px;">
+        <span th:text="${book.description}"></span>
+    </div>
+
+    <br>
+
+    <p>
+        <a href="/admin/books">Back</a> |
+        <a th:href="@{'/admin/books/delete/' + ${book.bookId}}"
+           onclick="return confirm('Bạn chắc chắn muốn xóa?')"
+           style="color:red;">Delete</a>
+    </p>
+</div>
+
+<footer th:replace="admin-dashboard :: footer"></footer>
+
+</body>
+</html>
