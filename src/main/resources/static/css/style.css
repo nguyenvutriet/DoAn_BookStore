@@ -184,81 +184,6 @@ body {
     grid-column: 1 / -1;
 }
 
-/*!* Preloader *!*/
-/*.preloader {*/
-/*    position: fixed;*/
-/*    top: 0;*/
-/*    left: 0;*/
-/*    width: 100%;*/
-/*    height: 100%;*/
-/*    background: rgba(255, 255, 255, 0.7);*/
-/*    display: flex;*/
-/*    justify-content: center;*/
-/*    align-items: center;*/
-/*    z-index: 9999;*/
-/*}*/
-
-/*.spinner {*/
-/*    width: 50px;*/
-/*    height: 50px;*/
-/*    border: 5px solid #f3f3f3;*/
-/*    border-top: 5px solid #3498db;*/
-/*    border-radius: 50%;*/
-/*    animation: spin 2s linear infinite;*/
-/*}*/
-
-/*@keyframes spin {*/
-/*    0% { transform: rotate(0deg); }*/
-/*    100% { transform: rotate(360deg); }*/
-/*}*/
-
-/*!* Home Section *!*/
-/*#home-area {*/
-/*    padding: 80px 0;*/
-/*    background-color: #fff;*/
-/*}*/
-
-/*#home-area .caption {*/
-/*    text-align: left;*/
-/*}*/
-
-/*#home-area .caption h1 {*/
-/*    font-size: 36px;*/
-/*    color: #333;*/
-/*}*/
-
-/*#home-area .caption p {*/
-/*    font-size: 18px;*/
-/*    color: #666;*/
-/*}*/
-
-/*#home-area .caption a {*/
-/*    background-color: #007bff;*/
-/*    color: white;*/
-/*    padding: 10px 20px;*/
-/*    font-size: 16px;*/
-/*    text-decoration: none;*/
-/*    border-radius: 5px;*/
-/*    margin-top: 20px;*/
-/*}*/
-
-/*#home-area .caption a:hover {*/
-/*    background-color: #0056b3;*/
-/*}*/
-
-/*#home-area .caption-img {*/
-/*    text-align: right;*/
-/*}*/
-
-/*#home-area .caption-img img {*/
-/*    max-width: 100%;*/
-/*    animation: bounce 1s ease-in-out infinite;*/
-/*}*/
-
-/*@keyframes bounce {*/
-/*    0%, 100% { transform: translateY(0); }*/
-/*    50% { transform: translateY(-20px); }*/
-/*}*/
 
 /* Chatbot container */
 #chatBotIframe {
@@ -406,3 +331,283 @@ main {
     border-radius: 8px;
     font-size: 14px;
 }
+/* Dropdown User */
+.user-dropdown {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+}
+
+.user-name {
+    color: #0B3D2E;
+    font-weight: bold;
+    padding: 6px 12px;
+}
+
+.user-name:hover {
+    background-color: #e8f5e9;
+    border-radius: 6px;
+}
+
+/* Menu xổ xuống */
+.user-menu {
+    position: absolute;
+    top: 120%;
+    right: 0;
+    background: white;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    border-radius: 8px;
+    width: 180px;
+    display: none;
+    padding: 8px 0;
+    z-index: 999;
+}
+
+.user-menu a,
+.user-menu button {
+    display: block;
+    padding: 10px 15px;
+    text-decoration: none;
+    font-size: 14px;
+    color: #0B3D2E;
+    background: transparent;
+    border: none;
+    width: 100%;
+    text-align: left;
+}
+
+.user-menu a:hover,
+.user-menu button:hover {
+    background-color: #e8f5e9;
+}
+
+/* Hiển thị menu khi hover */
+.user-dropdown:hover .user-menu {
+    display: block;
+}
+.user-dropdown {
+    position: relative;
+}
+
+.user-menu {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background: white;
+    border: 1px solid #ccc;
+    padding: 10px;
+    display: none;
+    z-index: 9999;
+}
+
+.user-dropdown:hover .user-menu {
+    display: block;
+}
+
+/* ---------------------------------------------------
+   🌿 PROFILE MAIN AREA
+--------------------------------------------------- */
+
+.profile-wrapper {
+    max-width: 650px;
+    margin: 40px auto;
+    background: #ffffff;
+    padding: 30px 35px;
+    border-radius: 14px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+}
+
+.profile-title {
+    text-align: center;
+    font-size: 26px;
+    font-weight: 700;
+    color: #0B3D2E;
+    margin-bottom: 25px;
+}
+
+/* Each input row */
+.profile-row {
+    margin-bottom: 18px;
+}
+
+.profile-row label {
+    font-weight: 600;
+    color: #333;
+    display: block;
+    margin-bottom: 6px;
+}
+
+.profile-row input {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1px solid #dcdcdc;
+    border-radius: 8px;
+    font-size: 15px;
+    transition: 0.25s;
+}
+
+.profile-row input:focus {
+    border-color: #0B3D2E;
+    box-shadow: 0 0 0 2px rgba(11, 61, 46, 0.2);
+    outline: none;
+}
+
+/* Buttons */
+.profile-buttons {
+    margin-top: 15px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.profile-buttons a {
+    color: #0B3D2E;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.profile-buttons a:hover {
+    text-decoration: underline;
+}
+
+.profile-buttons .btn-submit {
+    background: #0B3D2E;
+    color: #fff;
+    padding: 10px 18px;
+    border-radius: 8px;
+    border: none;
+    font-size: 15px;
+    cursor: pointer;
+    transition: 0.25s;
+}
+
+.profile-buttons .btn-submit:hover {
+    background: #145f47;
+}
+
+/* Date input better style */
+.profile-row input[type="date"] {
+    padding: 8px 12px;
+}
+/* ---------------------------------------------------
+   🌿 PROFILE PAGE – PREMIUM UI (FULL & FIXED)
+--------------------------------------------------- */
+
+.profile-container {
+    max-width: 900px;
+    margin: 50px auto;
+    padding: 20px;
+}
+
+.profile-title {
+    text-align: center;
+    font-size: 32px;
+    font-weight: 700;
+    color: #0B3D2E;
+    margin-bottom: 30px;
+}
+
+.profile-box {
+    background: #ffffff;
+    padding: 40px 50px;
+    border-radius: 18px;
+    box-shadow: 0 12px 32px rgba(0,0,0,0.12);
+    border: 1px solid #e5e5e5;
+}
+
+/* Form bố cục hai cột */
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 35px 50px;      /* 🔥 Tăng khoảng cách dọc + ngang */
+    margin-top: 10px;
+}
+
+.form-row {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-row label {
+    font-weight: 600;
+    font-size: 16px;
+    margin-bottom: 12px; /* 🔥 Label cách input */
+}
+
+.form-row input {
+    padding: 16px 18px;   /* 🔥 Input thoáng */
+    border-radius: 12px;
+    border: 1px solid #c7c7c7;
+    font-size: 16px;
+    transition: 0.25s;
+}
+
+.form-row input:focus {
+    border-color: #0B3D2E;
+    box-shadow: 0 0 0 3px rgba(11, 61, 46, 0.18);
+    outline: none;
+}
+
+/* Button groups */
+.button-group {
+    margin-top: 35px;
+    display: flex;
+    justify-content: center;
+    gap: 25px;
+}
+
+.button-group .btn {
+    padding: 12px 28px;
+    font-size: 16px;
+    border-radius: 10px;
+    min-width: 140px;
+    transition: 0.25s;
+}
+
+/* Hover */
+.btn:hover {
+    opacity: .85;
+    transform: translateY(-2px);
+}
+
+/* Buttons style */
+.btn-primary {
+    background: #0B3D2E;
+    border: none;
+    color: white;
+}
+
+.btn-secondary {
+    background: #b4b4b4;
+    border: none;
+    color: white;
+}
+
+.btn-success {
+    background: #27ae60;
+    border: none;
+    color: white;
+}
+
+.btn-danger {
+    background: #c0392b;
+    border: none;
+    color: white;
+}
+
+/* Mobile Responsive */
+@media(max-width: 768px) {
+    .profile-box {
+        padding: 25px 28px;
+    }
+
+    .form-grid {
+        grid-template-columns: 1fr; /* 1 cột */
+        gap: 22px;
+    }
+
+    .button-group {
+        flex-direction: column;
+    }
+}
+
+

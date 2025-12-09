@@ -1,0 +1,205 @@
+<!doctype html>
+<!--<html lang="vi">-->
+<html lang="vi" xmlns:th="http://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Đăng nhập</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <link rel="shortcut icon" type="image/png" href="/images/logo.png" />
+    <link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/style.css">
+    <link rel="stylesheet" type="text/css" href="/css/responsive.css">
+
+    <!-- Login form riêng -->
+    <link rel="stylesheet" href="/css/login.css">
+</head>
+
+<body>
+
+<!-- ===== HEADER GIỮ NGUYÊN ===== -->
+<header id="header">
+    <div class="container">
+        <nav class="navbar navbar-expand-lg">
+            <div class="navbar-container">
+                <!-- Logo -->
+                <a class="logo" href="/home"><img src="/images/logo.png" alt="logo"></a>
+
+                <!-- Menu -->
+                <!-- Menu -->
+                <div class="navbar-menu">
+                    <ul class="navbar-nav">
+                        <!-- Tất cả -->
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/}">Tất cả</a>
+                        </li>
+
+                        <!-- Kinh doanh -->
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/(categoryId='C01')}">Kinh doanh</a>
+                        </li>
+
+                        <!-- Sức khỏe -->
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/(categoryId='C02')}">Sức khỏe</a>
+                        </li>
+
+                        <!-- Marketing -->
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/(categoryId='C03')}">Marketing</a>
+                        </li>
+
+                        <!-- Lập trình -->
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/(categoryId='C04')}">Lập trình</a>
+                        </li>
+
+                        <!-- Truyện tranh -->
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/(categoryId='C05')}">Truyện tranh</a>
+                        </li>
+
+                        <!-- Công nghệ -->
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/(categoryId='C06')}">Công nghệ</a>
+                        </li>
+
+                        <!-- Đời sống -->
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/(categoryId='C07')}">Đời sống</a>
+                        </li>
+
+                        <!-- Lịch sử -->
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/(categoryId='C08')}">Lịch sử</a>
+                        </li>
+
+                        <!-- Giáo dục -->
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/(categoryId='C09')}">Giáo dục</a>
+                        </li>
+                    </ul>
+                </div>
+
+
+                <!-- Search Bar -->
+                <div class="search-bar">
+                    <input type="text" placeholder="Tìm kiếm sản phẩm..." class="form-control">
+                    <button type="submit" class="btn btn-primary">Tìm</button>
+                </div>
+
+                <!-- User Options (Giỏ hàng, Đăng nhập, Đăng ký) -->
+                <div class="user-options">
+                    <ul class="navbar-nav">
+
+                        <li class="nav-item">
+                            <a class="nav-link" href="/gio_hang">🛒</a>
+                        </li>
+                        <!-- Nếu chưa đăng nhập -->
+                        <li class="nav-item" sec:authorize="isAnonymous()">
+                            <a class="nav-link" th:href="@{/login}">Đăng nhập</a>
+                        </li>
+                        <li class="nav-item" sec:authorize="isAnonymous()">
+                            <a class="nav-link" th:href="@{/register}">Đăng ký</a>
+                        </li>
+
+                        <!-- Nút Logout dạng POST (chuẩn Security) -->
+                        <li class="nav-item" sec:authorize="isAuthenticated()">
+                            <div class="user-dropdown">
+                                <div class="user-name">
+                                    <span sec:authentication="principal.username"></span>
+                                    <i class="fa fa-caret-down"></i>
+                                </div>
+
+                                <div class="user-menu">
+                                    <a href="/user/profile">👤 Hồ sơ của tôi</a>
+                                    <a href="/user/profile">📦 Đơn hàng của tôi</a>
+                                    <hr>
+                                    <a href="/user/change-password">🔑 Đổi mật khẩu</a>
+
+                                    <form th:action="@{/logout}" method="post">
+                                        <button type="submit">🚪 Đăng xuất</button>
+                                    </form>
+                                </div>
+
+                            </div>
+
+                        </li>
+
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </div>
+</header>
+
+<!-- ===== NỘI DUNG LOGIN ===== -->
+<main id="main-content">
+
+    <div class="login-box">
+        <h2>Đổi mật khẩu</h2>
+
+        <form action="#" th:action="@{/user/change-password}" method="POST">
+
+            <label for="username">Tên đăng nhập</label>
+            <input type="text" id="username" name="username" th:value="${user.getUserName()}" placeholder="Nhập tên đăng nhập">
+
+            <label for="password">Mật khẩu</label>
+            <input type="password" id="password" name="password" placeholder="Nhập mật khẩu">
+
+            <label for="password">Nhập lại mật khẩu</label>
+            <input type="password" id="confirm" name="confirm" placeholder="Nhập lại khẩu">
+
+            <button type="submit">Đăng nhập</button>
+
+        </form>
+        <div th:if="${error}">
+            <p style="color: red" th:text="${error}"></p>
+        </div>
+    </div>
+
+</main>
+
+
+<!-- ===== FOOTER GIỮ NGUYÊN ===== -->
+<footer id="footer">
+    <div class="container">
+        <div class="footer-content">
+
+            <div class="footer-column footer-about">
+                <h4>UTE BookStore</h4>
+                <p>Chào mừng bạn đến với UTE BookStore, cửa hàng sách trực tuyến uy tín...</p>
+            </div>
+
+            <div class="footer-column">
+                <h4>Thông tin và chính sách</h4>
+                <ul>
+                    <li><a href="/">Home</a></li>
+                    <li><a href="#">Books</a></li>
+                    <li><a href="#">About</a></li>
+                    <li><a href="#">Contact</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-column">
+                <h4>Liên hệ</h4>
+                <div class="contact-info">📧 support@example.com</div>
+                <div class="contact-info">📞 +1234567890</div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="footer-bottom">
+        <p>&copy; 2025 UTE BookStore. All rights reserved.</p>
+    </div>
+</footer>
+
+
+
+
+</body>
+</html>

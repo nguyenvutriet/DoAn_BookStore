@@ -162,4 +162,25 @@ public class CartController {
 
         return resp;
     }
+
+
+    // ====== XỬ LÝ THÊM VÀO GIỎ ======
+    @PostMapping("/gio_hang/add")
+    public String addToCart(@RequestParam("bookId") String bookId,
+                            @RequestParam("quantity") int quantity,
+                            @AuthenticationPrincipal UserDetails userDetails) {
+
+        // Nếu chưa đăng nhập → ép login
+        if (userDetails == null) {
+            return "redirect:/login";
+        }
+
+        String username = userDetails.getUsername();
+
+        cartService.addToCart(username, bookId, quantity);
+
+        // Sau khi thêm → chuyển sang trang giỏ hàng
+        return "redirect:/gio_hang";
+    }
+
 }

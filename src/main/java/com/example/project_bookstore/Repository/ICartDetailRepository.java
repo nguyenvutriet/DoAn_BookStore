@@ -9,6 +9,6 @@ import java.util.List;
 
 @Repository
 public interface ICartDetailRepository extends JpaRepository<CartDetail, CartDetailId> {
-
+    // Lấy các dòng chi tiết theo cartId
     List<CartDetail> findByCartDetailId_CartId(String cartId);
 }

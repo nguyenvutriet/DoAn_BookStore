@@ -1,7 +1,9 @@
 package com.example.project_bookstore.Controller;
 
 import com.example.project_bookstore.Entity.Books;
+import com.example.project_bookstore.Entity.Review;
 import com.example.project_bookstore.Service.BooksService;
+import com.example.project_bookstore.Service.ReviewService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -14,6 +16,8 @@ import java.util.List;
 public class HomeController {
     @Autowired
     private BooksService booksService;
+    @Autowired
+    private ReviewService reviewService;
 
     @GetMapping
     public String home(
@@ -42,8 +46,20 @@ public class HomeController {
     @GetMapping("/books/{id}")
     public String bookDetail(@PathVariable("id") String bookId, Model model) {
         Books book = booksService.getBookById(bookId);
+
+        double avgRating = reviewService.getAverageRatingForBook(bookId);
+        int avgRatingRounded = reviewService.getAverageRatingRounded(bookId);
+        long reviewCount = reviewService.getReviewCountForBook(bookId);
+        List<Review> reviews = reviewService.getReviewsForBook(bookId);
+
         model.addAttribute("book", book);
+        model.addAttribute("avgRating", avgRating);
+        model.addAttribute("avgRatingRounded", avgRatingRounded);
+        model.addAttribute("reviewCount", reviewCount);
+        model.addAttribute("reviews", reviews);
+
         return "book_detail";
     }
+
 
 }

@@ -72,4 +72,20 @@ public class CartDetail {
     public void setUnitPrice(BigDecimal unitPrice) {
         this.unitPrice = unitPrice;
     }
+
+    public Cart getCart() {
+        return cart;
+    }
+
+    public void setCart(Cart cart) {
+        this.cart = cart;
+    }
+
+    public Books getBook() {
+        return book;
+    }
+
+    public void setBook(Books book) {
+        this.book = book;
+    }
 }
