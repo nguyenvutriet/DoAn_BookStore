@@ -3,6 +3,7 @@ package com.example.project_bookstore.Controller;
 
 import com.example.project_bookstore.Entity.Cart;
 import com.example.project_bookstore.Entity.Customers;
+import com.example.project_bookstore.Entity.Users;
 import com.example.project_bookstore.Service.CartService;
 import com.example.project_bookstore.Service.CustomersService;
 import com.example.project_bookstore.Service.UsersService;
@@ -79,7 +80,6 @@ public class RegisterController {
     public String saveUser(@RequestParam String fullName, @RequestParam String email, @RequestParam String phone, @RequestParam String address, @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Date dateOfBirth, @RequestParam String userName, @RequestParam String password, @RequestParam String confirm, @RequestParam String role, Model model){
 
         if(!password.equals(confirm)){
-            model.addAttribute("error","Passwords do not match");
             model.addAttribute("fullName",fullName);
             model.addAttribute("email",email);
             model.addAttribute("phone",phone);
@@ -89,28 +89,29 @@ public class RegisterController {
             return "register-form";
         }
 
-        customersService.save(fullName, email, address, dateOfBirth, phone);
-
-        Customers cus = customersService.getCustomerByEmail(email);
-
-        System.out.println(cus.toString());
-
         BCryptPasswordEncoder  passwordEncoder = new BCryptPasswordEncoder();
         password = passwordEncoder.encode(password);
 
-        boolean flag = usersService.saveUser(userName, password, fullName, role, cus);
-        cartService.createCart(cus);
 
+
+        customersService.save(fullName, email, address, dateOfBirth, phone);
+        Customers cus = customersService.getCustomerByEmail(email);
+
+        boolean flag = usersService.saveUser(userName, password, fullName, role, cus);
         if(!flag){
-            model.addAttribute("error","User already exists");
+            model.addAttribute("error","Tài khoản đã tồn tại");
             model.addAttribute("fullName",fullName);
             model.addAttribute("email",email);
             model.addAttribute("phone",phone);
             model.addAttribute("address",address);
             model.addAttribute("role",role);
             model.addAttribute("dateOfBirth",dateOfBirth);
+
             return "register-form";
         }
+
+        cartService.createCart(cus);
+
         return "redirect:/login";
     }
 }

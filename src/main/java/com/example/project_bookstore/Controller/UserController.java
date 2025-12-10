@@ -80,15 +80,26 @@ public class UserController {
     }
 
     @PostMapping("/change-password")
-    public String updatePassword(@RequestParam("username") String username, @RequestParam("password") String password, @RequestParam("confirm") String confirm, Model model, RedirectAttributes redirectAttributes){
+    public String updatePassword(@AuthenticationPrincipal UserDetails userDetails, @RequestParam("password") String password, @RequestParam("confirm") String confirm, Model model, RedirectAttributes redirectAttributes){
+
+        String username = userDetails.getUsername();
+
         if(!password.equals(confirm)){
             redirectAttributes.addFlashAttribute("error", "Mật khẩu không khớp");
             return "redirect:/user/change-password";
         }
 
         BCryptPasswordEncoder  passwordEncoder = new BCryptPasswordEncoder();
-        password =  passwordEncoder.encode(password);
+        Users user = usersService.getUserByUserName(username);
 
+
+
+        if(passwordEncoder.matches(password, user.getPassword())){
+            redirectAttributes.addFlashAttribute("error", "Mật khẩu mới không được trùng mật khẩu cũ");
+            return "redirect:/user/change-password";
+        }
+
+        password =  passwordEncoder.encode(password);
         usersService.updateUser(username, password);
         return "redirect:/login";
     }
@@ -102,10 +113,18 @@ public class UserController {
 
         List<Orders> listOrderByCustomerId = ordersService.getOrders(cus.getCustomerId());
 
-        model.addAttribute("list",listOrderByCustomerId);
+        model.addAttribute("orders",listOrderByCustomerId);
 
         return "myOrder";
 
+    }
+
+    @PostMapping("/order/{id}/received")
+    public String recivedOrder(@PathVariable("id") String orderId){
+        System.out.println("orderId"+orderId);
+        ordersService.updateStatus(orderId, "Delivered");
+        System.out.println(ordersService.getOrderById(orderId).toString());
+        return "redirect:/user/myOrder";
     }
 
 }

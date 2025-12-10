@@ -62,5 +62,9 @@ public class CustomersService {
         return repo.findByPhone(phone);
     }
 
+    public void delete(Customers cus){
+        repo.delete(cus);
+    }
+
 
 }

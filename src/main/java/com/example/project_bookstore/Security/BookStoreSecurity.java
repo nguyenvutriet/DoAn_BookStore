@@ -9,6 +9,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.util.matcher.AndRequestMatcher;
 
 @Configuration
@@ -41,7 +42,7 @@ public class BookStoreSecurity {
                 .formLogin(form -> form
                         .loginPage("/login")
                         .loginProcessingUrl("/process-login")
-                        .defaultSuccessUrl("/home", true)
+                        .successHandler(urlHandler())
                         .failureUrl("/login?error=true")
                         .permitAll()
                 )
@@ -60,4 +61,18 @@ public class BookStoreSecurity {
 
         return http.build();
     }
+
+    @Bean
+    public AuthenticationSuccessHandler urlHandler(){
+        return (request, response, authentication) -> {
+            var authorities = authentication.getAuthorities();
+
+            if (authorities.stream().anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
+                response.sendRedirect("/admin/dashboard");
+            } else {
+                response.sendRedirect("/home");
+            }
+        };
+    }
+
 }

@@ -10,6 +10,7 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
@@ -22,6 +23,8 @@ public class UsersService implements UserDetailsService {
 
     @Autowired
     private IUsersRepository repo;
+    @Autowired
+    private BCryptPasswordEncoder passwordEncoder;
 
     public Users getUserByUserName(String username){
         Users us = repo.findById(username).orElse(null);
@@ -45,6 +48,11 @@ public class UsersService implements UserDetailsService {
         Users user = new Users(userName, password, role, fullName, cus, new Date());
         repo.save(user);
         return true;
+    }
+
+    public boolean checkPassword(String username, String password){
+        Users us = repo.findById(username).orElse(null);
+        return passwordEncoder.matches(password, us.getPassword());
     }
 
 

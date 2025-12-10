@@ -18,4 +18,12 @@ public class OrdersService {
         return repo.findByCustomerId(customerId);
     }
 
+    public void updateStatus(String id, String status){
+        repo.updateStatus(id, status);
+    }
+
+    public Orders getOrderById(String orderId){
+        return repo.findById(orderId).orElse(null);
+    }
+
 }

@@ -14,6 +14,7 @@ a:active {
    GENERAL STYLES
    ========================================================= */
 body {
+    /* ĐÃ SỬA: Dùng Open Sans cho toàn bộ nội dung (body) */
     font-family: Arial, sans-serif;
     background-color: #f4f4f4;
     height: 100%;
@@ -205,10 +206,14 @@ main {
 }
 
 .section-title {
-    font-weight: 600;
+    /* ĐÃ CẬP NHẬT: Chỉ tiêu đề dùng font Poppins */
+    font-family: 'Poppins', sans-serif;
+    font-weight: 700; /* Tăng độ đậm để nổi bật */
     font-size: 1.4rem;
     border-left: 4px solid darkgreen;
     padding-left: 10px;
+    max-width: 1200px;
+    margin: 0 auto 15px auto;
 }
 
 /* Grid sách */
@@ -278,6 +283,7 @@ main {
     line-height: 1.5;
     margin-bottom: 0;
     font-size: 1rem;
+    /* Giữ nguyên font của body (Open Sans) được kế thừa */
     font-weight: 300;
     color: #000 !important;
     width: 100%;
@@ -331,6 +337,11 @@ main {
     gap: 120px;
 }
 
+.footer-about-text {
+    text-align: justify;
+}
+
+
 .footer-column {
     text-align: left;
 }
@@ -341,6 +352,7 @@ main {
     font-size: 0.95rem;
     text-transform: uppercase;
     letter-spacing: 1px;
+    /* Giữ nguyên font của body (Open Sans) được kế thừa */
 }
 
 .footer-column p,
@@ -383,6 +395,56 @@ main {
     text-align: center;
     font-size: 0.7rem;
     opacity: 0.8;
+}
+
+
+/*Cột 2&3*/
+.footer-contact {
+    display: flex;
+    flex-direction: column;
+    height: 130px; /* điều chỉnh để các dòng cách đều */
+    justify-content: space-between;
+}
+
+.footer-contact .contact-hours {
+    margin: 0;
+    color: #ccc;
+    font-size: 14px;
+}
+
+.footer-contact .contact-info,
+.footer-contact .contact-info a {
+    display: flex;
+    align-items: center;  /* căn icon + text theo chiều dọc */
+    gap: 6px;             /* khoảng cách icon và text */
+    color: #ccc;
+    font-size: 14px;
+    text-decoration: none;
+}
+
+.footer-contact .contact-info a:hover {
+    color: #ccc;
+}
+
+
+.footer-contact .contact-icon {
+    width: 30px; /* kích thước icon */
+    height: 30px;
+    margin-right: 6px; /* khoảng cách giữa icon và text */
+}
+
+.footer-contact .contact-info,
+.footer-contact .contact-info a {
+    display: flex;
+    align-items: center;
+    margin: 0;
+    font-size: 14px;
+    color: #ccc;           /* màu giống các dòng khác */
+    text-decoration: none;  /* bỏ gạch chân */
+}
+
+.footer-contact .contact-info a:hover {
+    color: #ccc;           /* hover cũng giữ màu đồng bộ */
 }
 
 /* =========================================================
@@ -440,6 +502,14 @@ main {
 .book-card .price {
     color: #d60000 !important;   /* đỏ */
     font-weight: bold;
+}
+/* Thông báo lỗi */
+.login-box .alert {
+    text-align: center;
+    margin-top: 15px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    font-size: 14px;
 }
 /* Thông báo lỗi */
 .login-box .alert {

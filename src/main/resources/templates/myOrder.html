@@ -1,10 +1,348 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="keywords" content="books, book store, online shop, best books">
+    <meta name="description" content="Welcome to our online book store, where you can find a wide range of books for all ages and interests.">
+    <title>Online Bookstore - Đơn hàng của tôi</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <!-- Favicon -->
+    <link rel="shortcut icon" type="image/png" href="/images/logo.png" />
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css">
+
+    <!-- Owl Carousel CSS -->
+    <link rel="stylesheet" type="text/css" href="/css/owl.carousel.min.css">
+
+    <!-- Magnific Popup CSS -->
+    <link rel="stylesheet" type="text/css" href="/css/magnific-popup.css">
+
+    <!-- IcoMoon CSS -->
+    <link rel="stylesheet" type="text/css" href="/css/icomoon.css">
+
+    <!-- IcoFont CSS -->
+    <link rel="stylesheet" type="text/css" href="/css/icofont.min.css">
+
+    <!-- Animate CSS -->
+    <link rel="stylesheet" type="text/css" href="/css/animate.css">
+
+    <!-- Main CSS -->
+    <link rel="stylesheet" type="text/css" href="/css/style1.css">
+
+    <link rel="stylesheet" type="text/css" href="/css/myorder.css">
+
+    <!-- Responsive CSS -->
+    <link rel="stylesheet" type="text/css" href="/css/responsive.css">
+
+
 </head>
+
 <body>
+<!--Start Preloader-->
+<div class="preloader">
+    <div class="d-table">
+        <div class="d-table-cell align-middle">
+            <div class="spinner">
+                <div class="double-bounce1"></div>
+                <div class="double-bounce2"></div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--End Preloader-->
+
+<!-- Start Header -->
+<header id="header">
+    <div class="container">
+        <nav class="navbar navbar-expand-lg">
+            <div class="navbar-container">
+                <!-- Logo -->
+                <a class="logo" href="/home"><img src="/images/logo.png" alt="logo"></a>
+
+                <!-- Menu -->
+                <div class="navbar-menu">
+                    <ul class="navbar-nav">
+                        <!-- Tất cả -->
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/home}">Tất cả</a>
+                        </li>
+
+                        <!-- Kinh doanh -->
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/home(categoryId='C01')}">Kinh doanh</a>
+                        </li>
+
+                        <!-- Sức khỏe -->
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/home(categoryId='C02')}">Sức khỏe</a>
+                        </li>
+
+                        <!-- Marketing -->
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/home(categoryId='C03')}">Marketing</a>
+                        </li>
+
+                        <!-- Lập trình -->
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/home(categoryId='C04')}">Lập trình</a>
+                        </li>
+
+                        <!-- Truyện tranh -->
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/home(categoryId='C05')}">Truyện tranh</a>
+                        </li>
+
+                        <!-- Công nghệ -->
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/home(categoryId='C06')}">Công nghệ</a>
+                        </li>
+
+                        <!-- Đời sống -->
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/home(categoryId='C07')}">Đời sống</a>
+                        </li>
+
+                        <!-- Lịch sử -->
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/home(categoryId='C08')}">Lịch sử</a>
+                        </li>
+
+                        <!-- Giáo dục -->
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/home(categoryId='C09')}">Giáo dục</a>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Search Bar -->
+                <div class="search-bar">
+                    <input type="text" placeholder="Tìm kiếm sản phẩm..." class="form-control">
+                    <button type="submit" class="btn btn-primary">Tìm</button>
+                </div>
+
+                <!-- User Options (Giỏ hàng, Đăng nhập, Đăng ký) -->
+                <div class="user-options">
+                    <ul class="navbar-nav">
+
+                        <li class="nav-item">
+                            <a class="nav-link" href="/gio_hang">🛒</a>
+                        </li>
+                        <!-- Nếu chưa đăng nhập -->
+                        <li class="nav-item" sec:authorize="isAnonymous()">
+                            <a class="nav-link" th:href="@{/login}">Đăng nhập</a>
+                        </li>
+                        <li class="nav-item" sec:authorize="isAnonymous()">
+                            <a class="nav-link" th:href="@{/register}">Đăng ký</a>
+                        </li>
+
+                        <!-- Nút Logout dạng POST (chuẩn Security) -->
+                        <li class="nav-item" sec:authorize="isAuthenticated()">
+                            <div class="user-dropdown">
+                                <div class="user-name">
+                                    <span sec:authentication="principal.username"></span>
+                                    <i class="fa fa-caret-down"></i>
+                                </div>
+
+                                <div class="user-menu">
+                                    <a th:href="@{/user/profile}">👤 Hồ sơ của tôi</a>
+                                    <a href="/user/myOrder">📦 Đơn hàng của tôi</a>
+                                    <hr>
+                                    <a href="/user/change-password">🔑 Đổi mật khẩu</a>
+
+                                    <form th:action="@{/logout}" method="post">
+                                        <button type="submit">🚪 Đăng xuất</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </div>
+</header>
+
+<main>
+    <!-- Thêm bảng hiển thị đơn hàng -->
+    <div class="orders-container">
+        <h1 class="orders-title">Đơn hàng của tôi</h1>
+
+        <!-- Bảng đơn hàng -->
+        <div th:if="${orders != null && orders.size() > 0}">
+            <table class="orders-table">
+                <thead>
+                <tr>
+                    <th>Ngày đặt</th>
+                    <th>Phương thức thanh toán</th>
+                    <th>Địa chỉ nhận</th>
+                    <th>Tổng tiền</th>
+                    <th>Trạng thái</th>
+                    <th>Hành động</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="order : ${orders}">
+                    <!-- Ngày đặt -->
+                    <td class="order-date" th:text="${order.getOrderDate()}">
+
+                    </td>
+
+                    <!-- Phương thức thanh toán -->
+                    <td>
+                            <span class="order-method" th:text="${order.getPaymentMethod()}">
+
+                            </span>
+                    </td>
+
+                    <!-- Địa chỉ nhận -->
+                    <td class="order-address" th:title="${order.getAddress()}" th:text="${order.getAddress()}">
+                        123 Đường ABC, Quận 1, TP.HCM
+                    </td>
+
+                    <!-- Tổng tiền -->
+                    <td class="order-total" th:text="${#numbers.formatDecimal(order.getTotalAmount(), 0, 'COMMA', 2, 'POINT')} + ' đ'">
+
+                    </td>
+
+                    <!-- Trạng thái -->
+                    <td>
+                            <span
+                                    class="order-status"
+                                    th:classappend="${order.status == 'Pending' ? 'status-pending' :
+                                               order.status == 'Confirmed' ? 'status-confirmed' :
+                                               order.status == 'Delivered' ? 'status-shipped' : ''
+                                               }"
+                                    th:text="${order.getStatus()}">
+
+                            </span>
+                    </td>
+
+                    <!-- Hành động: Nút "Đã nhận được hàng" chỉ hiện khi status = "ĐÃ_XÁC_NHẬN" -->
+                    <td th:if="${order.getStatus()!='Delivered'}">
+                        <form th:if="${order.getStatus() == 'Confirmed'}"
+                              th:action="@{/user/order/{id}/received(id=${order.getOrderId()})}"
+                              method="post"
+                              style="display: inline;">
+                            <button type="submit" class="btn-received">✓ Đã nhận được hàng</button>
+                        </form>
+                        <span th:unless="${order.getStatus() == 'Confirmed'}" style="color: #999;">-</span>
+                    </td>
+                    <td th:if="${order.getStatus()=='Delivered'}">
+                        <form th:action="@{/user/order/{id}/received(id=${order.getOrderId()})}" method="post" style="display: inline;">
+                            <button type="submit" class="btn-received">Đánh giá</button>
+                        </form>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Thông báo khi không có đơn hàng -->
+        <div th:unless="${orders != null && orders.size() > 0}" class="no-orders">
+            <p>Bạn chưa có đơn hàng nào. <a th:href="@{/home}" style="color: #388e3c; text-decoration: underline;">Tiếp tục mua sắm</a></p>
+        </div>
+    </div>
+</main>
+
+
+<footer id="footer">
+    <div class="container">
+        <div class="footer-content">
+            <!-- Column 1 -->
+            <div class="footer-column footer-about">
+                <h4>UTE BookStore</h4>
+                <p class="footer-about-text">
+                    Chào mừng bạn đến với UTE BookStore, cửa hàng sách trực tuyến uy tín, nơi bạn có thể khám phá bộ sưu tập sách phong phú dành cho mọi đối tượng đọc giả. Từ các loại sách phổ biên đến các tác phẩm kinh điển, chúng tôi luôn có những lựa chọn tuyệt vời cho bạn. Khám phá ngay bộ sưu tập của chúng tôi và nếu cần trợ giúp, chatbox của chúng tôi luôn sẵn sàng hỗ trợ bạn!
+                </p>
+            </div>
+
+            <!-- Column 2 -->
+            <div class="footer-column footer-contact">
+                <h4>Thông tin và chính sách</h4>
+
+                <!-- Địa chỉ với icon Map -->
+                <div class="contact-info">
+                    <a href="http://google.com/maps?rlz=1C1VDKB_enVN1145VN1145&gs_lcrp=EgZjaHJvbWUqBwgBEC4YgAQyBggAEEUYOTIHCAEQLhiABDIHCAIQABiABDIHCAMQABiABDIHCAQQABiABDIHCAUQLhiABDIHCAYQABiABDIGCAcQRRhB0gEINDg1OGowajeoAgCwAgA&um=1&ie=UTF-8&fb=1&gl=vn&sa=X&geocode=KasWOPJjJ3UxMW-RtkEUcS8o&daddr=01+%C4%90.+V%C3%B5+V%C4%83n+Ng%C3%A2n,+Linh+Chi%E1%BB%83u,+Th%E1%BB%A7+%C4%90%E1%BB%A9c,+Th%C3%A0nh+ph%E1%BB%91+H%E1%BB%93+Ch%C3%AD+Minh" target="_blank" class="info-link">
+                        <img src="/images/map.png" alt="map icon" class="contact-icon">
+                        <span>Địa chỉ: Số 1 VVN, phường Thủ Đức, TPHCM</span>
+                    </a>
+                </div>
+
+                <!-- Đồng sáng lập Web với icon member -->
+                <div class="contact-info">
+                    <img src="/images/member.png" alt="member icon" class="contact-icon">
+                    <span>H.Bang, D.Ngọc, M.Quỳnh, T.Trà, V.Triết</span>
+                </div>
+            </div>
+
+            <!-- Column 3 -->
+            <div class="footer-column footer-contact">
+                <h4>Liên hệ</h4>
+
+                <!-- Giờ hoạt động -->
+                <p class="contact-hours">(Hoạt động từ 8h - 17h, thứ 2 - thứ 7)</p>
+
+                <!-- Số điện thoại với hình ảnh icon -->
+                <div class="contact-info">
+                    <img src="/images/telephone.png" alt="phone icon" class="contact-icon">
+                    <span>Gọi đặt hàng: 0328327303</span>
+                </div>
+
+                <!-- Email với hình ảnh icon -->
+                <div class="contact-info">
+                    <img src="/images/email.png" alt="email icon" class="contact-icon">
+                    <span>Email: banghohoang16102005@gmail.com</span>
+                </div>
+
+                <!-- Facebook -->
+                <div class="contact-info">
+                    <a href="https://www.facebook.com/tola.simon1610/" target="_blank" class="contact-info">
+                        <img src="/images/facebook.png" alt="facebook icon" class="contact-icon">
+                        <span>3.2k người theo dõi</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <p>&copy; 2025 UTE BookStore. All rights reserved.</p>
+    </div>
+</footer>
+
+<!-- jQuery js -->
+<script src="/assets/js/jquery-3.3.1.min.js"></script>
+<!-- Bootstrap js -->
+<script src="/assets/js/bootstrap.min.js"></script>
+
+<!-- Fetch nội dung động cho body-->
+<script>
+    // Khi click nút Đăng nhập trên navbar
+    document.addEventListener('DOMContentLoaded', function () {
+        const mainContent = document.getElementById('main-content');
+        // CLICK VÀO SẢN PHẨM (CARD SÁCH)
+        document.addEventListener('click', function (e) {
+            const card = e.target.closest('.book-card');
+            if (!card) return; // không click trong card thì bỏ
+
+            const bookId = card.getAttribute('data-id');
+            if (!bookId) return;
+
+            fetch('/books/' + bookId)   // endpoint trả về HTML chi tiết sách
+                .then(response => response.text())
+                .then(html => {
+                    mainContent.innerHTML = html;
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                })
+                .catch(err => {
+                    console.error('Lỗi khi tải chi tiết sách:', err);
+                });
+        });
+    });
+</script>
 
 </body>
 </html>
