@@ -995,3 +995,25 @@ main {
         transform: translateY(-10px);
     }
 }
+/* ===========================
+   FIX MÀU CHỮ BOOK CARD (KHÔNG ĐỔI FORM)
+=========================== */
+
+/* Màu tên sách (giữ nguyên) */
+.book-card .card-title {
+    color: #222 !important;
+}
+
+/* Màu tác giả */
+.book-card .card-text.text-muted,
+.book-card .author,
+.book-card .author a {
+    color: #6c757d !important;   /* xám */
+}
+
+/* Màu giá */
+.book-card .text-danger,
+.book-card .price {
+    color: #d60000 !important;   /* đỏ */
+    font-weight: bold;
+}

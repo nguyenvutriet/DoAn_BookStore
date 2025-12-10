@@ -1,0 +1,280 @@
+/* ==== SỬA LỖI TRÀN NGANG CẤP ĐỘ TRANG ==== */
+body, html {
+    overflow-x: hidden; /* NGĂN CHẶN LỖI TRÀN NGANG TOÀN BỘ TRANG */
+}
+
+/* ==== Font tổng ==== */
+.book-detail {
+    font-family: "Poppins", sans-serif;
+    padding: 20px 0;
+    overflow: hidden; /* Ngăn chặn lỗi tràn cục bộ bên trong chi tiết sách */
+}
+
+/* ==== Row chính (Chứa 3 cột) ==== */
+/* Giữ nguyên cấu trúc row/col của Bootstrap */
+.book-detail .row {
+    display: flex !important;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    margin-left: -15px;
+    margin-right: -15px;
+}
+
+.book-detail .col-md-4,
+.book-detail .col-md-5,
+.book-detail .col-md-3 {
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+
+/* ==== CỘT 1: ẢNH SÁCH ==== */
+.col-md-4 {
+    flex-shrink: 0 !important;
+}
+.main-book-image {
+    border: 1px solid #ddd;
+    padding: 10px;
+    background: #fff;
+    border-radius: 4px;
+    width: 100%;
+    /* Dùng max-height để giới hạn kích thước khung */
+    max-height: 440px;
+    box-sizing: border-box;
+}
+
+.main-img {
+    width: 100%;
+    /* TỐI ƯU: Dùng auto và max-height để giữ tỷ lệ */
+    height: auto;
+    max-height: 420px;
+    object-fit: contain; /* Đảm bảo ảnh hiển thị toàn bộ */
+}
+
+/* ==== CỘT 2: THÔNG TIN ==== */
+.col-md-5 {
+    flex-grow: 1;
+}
+.book-title {
+    font-size: 26px;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.author {
+    font-size: 16px;
+    color: #777;
+    margin-bottom: 15px;
+}
+
+/* Giá bán */
+.price-box {
+    margin-bottom: 15px;
+}
+
+.current-price {
+    font-size: 28px;
+    font-weight: bold;
+    color: #d10000;
+}
+
+.old-price {
+    text-decoration: line-through;
+    margin-left: 12px;
+    color: #888;
+}
+
+.discount {
+    background: #ff6600;
+    color: #fff;
+    padding: 4px 8px;
+    border-radius: 4px;
+    margin-left: 10px;
+}
+
+/* Khung mô tả sách */
+.description-box {
+    background: #fff4e6;
+    padding: 15px;
+    border-radius: 6px;
+    border: 1px solid #ffd9b3;
+    max-height: 180px;
+    overflow-y: auto;
+    width: 100%;
+    box-sizing: border-box;
+    margin-bottom: 15px;
+}
+
+.description-box h4 {
+    font-size: 17px;
+    margin-bottom: 10px;
+}
+
+.description-box p {
+    font-size: 15px;
+    color: #555;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+
+/* ==== SỬA CHỮA: NÚT SỐ LƯỢNG LIỀN MẠCH VÀ ĐẸP HƠN ==== */
+.quantity-box {
+    margin: 20px 0;
+    display: flex;
+    align-items: center;
+    /* BỎ gap: 10px để các phần tử dính liền */
+    gap: 10px;
+}
+/* Tạo class bao bọc nếu HTML cho phép */
+.quantity-box .quantity-selector {
+    display: flex;
+    border: 1px solid #bbb;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.qty-btn,
+.qty-input {
+    width: 35px;
+    height: 35px;
+    background: #fff;
+    font-size: 16px;
+    line-height: 1;
+    text-align: center;
+    padding: 0;
+    box-sizing: border-box;
+    cursor: pointer;
+    /* Reset border để dùng border của .quantity-selector */
+    border: none;
+    border-radius: 0;
+}
+
+.qty-input {
+    width: 45px;
+    cursor: default;
+    outline: none;
+    font-weight: 600;
+    /* Thêm viền phân cách */
+    border-left: 1px solid #bbb;
+    border-right: 1px solid #bbb;
+}
+
+/* Nếu bạn không dùng .quantity-selector, bạn cần dùng lại CSS cũ và bỏ gap */
+/* Nếu bạn muốn nút liền mạch hơn, bạn nên dùng CSS sau: */
+/*
+.qty-btn,
+.qty-input { border: 1px solid #bbb; border-radius: 0; }
+.qty-input { border-left: none; border-right: none; }
+.qty-btn:first-of-type { border-top-left-radius: 4px; border-bottom-left-radius: 4px; border-right: none; }
+.qty-btn:last-of-type { border-top-right-radius: 4px; border-bottom-right-radius: 4px; border-left: none; }
+*/
+
+
+.qty-btn:hover {
+    background: #f0f0f0;
+}
+
+/* Nút mua */
+.buy-btn {
+    width: 100%;
+    background: #ff7b00;
+    border: none;
+    color: white;
+    padding: 14px 0;
+    font-size: 18px;
+    border-radius: 6px;
+    transition: 0.2s;
+}
+
+.buy-btn:hover {
+    background: #e66a00;
+}
+
+/* ==== CỘT 3: BẢNG THÔNG TIN (FIX Lỗi Mất Viền & Tối Ưu) ==== */
+.col-md-3 {
+    flex-shrink: 0;
+}
+.publisher-box {
+    border: none;
+    padding: 0;
+    background: none;
+    border-radius: 6px;
+    width: 100%;
+    overflow-x: auto;
+}
+
+.publisher-box table {
+    min-width: 300px;
+    width: 100%;
+    border-collapse: collapse;
+    margin: 0;
+
+    /* VIỀN NGOÀI */
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.publisher-box th,
+.publisher-box td {
+    /* VIỀN PHÂN CÁCH BÊN TRONG */
+    border-top: 1px solid #ddd;
+    border-right: 1px solid #ddd;
+    border-bottom: none;
+    border-left: none;
+    padding: 8px;
+    font-size: 15px;
+    white-space: nowrap;
+}
+/* Loại bỏ viền thừa */
+.publisher-box td:last-child,
+.publisher-box th:last-child {
+    border-right: none;
+}
+/* Loại bỏ viền trên của hàng đầu tiên */
+.publisher-box tr:first-child th,
+.publisher-box tr:first-child td {
+    border-top: none;
+}
+
+
+.publisher-box th {
+    background-color: #f7f7f7;
+    text-align: left;
+    width: 40%;
+}
+
+/* ==== Responsive ==== */
+
+/* Màn hình Medium (>= 768px): Giữ 3 cột cố định */
+@media (min-width: 768px) {
+    .book-detail .row {
+        flex-wrap: nowrap !important; /* BẮT BUỘC giữ 3 cột trên một hàng */
+    }
+    /* Tối ưu: Bỏ !important nếu flex-wrap đã hoạt động */
+    .col-md-4 {
+        flex-shrink: 0;
+    }
+}
+
+/* Màn hình nhỏ (Mobile/Tablet) */
+@media (max-width: 767px) {
+    .book-detail .row {
+        flex-wrap: wrap; /* Cho phép xuống dòng */
+    }
+
+    .book-detail .col-md-4,
+    .book-detail .col-md-5,
+    .book-detail .col-md-3 {
+        width: 100%; /* BỎ !important */
+        max-width: 100%; /* BỎ !important */
+        flex-shrink: 1;
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+    .main-book-image {
+        max-width: 100%;
+        margin: 0 auto;
+    }
+}
