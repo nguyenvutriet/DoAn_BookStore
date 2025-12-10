@@ -31,7 +31,7 @@
 
     <!-- Load style.css instead of cart.css to ensure consistent header styling -->
     <!-- Main CSS -->
-    <link rel="stylesheet" type="text/css" href="/css/style.css">
+    <link rel="stylesheet" type="text/css" href="/css/style1.css">
 
     <!-- Cart specific CSS (load after style.css to override if needed) -->
     <link rel="stylesheet" type="text/css" href="/css/cart.css">
@@ -200,7 +200,7 @@
 
                     <!-- PRODUCT -->
                     <td class="product-cell">
-                        <img th:src="@{'/images/' + ${item.image}}" class="product-img">
+                        <img th:src="@{'/images/books/' + ${item.image}}" class="product-img">
                         <div class="info">
                             <h3 th:text="${item.bookName}"></h3>
                             <p th:text="'Mã SP: ' + ${item.bookId}"></p>
