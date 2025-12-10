@@ -11,7 +11,7 @@
 
     <link rel="shortcut icon" type="image/png" href="/images/logo.png" />
     <link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css">
-    <link rel="stylesheet" type="text/css" href="/css/style.css">
+    <link rel="stylesheet" type="text/css" href="/css/style1.css">
     <link rel="stylesheet" type="text/css" href="/css/responsive.css">
 
     <!-- Login form riêng -->
@@ -29,61 +29,59 @@
                 <a class="logo" href="/home"><img src="/images/logo.png" alt="logo"></a>
 
                 <!-- Menu -->
-                <!-- Menu -->
                 <div class="navbar-menu">
                     <ul class="navbar-nav">
                         <!-- Tất cả -->
                         <li class="nav-item">
-                            <a class="nav-link" th:href="@{/}">Tất cả</a>
+                            <a class="nav-link" th:href="@{/home}">Tất cả</a>
                         </li>
 
                         <!-- Kinh doanh -->
                         <li class="nav-item">
-                            <a class="nav-link" th:href="@{/(categoryId='C01')}">Kinh doanh</a>
+                            <a class="nav-link" th:href="@{/home(categoryId='C01')}">Kinh doanh</a>
                         </li>
 
                         <!-- Sức khỏe -->
                         <li class="nav-item">
-                            <a class="nav-link" th:href="@{/(categoryId='C02')}">Sức khỏe</a>
+                            <a class="nav-link" th:href="@{/home(categoryId='C02')}">Sức khỏe</a>
                         </li>
 
                         <!-- Marketing -->
                         <li class="nav-item">
-                            <a class="nav-link" th:href="@{/(categoryId='C03')}">Marketing</a>
+                            <a class="nav-link" th:href="@{/home(categoryId='C03')}">Marketing</a>
                         </li>
 
                         <!-- Lập trình -->
                         <li class="nav-item">
-                            <a class="nav-link" th:href="@{/(categoryId='C04')}">Lập trình</a>
+                            <a class="nav-link" th:href="@{/home(categoryId='C04')}">Lập trình</a>
                         </li>
 
                         <!-- Truyện tranh -->
                         <li class="nav-item">
-                            <a class="nav-link" th:href="@{/(categoryId='C05')}">Truyện tranh</a>
+                            <a class="nav-link" th:href="@{/home(categoryId='C05')}">Truyện tranh</a>
                         </li>
 
                         <!-- Công nghệ -->
                         <li class="nav-item">
-                            <a class="nav-link" th:href="@{/(categoryId='C06')}">Công nghệ</a>
+                            <a class="nav-link" th:href="@{/home(categoryId='C06')}">Công nghệ</a>
                         </li>
 
                         <!-- Đời sống -->
                         <li class="nav-item">
-                            <a class="nav-link" th:href="@{/(categoryId='C07')}">Đời sống</a>
+                            <a class="nav-link" th:href="@{/home(categoryId='C07')}">Đời sống</a>
                         </li>
 
                         <!-- Lịch sử -->
                         <li class="nav-item">
-                            <a class="nav-link" th:href="@{/(categoryId='C08')}">Lịch sử</a>
+                            <a class="nav-link" th:href="@{/home(categoryId='C08')}">Lịch sử</a>
                         </li>
 
                         <!-- Giáo dục -->
                         <li class="nav-item">
-                            <a class="nav-link" th:href="@{/(categoryId='C09')}">Giáo dục</a>
+                            <a class="nav-link" th:href="@{/home(categoryId='C09')}">Giáo dục</a>
                         </li>
                     </ul>
                 </div>
-
 
                 <!-- Search Bar -->
                 <div class="search-bar">
@@ -103,7 +101,7 @@
                             <a class="nav-link" th:href="@{/login}">Đăng nhập</a>
                         </li>
                         <li class="nav-item" sec:authorize="isAnonymous()">
-                            <a class="nav-link" th:href="@{/register}">Đăng ký</a>
+                            <a class="nav-link" th:href="@{/register/infor}">Đăng ký</a>
                         </li>
 
                         <!-- Nút Logout dạng POST (chuẩn Security) -->
@@ -115,8 +113,8 @@
                                 </div>
 
                                 <div class="user-menu">
-                                    <a href="/user/profile">👤 Hồ sơ của tôi</a>
-                                    <a href="/user/profile">📦 Đơn hàng của tôi</a>
+                                    <a th:href="@{/user/profile}">👤 Hồ sơ của tôi</a>
+                                    <a href="/user/myOrder">📦 Đơn hàng của tôi</a>
                                     <hr>
                                     <a href="/user/change-password">🔑 Đổi mật khẩu</a>
 
@@ -124,11 +122,8 @@
                                         <button type="submit">🚪 Đăng xuất</button>
                                     </form>
                                 </div>
-
                             </div>
-
                         </li>
-
                     </ul>
                 </div>
             </div>

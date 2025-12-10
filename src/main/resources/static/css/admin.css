@@ -8,46 +8,6 @@ body {
     background-color: #f4f4f4;
 }
 
-/*!* -----------------------------*/
-/*   ADMIN HEADER*/
-/*------------------------------ *!*/
-/*.admin-header {*/
-/*    background-color: #fff;*/
-/*    border-top: 30px solid #0B3D2E;*/
-/*    padding: 10px 30px;*/
-/*    display: flex;*/
-/*    justify-content: space-between;*/
-/*    align-items: center;*/
-/*    box-shadow: 0 2px 8px rgba(0,0,0,0.15);*/
-/*}*/
-
-/*.admin-header .logo {*/
-/*    display: flex;*/
-/*    align-items: center;*/
-/*    gap: 10px;*/
-/*}*/
-
-/*.admin-header .logo img {*/
-/*    height: 55px;*/
-/*}*/
-
-/*.admin-header .welcome {*/
-/*    font-size: 15px;*/
-/*}*/
-
-/*.logout-btn {*/
-/*    background-color: #388e3c;*/
-/*    padding: 6px 12px;*/
-/*    color: white;*/
-/*    border-radius: 5px;*/
-/*}*/
-/*.logout-btn:hover {*/
-/*    background-color: #2c6f3b;*/
-/*}*/
-
-/* ===========================
-   ADMIN HEADER FULL WIDTH
-=========================== */
 
 .admin-header {
     background-color: #fff;

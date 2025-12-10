@@ -25,4 +25,5 @@ public interface ICustomersRepository extends JpaRepository<Customers, String> {
     public Customers findByEmail(@Param("email") String email);
 
 
+    public Customers findByPhone(String phone);
 }

@@ -128,62 +128,54 @@
 
 
 <main id="main-content">
-<div class="register-form-container">
-    <h2>Đăng tài khoản</h2>
+    <div class="register-form-container">
+        <h2>Đăng ký thông tin</h2>
 
-    <div class="alert alert-danger" th:if="${error}">
-        <span th:text="${error}"></span>
+
+        <div class="alert alert-danger" th:if="${error}">
+            <span th:text="${error}"></span>
+        </div>
+
+
+
+        <form th:action="@{/register/infor}" method="post">
+
+            <div class="form-section">
+                <h3 class="section-heading">📋 Thông tin người dùng</h3>
+
+                <div class="input-group">
+                    <label for="fullName">Họ và tên</label>
+                    <input type="text" id="fullName" name="fullName" th:value="${fullName}" required>
+                </div>
+
+                <div class="input-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" th:value="${email}" required placeholder="example@gmail.com">
+                </div>
+
+                <div class="input-group">
+                    <label for="phone">Số điện thoại</label>
+                    <input type="text" id="phone" name="phone" th:value="${phone}" required maxlength="10">
+                </div>
+
+                <div class="input-group">
+                    <label for="address">Địa chỉ</label>
+                    <input type="text" id="address" name="address" th:value="${address}" required>
+                </div>
+
+                <div class="input-group">
+                    <label for="dateOfBirth">Ngày sinh</label>
+                    <input type="date" id="dateOfBirth" name="dateOfBirth" th:value="${#dates.format(dateOfBirth, 'yyyy-MM-dd')}">
+
+                </div>
+            </div>
+
+            <!-- DIVIDER LINE -->
+            <div class="form-divider"></div>
+            <button type="submit" class="submit-btn">Tiếp theo</button>
+        </form>
+
     </div>
-
-    <form th:action="@{/register/save}" method="post">
-        <input type="hidden" name="fullName" th:value="${fullName}">
-        <input type="hidden" name="email" th:value="${email}">
-        <input type="hidden" name="phone" th:value="${phone}">
-        <input type="hidden" name="address" th:value="${address}">
-        <input type="hidden" name="dateOfBirth" th:value="${#dates.format(dateOfBirth, 'yyyy-MM-dd')}">
-
-        <div class="form-section">
-            <h3 class="section-heading">🔐 Đăng ký tài khoản</h3>
-
-            <div class="input-group">
-                <label for="userName">Tên đăng nhập</label>
-                <input type="text" id="userName" name="userName" required>
-            </div>
-
-            <div class="input-group">
-                <label for="password">Mật khẩu</label>
-                <input type="password" id="password" name="password" required>
-            </div>
-
-            <div class="input-group">
-                <label for="confirm">Nhập lại mật khẩu</label>
-                <input type="password" id="confirm" name="confirm" required>
-            </div>
-        </div>
-
-        <!-- Hidden role input -->
-        <input type="hidden" name="role" value="ROLE_USER">
-
-        <!-- Submit button -->
-        <div class="button-group">
-            <a th:href="@{/register/back(
-                        fullName=${fullName},
-                        email=${email},
-                        phone=${phone},
-                        address=${address},
-                        dateOfBirth=${#dates.format(dateOfBirth, 'yyyy-MM-dd')}
-                    )}" class="btn btn-secondary">⬅ Quay lại</a>
-            <button type="submit" class="btn btn-primary">Đăng ký</button>
-        </div>
-
-
-        <!-- Login link -->
-        <div class="login">
-            Đã có tài khoản? <a href="/login">Đăng nhập</a>
-        </div>
-    </form>
-
-</div>
 </main>
 
 <footer id="footer">
@@ -198,7 +190,7 @@
             <div class="footer-column">
                 <h4>Thông tin và chính sách</h4>
                 <ul>
-                    <li><a href="#">Home</a></li>
+                    <li><a href="/home">Home</a></li>
                     <li><a href="#">Books</a></li>
                     <li><a href="#">About</a></li>
                     <li><a href="#">Contact</a></li>

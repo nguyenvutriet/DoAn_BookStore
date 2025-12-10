@@ -58,7 +58,9 @@ public class CustomersService {
         repo.updateCus(cus.getCustomerId(), cus.getFullName(), cus.getPhone(), cus.getEmail(), cus.getAddress(), cus.getDateOfBirth());
     }
 
-
+    public Customers getCustomerByPhone(String phone){
+        return repo.findByPhone(phone);
+    }
 
 
 }

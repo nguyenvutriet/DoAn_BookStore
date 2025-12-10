@@ -28,13 +28,6 @@ public class HomeController {
         List<Books> bestSellingBooks = booksService.getBestSellingBooks(categoryId);
         List<Books> favoriteBooks = booksService.getFavoriteBooks(categoryId);
 
-        System.out.println("=== HOME CONTROLLER ===");
-        System.out.println("categoryId = " + categoryId);
-        System.out.println("newBooks size = " + (newBooks != null ? newBooks.size() : -1));
-        System.out.println("bestSellingBooks size = " + (bestSellingBooks != null ? bestSellingBooks.size() : -1));
-        System.out.println("favoriteBooks size = " + (favoriteBooks != null ? favoriteBooks.size() : -1));
-
-
         model.addAttribute("newBooks", newBooks);
         model.addAttribute("bestSellingBooks", bestSellingBooks);
         model.addAttribute("favoriteBooks", favoriteBooks);

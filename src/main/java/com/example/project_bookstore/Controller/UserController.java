@@ -1,8 +1,10 @@
 package com.example.project_bookstore.Controller;
 
 import com.example.project_bookstore.Entity.Customers;
+import com.example.project_bookstore.Entity.Orders;
 import com.example.project_bookstore.Entity.Users;
 import com.example.project_bookstore.Service.CustomersService;
+import com.example.project_bookstore.Service.OrdersService;
 import com.example.project_bookstore.Service.UsersService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -16,6 +18,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 @Controller
 @RequestMapping("/user")
@@ -27,9 +30,12 @@ public class UserController {
     @Autowired
     private CustomersService customersService;
 
+    @Autowired
+    private OrdersService ordersService;
+
     @GetMapping("/profile")
     public String inforCustomer(@AuthenticationPrincipal UserDetails userDetails, Model model){
-        String username = userDetails.getUsername();
+        String username =  userDetails.getUsername();
         Users user = usersService.getUserByUserName(username);
         Customers cus = customersService.getCustomerById(user.getCustomer().getCustomerId());
 
@@ -85,6 +91,21 @@ public class UserController {
 
         usersService.updateUser(username, password);
         return "redirect:/login";
+    }
+
+
+    @GetMapping("/myOrder")
+    public String pageMyOrder(@AuthenticationPrincipal UserDetails userDetails, Model model){
+        String username =   userDetails.getUsername();
+        Users user = usersService.getUserByUserName(username);
+        Customers cus = customersService.getCustomerById(user.getCustomer().getCustomerId());
+
+        List<Orders> listOrderByCustomerId = ordersService.getOrders(cus.getCustomerId());
+
+        model.addAttribute("list",listOrderByCustomerId);
+
+        return "myOrder";
+
     }
 
 }

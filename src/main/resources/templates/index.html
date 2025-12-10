@@ -31,7 +31,7 @@
     <link rel="stylesheet" type="text/css" href="/css/animate.css">
 
     <!-- Main CSS -->
-    <link rel="stylesheet" type="text/css" href="/css/style.css">
+    <link rel="stylesheet" type="text/css" href="/css/style1.css">
 
     <!-- Responsive CSS -->
     <link rel="stylesheet" type="text/css" href="/css/responsive.css">
@@ -144,7 +144,7 @@
                                 </div>
 
                                 <div class="user-menu">
-                                    <a th:href="@{/user/profile}">👤 Hồ sơ của tôi</a>
+                                    <a th:href="@{/user/profile/{username}(username=${#authentication.name})}">👤 Hồ sơ của tôi</a>
                                     <a href="/user/order">📦 Đơn hàng của tôi</a>
                                     <hr>
                                     <a href="/user/change-password">🔑 Đổi mật khẩu</a>
@@ -191,7 +191,7 @@
                         </div>
                         <h5 class="card-title mb-2" th:text="${book.title}">Tên sách</h5>
                         <p class="card-text mb-1 text-muted"
-                           th:text="'by ' + ${book.author}">by Tác giả</p>
+                           th:text="${book.author}">Tác giả</p>
                         <p class="card-text text-danger font-weight-bold mt-auto"
                            th:text="${#numbers.formatInteger(book.price, 3, 'COMMA')} + ' ₫'">
                             0 ₫
@@ -226,15 +226,14 @@
                         </div>
                         <h5 class="card-title mb-2" th:text="${book.title}">Tên sách</h5>
                         <p class="card-text mb-1 text-muted"
-                           th:text="'by ' + ${book.author}">by Tác giả</p>
+                           th:text="${book.author}">Tác giả</p>
                         <p class="card-text text-danger font-weight-bold mt-auto"
-                           th:text="${#numbers.formatDecimal(book.price, 1, 2)} + ' VND'">
-                            0 VND
+                           th:text="${#numbers.formatInteger(book.price, 3, 'COMMA')} + ' ₫'">
+                            0 ₫
                         </p>
                     </div>
                 </a>
             </div>
-
             <div class="book-empty" th:if="${#lists.isEmpty(bestSellingBooks)}">
                 <p class="text-muted text-center">
                     Chưa có sách bán chạy nào trong danh mục này.
@@ -260,10 +259,10 @@
                         </div>
                         <h5 class="card-title mb-2" th:text="${book.title}">Tên sách</h5>
                         <p class="card-text mb-1 text-muted"
-                           th:text="'by ' + ${book.author}">Tác giả</p>
+                           th:text="${book.author}">Tác giả</p>
                         <p class="card-text text-danger font-weight-bold mt-auto"
-                           th:text="${#numbers.formatDecimal(book.price, 1, 2)} + ' VND'">
-                            0 VND
+                           th:text="${#numbers.formatInteger(book.price, 3, 'COMMA')} + ' ₫'">
+                            0 ₫
                         </p>
                     </div>
                 </a>
