@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="vi" xmlns:th="http://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -200,7 +200,7 @@
 
                     <!-- PRODUCT -->
                     <td class="product-cell">
-                        <img th:src="@{'/images/' + ${item.image}}" class="product-img">
+                        <img th:src="@{'/images/books/' + ${item.image}}" class="product-img">
                         <div class="info">
                             <h3 th:text="${item.bookName}"></h3>
                             <p th:text="'Mã SP: ' + ${item.bookId}"></p>

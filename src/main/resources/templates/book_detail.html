@@ -8,14 +8,10 @@
   <title>Đăng nhập</title>
 
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap" rel="stylesheet">
-
+  <link rel="stylesheet" type="text/css" href="/css/style.css">
   <link rel="shortcut icon" type="image/png" href="/images/logo.png" />
   <link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css">
-  <link rel="stylesheet" type="text/css" href="/css/style.css">
-  <link rel="stylesheet" type="text/css" href="/css/responsive.css">
-
-  <!-- Login form riêng -->
-  <link rel="stylesheet" href="/css/login.css">
+<!--  <link rel="stylesheet" type="text/css" href="/css/responsive.css">-->
 </head>
 
 <body>
@@ -141,15 +137,18 @@
 
   <div class="book-detail container my-5">
     <div class="row">
+      <!-- Cột ảnh sách -->
       <div class="col-md-4 text-center">
         <img th:src="@{'/images/books/' + ${book.picture}}"
              th:alt="${book.title}"
              style="width: 250px; height: 360px; object-fit: cover;">
       </div>
 
+      <!-- Cột thông tin + hành động -->
       <div class="col-md-8">
         <h2 th:text="${book.title}">Tên sách</h2>
         <p class="text-muted" th:text="'by ' + ${book.author}">by Tác giả</p>
+
         <p class="h4 text-danger"
            th:text="${#numbers.formatDecimal(book.price,1,2)} + ' VND'">
           0 VND
@@ -171,17 +170,24 @@
           <button type="submit" class="btn btn-warning mt-3 ml-2">Mua ngay</button>
         </form>
 
+        <!-- Nút quay lại dùng history -->
+        <button type="button" class="btn btn-outline-secondary mt-3 ml-2" onclick="history.back()">
+          Quay lại
+        </button>
 
         <!-- ===== KHU ĐÁNH GIÁ SÁCH ===== -->
         <hr class="my-4">
 
+        <!-- Thông báo sau khi gửi review -->
+        <div th:if="${message}" class="alert alert-success" th:text="${message}"></div>
+
         <!-- Tóm tắt rating -->
-        <div class="rating-summary d-flex align-items-center mb-2">
+        <div class="rating-summary d-flex align-items-center mb-3">
           <div class="mr-3">
             <strong th:text="${#numbers.formatDecimal(avgRating,1,1)} + ' / 5'">0 / 5</strong>
           </div>
 
-          <!-- Hiển thị icon sao theo avgRatingRounded -->
+          <!-- Sao trung bình -->
           <div class="stars mr-3">
             <span th:each="i : ${#numbers.sequence(1,5)}"
                   th:text="${i <= avgRatingRounded} ? '★' : '☆'"
@@ -197,18 +203,74 @@
           </div>
         </div>
 
-        <!-- Nút mở log đánh giá -->
-        <button id="toggleReviewLog" class="btn btn-outline-primary btn-sm mt-2">
-          Xem log đánh giá
-        </button>
+        <!-- Thanh progress đơn giản -->
+        <div class="progress mb-3" style="height: 6px; max-width: 300px;">
+          <div class="progress-bar bg-warning"
+               role="progressbar"
+               th:style="'width:' + (${avgRating} / 5.0 * 100) + '%;'">
+          </div>
+        </div>
 
-        <!-- Khu LOG ĐÁNH GIÁ (ẩn/hiện) -->
-        <div id="reviewLog" class="mt-3" style="display: none;">
-          <h5 class="mb-3">Log đánh giá</h5>
+      </div> <!-- end col-md-8 -->
+    </div> <!-- end row -->
+
+    <!-- Hàng mới: Form đánh giá + Log đánh giá -->
+    <div class="row mt-4">
+      <!-- Form đánh giá -->
+      <div class="col-md-6">
+        <h4>Đánh giá sách này</h4>
+
+        <!-- Nếu chưa đăng nhập -->
+        <div sec:authorize="isAnonymous()" class="alert alert-info">
+          Vui lòng <a th:href="@{/login}">đăng nhập</a> để đánh giá cuốn sách này.
+        </div>
+
+        <!-- Nếu đã đăng nhập -->
+        <form sec:authorize="isAuthenticated()"
+              th:action="@{'/home/books/' + ${book.bookId} + '/review'}"
+              method="post"
+              class="card card-body mt-2">
+
+          <div class="form-group">
+            <label for="rating">Số sao (0–5)</label>
+            <select id="rating" name="rating" class="form-control" required>
+              <option value="0">0 ⭐</option>
+              <option value="1">1 ⭐</option>
+              <option value="2">2 ⭐</option>
+              <option value="3">3 ⭐</option>
+              <option value="4">4 ⭐</option>
+              <option value="5">5 ⭐</option>
+            </select>
+          </div>
+
+          <div class="form-group mt-3">
+            <label for="comment">Nhận xét</label>
+            <textarea id="comment" name="comment" rows="4" class="form-control"
+                      placeholder="Viết cảm nhận của bạn về cuốn sách này..."></textarea>
+          </div>
+
+          <div class="mt-3 d-flex justify-content-end">
+            <button type="submit" class="btn btn-primary">
+              Gửi đánh giá
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Log đánh giá -->
+      <div class="col-md-6">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <h4 class="mb-0">Nhận xét từ độc giả</h4>
+          <button id="toggleReviewLog" class="btn btn-outline-primary btn-sm">
+            Xem/Ẩn log đánh giá
+          </button>
+        </div>
+
+        <div id="reviewLog" class="mt-2" style="display: none;">
 
           <!-- Nếu không có review -->
           <p class="text-muted" th:if="${reviewCount == 0}">
-            Chưa có đánh giá nào cho cuốn sách này.
+            Chưa có đánh giá nào cho cuốn sách này. Hãy là người đầu tiên!
           </p>
 
           <!-- Danh sách review -->
@@ -238,13 +300,13 @@
                 Khách hàng:
                 <span th:text="${r.customer.fullName}">Tên khách</span>
               </small>
-
             </div>
           </div>
-        </div>
 
-      </div> <!-- end col-md-8 -->
-    </div> <!-- end row -->
+        </div>
+      </div>
+    </div> <!-- end row form + log -->
+
   </div> <!-- end book-detail -->
 
 </main>
@@ -261,7 +323,7 @@
           btn.textContent = 'Ẩn log đánh giá';
         } else {
           log.style.display = 'none';
-          btn.textContent = 'Xem log đánh giá';
+          btn.textContent = 'Xem/Ẩn log đánh giá';
         }
       });
     }

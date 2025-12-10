@@ -219,6 +219,14 @@ body {
     }
 }
 
+#reviewLog {
+    margin-bottom: 80px;    /* đẩy riêng log đánh giá lên khỏi footer */
+}
+
+.book-detail {
+    padding-bottom: 300px;   /* hoặc 200px nếu muốn dư rộng */
+}
+
 /* Footer */
 /* ===== FOOTER ===== */
 /* Footer */
@@ -311,17 +319,19 @@ body {
     opacity: 0.8;
 }
 
-/* Đẩy footer xuống dưới nếu content không đủ dài */
-body, html {
-    height: 100%;
+/* Đẩy footer xuống dưới nếu content không đủ dài, nhưng không phá layout */
+html, body {
     margin: 0;
-    display: flex;
-    flex-direction: column;
+    padding: 0;
+    min-height: 100%;
 }
 
+/* Nếu muốn footer không “dính” màn hình, chỉ cần main là block bình thường */
 main {
-    flex: 1;
+    display: block;
 }
+
+
 
 /* Thông báo lỗi */
 .login-box .alert {
@@ -593,21 +603,4 @@ main {
     border: none;
     color: white;
 }
-
-/* Mobile Responsive */
-@media(max-width: 768px) {
-    .profile-box {
-        padding: 25px 28px;
-    }
-
-    .form-grid {
-        grid-template-columns: 1fr; /* 1 cột */
-        gap: 22px;
-    }
-
-    .button-group {
-        flex-direction: column;
-    }
-}
-
 

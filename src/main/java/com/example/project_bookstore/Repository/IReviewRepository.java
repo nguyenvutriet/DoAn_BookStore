@@ -15,12 +15,16 @@ public interface IReviewRepository extends JpaRepository<Review, String> {
     // Lấy tất cả review của 1 cuốn sách
     List<Review> findByBook_BookId(String bookId);
 
+    // Lấy các review của 1 khách hàng
+    List<Review> findByCustomer_CustomerId(String customerId);
+
     // Đếm số review của 1 cuốn sách
     long countByBook_BookId(String bookId);
 
     // Tính điểm trung bình rating cho 1 cuốn sách
     @Query("SELECT COALESCE(AVG(r.rating), 0) FROM Review r WHERE r.book.bookId = :bookId")
     Double findAverageRatingByBookId(@Param("bookId") String bookId);
+
 
 
 }
