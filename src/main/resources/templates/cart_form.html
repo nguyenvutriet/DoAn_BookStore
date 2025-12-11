@@ -265,7 +265,7 @@
                     <span id="total">0 ₫</span>
                 </div>
 
-                <button class="checkout-btn">Mua hàng</button>
+                <button id="buyBtn" class="checkout-btn">Mua hàng</button>
 
                 <a href="/home" class="continue-shopping">← Tiếp tục mua sắm</a>
 
@@ -461,6 +461,36 @@
 
         // Chạy khi load trang
         recalcSummary();
+    });
+    document.getElementById("buyBtn").addEventListener("click", function () {
+
+        let items = [];
+
+        document.querySelectorAll(".cart-row").forEach(row => {
+            let cb = row.querySelector(".check-item");
+            if (cb.checked) {
+                items.push({
+                    cartId: row.querySelector(".qty-box").dataset.cart,
+                    bookId: row.querySelector(".qty-box").dataset.book,
+                    quantity: row.querySelector(".qty-input").value
+                });
+            }
+        });
+
+        if (items.length === 0) {
+            alert("Vui lòng chọn ít nhất 1 sản phẩm");
+            return;
+        }
+
+        // Gửi danh sách qua POST để chuyển sang form thanh toán
+        fetch("/checkout", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(items)
+        })
+            .then(res => window.location.href = "/checkout")
+            .catch(err => console.error(err));
+
     });
 </script>
 

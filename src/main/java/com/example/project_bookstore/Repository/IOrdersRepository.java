@@ -21,6 +21,8 @@ public interface IOrdersRepository extends JpaRepository<Orders, String> {
     @Transactional
     @Query("UPDATE Orders o SET o.status = :sta WHERE o.orderId = :id")
     void updateStatus(@Param("id") String orderId, @Param("sta") String status);
+    @Query(value = "SELECT orderId FROM Orders ORDER BY orderId DESC LIMIT 1", nativeQuery = true)
+    String findLastOrderId();
 
 }
 
