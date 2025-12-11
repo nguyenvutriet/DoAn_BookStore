@@ -54,4 +54,25 @@ public class BookDetailController {
         // Redirect lại đúng trang chi tiết sách (không có bước /rating, back là ra ngoài luôn)
         return "redirect:/home/books/" + bookId;
     }
+    @GetMapping("/home/books/{id}/review")
+    public String reviewBook(@PathVariable("id") String bookId,
+                               RedirectAttributes redirectAttributes) {
+
+        // Lấy user đang đăng nhập
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+
+        Users user = usersService.getUserByUserName(username);
+        if (user == null) {
+            throw new RuntimeException("Không tìm thấy user: " + username);
+        }
+
+        Customers customer = user.getCustomer();
+        if (customer == null) {
+            throw new RuntimeException("User này chưa gắn Customers, không thể đánh giá.");
+        }
+
+        // Redirect lại đúng trang chi tiết sách (không có bước /rating, back là ra ngoài luôn)
+        return "redirect:/home/books/" + bookId;
+    }
 }

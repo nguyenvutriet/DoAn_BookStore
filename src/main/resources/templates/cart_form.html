@@ -202,7 +202,8 @@
                     <td class="product-cell">
                         <img th:src="@{'/images/books/' + ${item.image}}" class="product-img">
                         <div class="info">
-                            <h3 th:text="${item.bookName}"></h3>
+                            <a th:href="@{/home/books/{id}/review(id=${item.bookId})}">
+                                <h3 th:text="${item.bookName}"></h3> </a>
                             <p th:text="'Mã SP: ' + ${item.bookId}"></p>
                         </div>
                     </td>

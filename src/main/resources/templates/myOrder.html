@@ -236,6 +236,10 @@
                             <button type="submit" class="btn-received">Đánh giá</button>
                         </form>
                     </td>
+                    <td th:if="${order.getStatus()=='Cancelled'}">
+
+                    </td>
+
                 </tr>
                 </tbody>
             </table>
