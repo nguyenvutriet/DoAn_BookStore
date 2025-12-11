@@ -25,5 +25,20 @@ public class OrdersService {
     public Orders getOrderById(String orderId){
         return repo.findById(orderId).orElse(null);
     }
+    public void markOrderPaid(String orderId) {
+        Orders order = repo.findById(orderId).orElse(null);
+        if (order != null) {
+            order.setStatus("Pending");
+            repo.save(order);
+        }
+    }
+
+    public void markOrderUnPaid(String orderId) {
+        Orders order = repo.findById(orderId).orElse(null);
+        if (order != null) {
+            order.setStatus("Cancelled");
+            repo.save(order);
+        }
+    }
 
 }

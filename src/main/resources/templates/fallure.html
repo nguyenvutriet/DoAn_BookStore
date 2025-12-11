@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="keywords" content="books, book store, online shop, best books">
+    <meta name="description" content="Welcome to our online book store, where you can find a wide range of books for all ages and interests.">
+    <title>Đặt hàng thất bại</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <!-- Favicon -->
+    <link rel="shortcut icon" type="image/png" href="/images/logo.png" />
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css">
+
+    <!-- Owl Carousel CSS -->
+    <link rel="stylesheet" type="text/css" href="/css/owl.carousel.min.css">
+
+    <!-- Magnific Popup CSS -->
+    <link rel="stylesheet" type="text/css" href="/css/magnific-popup.css">
+
+    <!-- IcoMoon CSS -->
+    <link rel="stylesheet" type="text/css" href="/css/icomoon.css">
+
+    <!-- IcoFont CSS -->
+    <link rel="stylesheet" type="text/css" href="/css/icofont.min.css">
+
+    <!-- Animate CSS -->
+    <link rel="stylesheet" type="text/css" href="/css/animate.css">
+
+    <!-- Main CSS -->
+    <link rel="stylesheet" type="text/css" href="/css/sucess.css">
+
+    <!-- Responsive CSS -->
+    <link rel="stylesheet" type="text/css" href="/css/responsive.css">
+</head>
+
+<body>
+<!--Start Preloader-->
+<div class="preloader">
+    <div class="d-table">
+        <div class="d-table-cell align-middle">
+            <div class="spinner">
+                <div class="double-bounce1"></div>
+                <div class="double-bounce2"></div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--End Preloader-->
+
+<header id="header">
+    <div class="container">
+        <nav class="navbar navbar-expand-lg">
+            <div class="navbar-container">
+                <!-- Logo -->
+                <a class="logo" href="/home"><img src="/images/logo.png" alt="logo"></a>
+
+                <!-- Menu -->
+                <div class="navbar-menu">
+                    <ul class="navbar-nav">
+                        <li class="nav-item"><a class="nav-link" href="/category?category=kinhdoanh">Kinh doanh</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#">Sức khỏe</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#">Marketing</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#">Lập trình</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#">Truyện tranh</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#">Công nghệ</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#">Đời sống</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#">Lịch sử</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#">Giáo dục</a></li>
+                    </ul>
+                </div>
+
+                <!-- Search Bar -->
+                <div class="search-bar">
+                    <input type="text" placeholder="Tìm kiếm sản phẩm..." class="form-control">
+                    <button type="submit" class="btn btn-primary">Tìm</button>
+                </div>
+
+                <!-- User Options (Giỏ hàng, Đăng nhập, Đăng ký) -->
+                <div class="user-options">
+                    <ul class="navbar-nav">
+
+                        <li class="nav-item">
+                            <a class="nav-link" href="/gio_hang">🛒</a>
+                        </li>
+                        <!-- Nếu chưa đăng nhập -->
+                        <li class="nav-item" sec:authorize="isAnonymous()">
+                            <a class="nav-link" th:href="@{/login}">Đăng nhập</a>
+                        </li>
+                        <li class="nav-item" sec:authorize="isAnonymous()">
+                            <a class="nav-link" th:href="@{/register}">Đăng ký</a>
+                        </li>
+
+                        <!-- Nút Logout dạng POST (chuẩn Security) -->
+                        <li class="nav-item" sec:authorize="isAuthenticated()">
+                            <span>Xin chào <b sec:authentication="principal.username"></b></span>
+                            <form action="#" th:action="@{/logout}" method="post">
+                                <button class="btn btn-outline-primary btn-sm ml-2">
+                                    Đăng xuất
+                                </button>
+                            </form>
+                        </li>
+
+                    </ul>
+                </div>
+
+
+            </div>
+        </nav>
+    </div>
+</header>
+
+<!-- End Header -->
+
+<!-- Start Main Content -->
+<main id="main-content">
+
+    <div class="success-box">
+
+        <h1>Đặt hàng thất bại!</h1>
+        <p>Cảm ơn bạn đã lựa chọn mua hàng tại <strong>UTE BookStore</strong>.</p>
+
+        <!-- Thông tin đơn hàng -->
+        <div class="order-info">
+            <h2>Mã đơn hàng: <span th:text="${order.orderId}"></span></h2>
+            <p>Ngày đặt: <span th:text="${#dates.format(order.orderDate, 'dd/MM/yyyy HH:mm')}"></span></p>
+            <p>Phương thức thanh toán: <span th:text="${order.paymentMethod}"></span></p>
+            <p>Địa chỉ giao hàng: <span th:text="${order.address}"></span></p>
+            <p>Tổng tiền: <span class="price" th:text="${order.totalAmount}"></span> ₫</p>
+        </div>
+
+        <!-- Bảng sản phẩm -->
+        <table class="order-table">
+            <thead>
+            <tr>
+                <th>Sách</th>
+                <th>SL</th>
+                <th>Giá</th>
+                <th>Thành tiền</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="d : ${details}">
+                <td th:text="${d.book.title}"></td>
+                <td th:text="${d.quantity}"></td>
+                <td th:text="${d.unitPrice}"></td>
+                <td th:text="${d.unitPrice * d.quantity}"></td>
+            </tr>
+            </tbody>
+        </table>
+
+        <a href="/home" class="back-btn">Quay lại trang chủ</a>
+
+    </div>
+</main>
+
+<footer id="footer">
+    <div class="container">
+        <div class="footer-content">
+            <!-- Column 1 -->
+            <div class="footer-column footer-about">
+                <h4>UTE BookStore</h4>
+                <p>Chào mừng bạn đến với UTE BookStore, cửa hàng sách trực tuyến uy tín, nơi bạn có thể khám phá bộ sưu tập sách phong phú dành cho mọi đối tượng đọc giả. Từ các loại sách phổ biên đến các tác phẩm kinh điển, chúng tôi luôn có những lựa chọn tuyệt vời cho bạn. Khám phá ngay bộ sưu tập của chúng tôi và nếu cần trợ giúp, chatbox của chúng tôi luôn sẵn sàng hỗ trợ bạn!</p>
+            </div>
+            <!-- Column 2 -->
+            <div class="footer-column">
+                <h4>Thông tin và chính sách</h4>
+                <ul>
+                    <li><a href="#">Home</a></li>
+                    <li><a href="#">Books</a></li>
+                    <li><a href="#">About</a></li>
+                    <li><a href="#">Contact</a></li>
+                </ul>
+            </div>
+            <!-- Column 3 -->
+            <div class="footer-column">
+                <h4>Liên hệ</h4>
+                <div class="contact-info">
+                    <i class="fas fa-envelope"></i>
+                    <span>support@example.com</span>
+                </div>
+                <div class="contact-info">
+                    <i class="fas fa-phone"></i>
+                    <span>+1234567890</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <p>&copy; 2025 UTE BookStore. All rights reserved.</p>
+    </div>
+</footer>
+
+
+
+</body>
+
