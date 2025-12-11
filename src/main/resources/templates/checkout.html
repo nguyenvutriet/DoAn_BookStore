@@ -195,8 +195,101 @@
                     </div>
 
                     <div style="flex:1">
-                        <label>Địa chỉ giao hàng</label>
-                        <input type="text" name="address" required>
+                        <!--                        <label for="addressInput" style="font-weight:600; margin-bottom:5px;">-->
+                        <!--                            Địa chỉ giao hàng-->
+                        <!--                        </label>-->
+
+                        <!--                        &lt;!&ndash; Ô nhập địa chỉ &ndash;&gt;-->
+                        <!--                        <input-->
+                        <!--                                type="text"-->
+                        <!--                                id="addressInput"-->
+                        <!--                                class="form-control"-->
+                        <!--                                placeholder="Nhập địa chỉ..."-->
+                        <!--                                autocomplete="off"-->
+                        <!--                                required-->
+                        <!--                                style="margin-bottom: 8px;"-->
+                        <!--                        >-->
+
+                        <!--                        &lt;!&ndash; Địa chỉ chuẩn hóa &ndash;&gt;-->
+                        <!--                        <p id="formattedAddress"-->
+                        <!--                           style="font-weight:bold; color:#222; margin:4px 0;">-->
+                        <!--                        </p>-->
+
+                        <!--                        &lt;!&ndash; Khoảng cách &ndash;&gt;-->
+                        <!--                        <p id="distanceLabel"-->
+                        <!--                           style="font-weight:bold; color:#444; margin:4px 0;">-->
+                        <!--                        </p>-->
+
+                        <!--                        &lt;!&ndash; Input gửi về backend &ndash;&gt;-->
+                        <!--                        <input type="hidden" id="finalAddress" name="address">-->
+
+                        <!--                        &lt;!&ndash; Nút xem trên Google Maps &ndash;&gt;-->
+                        <!--                        <button-->
+                        <!--                                type="button"-->
+                        <!--                                id="viewOnMap"-->
+                        <!--                                class="btn btn-outline-primary btn-sm"-->
+                        <!--                                style="margin-top:8px;">-->
+                        <!--                            Xem trên bản đồ-->
+                        <!--                        </button>-->
+                        <!--                        <label for="addressInput" style="font-weight:600; margin-bottom:5px;">-->
+                        <!--                            Địa chỉ giao hàng-->
+                        <!--                        </label>-->
+
+                        <!--                        <input-->
+                        <!--                                type="text"-->
+                        <!--                                id="addressInput"-->
+                        <!--                                class="form-control"-->
+                        <!--                                placeholder="Nhập địa chỉ..."-->
+                        <!--                                autocomplete="off"-->
+                        <!--                                required-->
+                        <!--                                style="margin-bottom:8px;"-->
+                        <!--                        >-->
+
+                        <!--                        &lt;!&ndash; Hiển thị địa chỉ chuẩn &ndash;&gt;-->
+                        <!--                        <p id="formattedAddress" style="font-weight:bold; color:#222; margin:4px 0;"></p>-->
+
+                        <!--                        &lt;!&ndash; Khoảng cách &ndash;&gt;-->
+                        <!--                        <p id="distanceLabel" style="font-weight:bold; color:#444; margin:4px 0;"></p>-->
+
+                        <!--                        &lt;!&ndash; Gửi về backend &ndash;&gt;-->
+                        <!--                        <input type="hidden" id="finalAddress" name="address">-->
+
+                        <!--                        <button type="button"-->
+                        <!--                                id="viewOnMap"-->
+                        <!--                                class="btn btn-outline-primary btn-sm"-->
+                        <!--                                style="margin-top:8px;">-->
+                        <!--                            Xem trên bản đồ-->
+                        <!--                        </button>-->
+                        <label for="addressInput" style="font-weight:600;">Địa chỉ giao hàng</label>
+
+                        <input type="text"
+                               id="addressInput"
+                               class="form-control"
+                               placeholder="Nhập địa chỉ..."
+                               autocomplete="off"
+                               style="margin-bottom:8px;">
+
+                        <p id="formattedAddress" style="font-weight:600; margin:4px 0;"></p>
+                        <p id="distanceLabel" style="font-weight:600; margin:4px 0;"></p>
+                        <p id="addressError"
+                           style="color:#d9534f; font-weight:600; margin-top:6px; display:none;">
+                            Vui lòng nhập địa chỉ hợp lệ để tiếp tục đặt hàng.
+                        </p>
+
+                        <input type="hidden" id="finalAddress" name="address">
+
+                        <button type="button"
+                                id="viewOnMap"
+                                class="btn btn-outline-primary btn-sm"
+                                style="margin-top:8px;">
+                            Xem trên bản đồ
+                        </button>
+
+
+
+
+
+
                     </div>
                 </div>
 
@@ -265,16 +358,24 @@
                         <span>Tạm tính:</span>
                         <span id="subtotal" th:text="${subtotal}"></span>
                     </div>
+                    <div class="summary-row">
+                        <span>Phí ship:</span>
+                        <span id="shippingFee">0</span>
+                    </div>
+
 
                     <div class="summary-total">
                         <span>Tổng cộng:</span>
-                        <span id="total" th:text="${total}"></span>
+                        <span id="total" th:text="${total}" data-original="${total}"></span>
                     </div>
+                    <input type="hidden" id="shippingFeeInput" name="shippingFee" value="0">
+                    <input type="hidden" id="totalInput" name="totalAmount" value="">
 
                     <!-- 🔥 BUTTON PHẢI NẰM TRONG FORM -->
-                    <button type="submit" class="checkout-btn">
+                    <button type="submit" class="checkout-btn" id="orderBtn" disabled>
                         Xác nhận đặt hàng
                     </button>
+
                 </div>
             </div>
 
@@ -346,30 +447,264 @@
         <p>&copy; 2025 UTE BookStore. All rights reserved.</p>
     </div>
 </footer>
+<!-- GOOGLE MAPS AUTOCOMPLETE -->
+<!--<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDPLmpCj5P8nboeG0EUAloOpei34eGRBME&libraries=places"></script>-->
+<!--<script src="/js/google-address.js"></script>-->
+<!-- Mapbox SDK -->
+<!--<script src="https://api.mapbox.com/mapbox-gl-js/v3.1.0/mapbox-gl.js"></script>-->
+<!--<link href="https://api.mapbox.com/mapbox-gl-js/v3.1.0/mapbox-gl.css" rel="stylesheet" />-->
+<!--<script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v5.1.2/mapbox-gl-geocoder.min.js"></script>-->
+<!--<link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v5.1.2/mapbox-gl-geocoder.css" />-->
 <script>
+    //
     document.addEventListener("DOMContentLoaded", function () {
 
         const form = document.getElementById("checkoutForm");
-
         form.addEventListener("submit", function (e) {
 
-            // Bạn có thể thêm validate form nếu muốn
-            // Ví dụ:
-            const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked');
-            if (!paymentMethod) {
-                alert("Vui lòng chọn phương thức thanh toán!");
+            const finalAddressEl = document.getElementById("finalAddress");
+            const errorEl = document.getElementById("addressError");
+            const orderBtn = document.getElementById("orderBtn");
+
+            if (!finalAddressEl.value.trim()) {
                 e.preventDefault();
+                errorEl.style.display = "block";
+                orderBtn.disabled = true;
                 return;
             }
 
-            // ⛔ Không preventDefault với VNPAY
-            // ⛔ Không gọi fetch
-            // ⛔ Không thao tác gì liên quan tới backend
+            errorEl.style.display = "none";
 
-            // Form submit → tự chạy vào controller
+            errorEl.style.display = "none";
+        });
+
+        const input = document.getElementById("addressInput");
+
+        const formattedEl = document.getElementById("formattedAddress");
+        const distanceEl = document.getElementById("distanceLabel");
+        const finalAddressEl = document.getElementById("finalAddress");
+
+        const STORE = "1 Võ Văn Ngân, Thủ Đức, Hồ Chí Minh";
+        let storeLocation = null;
+
+        async function getStoreLocation() {
+            const res = await fetch(
+                `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(STORE)}&limit=1`,
+                { headers: { "User-Agent": "BookStore/1.0" } }
+            );
+            const data = await res.json();
+
+            if (!data.length) return;
+            storeLocation = {
+                lat: parseFloat(data[0].lat),
+                lon: parseFloat(data[0].lon)
+            };
+        }
+        getStoreLocation();
+
+        async function searchAddress(keyword) {
+            const url =
+                `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(keyword)}&addressdetails=1&limit=5&countrycodes=vn`;
+
+            try {
+                const res = await fetch(url, {
+                    headers: { "User-Agent": "BookStore/1.0" }
+                });
+                return await res.json();
+            } catch {
+                return [];
+            }
+        }
+
+        function getDistanceKm(lat1, lon1, lat2, lon2) {
+            const R = 6371;
+
+            const dLat = (lat2 - lat1) * Math.PI / 180;
+            const dLon = (lon2 - lon1) * Math.PI / 180;
+
+            const a =
+                Math.sin(dLat / 2) ** 2 +
+                Math.cos(lat1 * Math.PI / 180) *
+                Math.cos(lat2 * Math.PI / 180) *
+                Math.sin(dLon / 2) ** 2;
+
+            return 2 * R * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        }
+
+        input.addEventListener("input", debounce(async function () {
+
+            const keyword = input.value.trim();
+            if (keyword.length < 3) return;
+
+            const results = await searchAddress(keyword);
+
+            if (!results.length) {
+                formattedEl.innerText = "Không tìm thấy địa chỉ";
+                finalAddressEl.value = "";
+                distanceEl.innerText = "";
+                document.getElementById("orderBtn").disabled = true;
+
+                document.getElementById("addressError").style.display = "block";
+                return;
+            }
+
+            document.getElementById("addressError").style.display = "none";
+            document.getElementById("orderBtn").disabled = false;
+
+
+            const best = results[0];
+            formattedEl.innerText = best.display_name;
+            finalAddressEl.value = best.display_name;
+            document.getElementById("orderBtn").disabled = false;
+
+            if (storeLocation) {
+                const dist = getDistanceKm(
+                    parseFloat(best.lat),
+                    parseFloat(best.lon),
+                    storeLocation.lat,
+                    storeLocation.lon
+                );
+
+                distanceEl.innerText = `Khoảng cách tới cửa hàng: ${dist.toFixed(2)} km`;
+
+                // Lấy subtotal đúng chuẩn
+                const subtotalStr = document.getElementById("subtotal").innerText;
+                const subtotal = parseFloat(subtotalStr.replace(/,/g, "")); // ✔ giữ nguyên .00
+
+                let fee = 0;
+                if (dist <= 3) fee = 0;
+                else if (dist <= 10) fee = 15000;
+                else fee = 30000;
+
+                document.getElementById("shippingFee").innerText = fee.toLocaleString();
+                document.getElementById("shippingFeeInput").value = fee;
+
+// Tổng mới
+                const newTotal = subtotal + fee;
+                document.getElementById("total").innerText = newTotal.toLocaleString();
+                document.getElementById("totalInput").value = newTotal;
+
+            }
+
+        }, 600));
+
+        function debounce(fn, delay) {
+            let timer;
+            return (...args) => {
+                clearTimeout(timer);
+                timer = setTimeout(() => fn.apply(this, args), delay);
+            };
+        }
+
+        document.getElementById("viewOnMap").addEventListener("click", function () {
+            const addr = finalAddressEl.value;
+            if (!addr) {
+                alert("Chưa có địa chỉ hợp lệ!");
+                return;
+            }
+            window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(addr)}`, "_blank");
         });
 
     });
+
+    // NÚT XEM TRÊN GOOGLE MAPS
+    document.getElementById("viewOnMap").addEventListener("click", function () {
+        const addr = document.getElementById("finalAddress").value;
+
+        if (!addr) {
+            alert("Chưa có địa chỉ hợp lệ để mở bản đồ!");
+            return;
+        }
+
+        const url = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(addr)}`;
+        window.open(url, "_blank");
+    });
+
+
+
+
+
+    //     document.addEventListener("DOMContentLoaded", function () {
+    //
+    //         const STORE_ADDRESS = "1 Võ Văn Ngân, Thủ Đức, Hồ Chí Minh";
+    //         let storeCoord = null;
+    //
+    //         // ====== LẤY TỌA ĐỘ CỬA HÀNG ======
+    //         async function fetchStoreLocation() {
+    //             const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(STORE_ADDRESS)}&key=AIzaSyDPLmpCj5P8nboeG0EUAloOpei34eGRBME
+    // `;
+    //
+    //             const res = await fetch(url);
+    //             const data = await res.json();
+    //
+    //             if (data.status === "OK") {
+    //                 const loc = data.results[0].geometry.location;
+    //                 storeCoord = { lat: loc.lat, lon: loc.lng };
+    //                 console.log("Store Location:", storeCoord);
+    //             }
+    //         }
+    //
+    //         fetchStoreLocation();
+    //
+    //         // ====== GOOGLE AUTOCOMPLETE ======
+    //         const input = document.getElementById("addressInput");
+    //         const autocomplete = new google.maps.places.Autocomplete(input, {
+    //             componentRestrictions: { country: "vn" },
+    //             fields: ["formatted_address", "geometry"]
+    //         });
+    //
+    //         autocomplete.addListener("place_changed", function () {
+    //             const place = autocomplete.getPlace();
+    //
+    //             if (!place.geometry) {
+    //                 document.getElementById("formattedAddress").innerText = "Không tìm thấy địa chỉ.";
+    //                 return;
+    //             }
+    //
+    //             const fullAddress = place.formatted_address;
+    //             const lat = place.geometry.location.lat();
+    //             const lon = place.geometry.location.lng();
+    //
+    //             // Hiển thị địa chỉ chuẩn
+    //             document.getElementById("formattedAddress").innerText = fullAddress;
+    //             document.getElementById("finalAddress").value = fullAddress;
+    //
+    //             // Tính khoảng cách
+    //             if (storeCoord) {
+    //                 const distance = getDistanceKm(lat, lon, storeCoord.lat, storeCoord.lon);
+    //                 document.getElementById("distanceLabel").innerText =
+    //                     `Khoảng cách tới cửa hàng: ${distance.toFixed(2)} km`;
+    //             }
+    //         });
+    //
+    //         // ====== TÍNH KHOẢNG CÁCH THEO HÀM HAVERSINE ======
+    //         function getDistanceKm(lat1, lon1, lat2, lon2) {
+    //             const R = 6371;
+    //             const dLat = (lat2 - lat1) * Math.PI / 180;
+    //             const dLon = (lon2 - lon1) * Math.PI / 180;
+    //
+    //             const a = Math.sin(dLat / 2) ** 2 +
+    //                 Math.cos(lat1 * Math.PI / 180) *
+    //                 Math.cos(lat2 * Math.PI / 180) *
+    //                 Math.sin(dLon / 2) ** 2;
+    //
+    //             return 2 * R * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    //         }
+    //
+    //         // ====== NÚT XEM TRÊN GOOGLE MAPS ======
+    //         document.getElementById("viewOnMap").addEventListener("click", () => {
+    //             const addr = document.getElementById("finalAddress").value;
+    //
+    //             if (!addr) {
+    //                 alert("Chưa có địa chỉ hợp lệ!");
+    //                 return;
+    //             }
+    //
+    //             const url = `https://maps.google.com/?q=${encodeURIComponent(addr)}`;
+    //             window.open(url, "_blank");
+    //         });
+    //     });
+
 </script>
 
 
