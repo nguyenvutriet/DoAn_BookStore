@@ -74,4 +74,13 @@ public interface IBooksRepository extends JpaRepository<Books, String> {
            """)
     List<Books> findFavoriteBooksByCategory(@Param("categoryId") String categoryId,
                                             Pageable pageable);
+    //sách còn hàng
+    @Query("SELECT b FROM Books b WHERE b.category.categoryId = :categoryId AND b.quantity > 0")
+    List<Books> findInStockByCategory(String categoryId);
+
+    //sách hết hàng
+    @Query("SELECT b FROM Books b WHERE b.category.categoryId = :categoryId AND b.quantity = 0")
+    List<Books> findOutOfStockByCategory(String categoryId);
+
+    boolean existsByBookId(String bookId);
 }

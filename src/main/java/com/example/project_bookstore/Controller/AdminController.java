@@ -1,11 +1,13 @@
 package com.example.project_bookstore.Controller;
 
 
-import com.example.project_bookstore.Entity.Books;
-import com.example.project_bookstore.Entity.Category;
-import com.example.project_bookstore.Entity.Users;
+import com.example.project_bookstore.Entity.*;
+import com.example.project_bookstore.Repository.IBooksRepository;
+import com.example.project_bookstore.Repository.ICategoryRepository;
+import com.example.project_bookstore.Repository.ICustomersRepository;
 import com.example.project_bookstore.Repository.IUsersRepository;
 import com.example.project_bookstore.Service.AdminService;
+import com.example.project_bookstore.Service.BooksService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,6 +18,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,6 +34,18 @@ public class AdminController {
     @Autowired
     private IUsersRepository usersRepository;
 
+    @Autowired
+    private IBooksRepository booksRepository;
+
+    @Autowired
+    private ICategoryRepository categoryRepository;
+
+    @Autowired
+    private ICustomersRepository customersRepository;
+
+    @Autowired
+    private BooksService bookService;
+
     // DASHBOARD
     @GetMapping("/dashboard")
     public String dashboard(Model model) {
@@ -40,6 +55,13 @@ public class AdminController {
         model.addAttribute("totalCustomers", adminService.getTotalCustomers());
         model.addAttribute("totalOrders", adminService.getTotalOrders());
         model.addAttribute("totalReviews", adminService.getTotalReviews());
+
+        // Biểu đồ doanh thu 6 tháng gần nhất
+        var monthly = adminService.getMonthlyRevenue("6M");
+        model.addAttribute("months", monthly.get("labels"));
+        model.addAttribute("monthlyRevenue", monthly.get("values"));
+
+        model.addAttribute("recentBooks", adminService.getRecentSoldBooks());
 
         return "admin-dashboard";
     }
@@ -56,12 +78,6 @@ public class AdminController {
         Users user = usersRepository.findById(userName).orElse(null);
         model.addAttribute("user", user);
         return "admin-user-detail";
-    }
-
-    @GetMapping("/users/delete/{userName}")
-    public String deleteUser(@PathVariable String userName) {
-        usersRepository.deleteById(userName);
-        return "redirect:/admin/users";
     }
 
     // CATEGORY
@@ -92,10 +108,28 @@ public class AdminController {
     }
 
     @PostMapping("/categories/save")
-    public String saveCategory(Category category) {
+    public String saveCategory(Category category, Model model) {
+
+        boolean idExists = adminService.existsCategoryId(category.getCategoryId());
+        boolean nameExists = adminService.existsCategoryName(category.getCategoryName());
+
+        if (idExists || nameExists) {
+            model.addAttribute("category", category);
+
+            if (idExists) {
+                model.addAttribute("errorMessage", "Category ID already exists!");
+            }
+            if (nameExists) {
+                model.addAttribute("errorMessage", "Category name already exists!");
+            }
+
+            return "admin-category-form";
+        }
+
         adminService.saveCategory(category);
         return "redirect:/admin/categories";
     }
+
 
     @GetMapping("/categories/delete/{id}")
     public String deleteCategory(@PathVariable String id, Model model) {
@@ -130,18 +164,42 @@ public class AdminController {
 
     @GetMapping("/categories/{id}")
     public String viewCategory(@PathVariable String id, Model model) {
+
+        // 1. Thông tin thể loại
         model.addAttribute("category", adminService.getCategory(id));
         model.addAttribute("totalBooks", adminService.getTotalBooksOfCategory(id));
         model.addAttribute("soldBooks", adminService.getSoldBooksOfCategory(id));
+
+        // 2. Sách còn hàng
+        model.addAttribute("inStockBooks", adminService.getInStockBooks(id));
+
+        // 3. Sách hết hàng
+        model.addAttribute("outOfStockBooks", adminService.getOutOfStockBooks(id));
+
         return "admin-category-detail";
     }
 
-    // ============================= BOOKS =============================
-    @GetMapping("/books")
-    public String listBooks(Model model) {
-        model.addAttribute("books", adminService.getAllBooks());
+
+    //BOOKS
+    @GetMapping("books")
+    public String booksByCategory(
+            @RequestParam(required = false) String categoryId,
+            Model model
+    ) {
+        List<Category> categories = adminService.getAllCategories();
+        model.addAttribute("categories", categories);
+
+        if (categoryId == null && !categories.isEmpty()) {
+            categoryId = categories.get(0).getCategoryId();
+        }
+
+        model.addAttribute("selectedCategory", categoryId);
+        model.addAttribute("inStockBooks", adminService.getInStockBooks(categoryId));
+        model.addAttribute("outOfStockBooks", adminService.getOutOfStockBooks(categoryId));
+
         return "admin-book-list";
     }
+
 
     @GetMapping("/books/{id}")
     public String viewBook(@PathVariable String id, Model model) {
@@ -158,29 +216,58 @@ public class AdminController {
 
     @PostMapping("/books/save")
     public String saveBook(@ModelAttribute Books book,
-                           @RequestParam("imageFile") MultipartFile file) {
+                           @RequestParam("imageFile") MultipartFile imageFile,
+                           Model model) {
 
+        // ========== 1. Kiểm tra mã sách trùng ==========
+        boolean isNew = booksRepository.findById(book.getBookId()).isEmpty();
+
+        if (isNew && booksRepository.existsByBookId(book.getBookId())) {
+            model.addAttribute("errorMessage", "❗ Mã sách đã tồn tại!");
+            model.addAttribute("book", book);
+            model.addAttribute("categories", categoryRepository.findAll());
+            return "admin-book-form";
+        }
+
+
+        // ========== 2. Kiểm tra số lượng tồn > 0 ==========
+        if (book.getQuantity() <= 0) {
+            model.addAttribute("errorMessage", "❗ Số lượng tồn phải lớn hơn 0!");
+            model.addAttribute("book", book);
+            model.addAttribute("categories", categoryRepository.findAll());
+            return "admin-book-form";
+        }
+
+        // ========== 3. Upload ảnh nếu có ==========
         try {
-            if (!file.isEmpty()) {
-                String fileName = file.getOriginalFilename();
-                Path uploadDir = Paths.get("src/main/resources/static/images/");
+            if (!imageFile.isEmpty()) {
 
-                if (!Files.exists(uploadDir)) {
-                    Files.createDirectories(uploadDir);
+                String fileName = imageFile.getOriginalFilename();
+
+                Path uploadPath = Paths.get("src/main/resources/static/images/books");
+
+                if (!Files.exists(uploadPath)) {
+                    Files.createDirectories(uploadPath);
                 }
 
-                Path path = uploadDir.resolve(fileName);
-                Files.write(path, file.getBytes());
+                Files.copy(
+                        imageFile.getInputStream(),
+                        uploadPath.resolve(fileName),
+                        StandardCopyOption.REPLACE_EXISTING
+                );
 
-                book.setPicture("/images/" + fileName);
+                book.setPicture(fileName);
             }
-        } catch (IOException e) {
+        }
+        catch (Exception e) {
             e.printStackTrace();
         }
-        adminService.saveBook(book);
+
+        // ========== 4. Lưu sách ==========
+        booksRepository.save(book);
+
         return "redirect:/admin/books";
     }
-
 
     @GetMapping("/books/delete/{id}")
     public String deleteBook(@PathVariable String id, Model model) {
@@ -206,21 +293,25 @@ public class AdminController {
     @GetMapping("/customers/{id}")
     public String viewCustomer(@PathVariable String id, Model model) {
 
-        model.addAttribute("customer", adminService.getCustomer(id));
+        Customers customer = adminService.getCustomer(id);
+        model.addAttribute("customer", customer);
+
+        model.addAttribute("orders", adminService.getOrdersByCustomer(id));
 
         return "admin-customer-detail";
     }
 
-    @GetMapping("/customers/delete/{id}")
-    public String deleteCustomer(@PathVariable String id) {
-        adminService.deleteCustomer(id);
-        return "redirect:/admin/customers";
-    }
-
     //ORDERS
     @GetMapping("/orders")
-    public String listOrders(Model model) {
-        model.addAttribute("orders", adminService.getAllOrders());
+    public String listOrders(
+            @RequestParam(defaultValue = "Pending") String status,
+            Model model
+    ) {
+        List<Orders> orders = adminService.getOrdersByStatus(status);
+
+        model.addAttribute("status", status);
+        model.addAttribute("orders", orders);
+
         return "admin-order-list";
     }
 
@@ -233,10 +324,17 @@ public class AdminController {
         return "admin-order-detail";
     }
 
-    @GetMapping("/orders/delete/{id}")
-    public String deleteOrder(@PathVariable String id) {
-        adminService.deleteOrder(id);
-        return "redirect:/admin/orders";
+    @GetMapping("/orders/confirm/{id}")
+    public String confirmOrder(@PathVariable String id) {
+
+        Orders order = adminService.getOrder(id);
+
+        if (order != null && order.getStatus().equals("Pending")) {
+            order.setStatus("Confirmed");
+            adminService.saveOrder(order);
+        }
+
+        return "redirect:/admin/orders?status=Pending";
     }
 
     //review
@@ -260,4 +358,24 @@ public class AdminController {
         return "redirect:/admin/reviews";
     }
 
+    //Doanh thu
+    @GetMapping("/revenue")
+    public String revenuePage(@RequestParam(defaultValue = "YEAR") String filter, Model model) {
+
+        model.addAttribute("filter", filter);
+
+        model.addAttribute("totalRevenue", adminService.getTotalRevenue());
+        model.addAttribute("totalOrders", adminService.getTotalDeliveredOrders());
+
+        var monthly = adminService.getMonthlyRevenue(filter);
+        model.addAttribute("months", monthly.get("labels"));
+        model.addAttribute("monthlyRevenue", monthly.get("values"));
+        model.addAttribute("growth", monthly.get("growth"));
+
+        var cat = adminService.getRevenueByCategory();
+        model.addAttribute("categoryLabels", cat.get("labels"));
+        model.addAttribute("categoryRevenue", cat.get("values"));
+
+        return "admin-revenue";
+    }
 }

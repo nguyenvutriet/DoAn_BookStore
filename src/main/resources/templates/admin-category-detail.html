@@ -8,27 +8,103 @@
 
 <header th:replace="admin-dashboard :: header"></header>
 
-<h1 class="dashboard-title">Category Detail</h1>
+<h1 class="dashboard-title">Chi tiết thể loại</h1>
 
-<div class="frame-box" style="width: 60%; margin:auto;">
+<!-- ===== PHẦN 1: THÔNG TIN THỂ LOẠI ===== -->
+<div class="detail-card" style="max-width: 700px; margin:auto;">
 
-  <p><strong>ID:</strong> <span th:text="${category.categoryId}"></span></p>
-  <p><strong>Name:</strong> <span th:text="${category.categoryName}"></span></p>
+  <h2 class="section-title">Thông tin thể loại</h2>
 
-  <p><strong>Total Books:</strong> <span th:text="${totalBooks}"></span></p>
-  <p><strong>Sold Books:</strong> <span th:text="${soldBooks}"></span></p>
+  <div class="detail-grid">
 
-  <p>
-    <a href="/admin/categories">Back</a> |
+    <div class="detail-item">
+      <label>ID Thể loại</label>
+      <input type="text" th:value="${category.categoryId}" disabled>
+    </div>
+
+    <div class="detail-item">
+      <label>Tên thể loại</label>
+      <input type="text" th:value="${category.categoryName}" disabled>
+    </div>
+
+    <div class="detail-item">
+      <label>Tổng số sách</label>
+      <input type="text" th:value="${totalBooks}" disabled>
+    </div>
+
+    <div class="detail-item">
+      <label>Số sách đã bán</label>
+      <input type="text" th:value="${soldBooks}" disabled>
+    </div>
+
+  </div>
+
+  <div class="action-buttons">
+    <a href="/admin/categories" class="btn-back">Quay lại</a>
+
     <a th:href="@{'/admin/categories/delete/' + ${category.categoryId}}"
-       style="color:red;"
-       onclick="return confirm('Delete this category?')">
-      Delete
+       class="btn-delete"
+       onclick="return confirm('Xóa thể loại này?')">
+      Xóa thể loại
     </a>
-  </p>
+  </div>
 </div>
 
-<footer th:replace="admin-dashboard :: footer"></footer>
+
+
+<!-- ===== PHẦN 2: SÁCH CÒN HÀNG ===== -->
+<div class="frame-box" style="width: 92%;">
+
+  <h3 class="frame-title">Sách còn hàng</h3>
+
+  <div th:if="${inStockBooks.size() == 0}" style="text-align:center; color:gray;">
+    Không có sách nào còn hàng.
+  </div>
+
+  <div class="card-container" th:if="${inStockBooks.size() > 0}">
+    <div class="book-card" th:each="b : ${inStockBooks}">
+      <!--      <img th:src="${b.picture}" alt="book" class="book-img">-->
+      <img class="book-img"
+           th:src="@{'/images/books/' + ${b.picture}}"
+           alt="Book Image">
+
+      <div class="book-info">
+        <h4 th:text="${b.title}"></h4>
+        <p>Số lượng: <strong th:text="${b.quantity}"></strong></p>
+        <a th:href="@{'/admin/books/' + ${b.bookId}}" class="btn-view">Xem</a>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+
+
+<!-- ===== PHẦN 3: SÁCH HẾT HÀNG ===== -->
+<div class="frame-box" style="width: 92%;">
+
+  <h3 class="frame-title">Sách hết hàng</h3>
+
+  <div th:if="${outOfStockBooks.size() == 0}" style="text-align:center; color:gray;">
+    Không có sách nào hết hàng.
+  </div>
+
+  <div class="card-container" th:if="${outOfStockBooks.size() > 0}">
+    <div class="book-card out-of-stock" th:each="b : ${outOfStockBooks}">
+      <img th:src="${b.picture}" alt="book" class="book-img">
+
+      <div class="book-info">
+        <h4 th:text="${b.title}"></h4>
+        <p style="color:red;">Hết hàng</p>
+        <a th:href="@{'/admin/books/' + ${b.bookId}}" class="btn-view">Xem</a>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+
+<footer class="admin-footer">© 2025 UTE BookStore Admin</footer>
 
 </body>
 </html>

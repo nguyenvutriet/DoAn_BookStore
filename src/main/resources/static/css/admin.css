@@ -199,3 +199,768 @@ body {
 .btn-submit:hover {
     background-color: #09533f;
 }
+
+
+
+
+
+/* ============================
+   STAT CARDS (modern dashboard)
+============================ */
+
+.stats-container {
+    width: 90%;
+    margin: 30px auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 25px;
+}
+
+.stat-card {
+    background: white;
+    padding: 25px 10px;
+    border-radius: 14px;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    transition: 0.25s ease;
+    cursor: pointer;
+}
+
+.stat-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 10px 24px rgba(0,0,0,0.15);
+}
+
+/* ICON STYLE */
+.stat-icon {
+    width: 50px;
+    height: 50px;
+    margin: 0 auto 10px;
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+
+/* GÁN ICON */
+.stat-icon.user { background-image: url('/images/admin/user.png'); }
+.stat-icon.book { background-image: url('/images/admin/book.png'); }
+.stat-icon.customer { background-image: url('/images/admin/customer.png'); }
+.stat-icon.order { background-image: url('/images/admin/order.png'); }
+.stat-icon.review { background-image: url('/images/admin/review.png'); }
+
+.stat-value {
+    font-size: 26px;
+    font-weight: 700;
+    color: #0B3D2E;
+}
+
+.stat-label {
+    font-size: 14px;
+    color: #555;
+    margin-top: 4px;
+}
+
+/* ============================
+   REVENUE BOX
+============================ */
+
+.revenue-box {
+    background: #fff;
+    width: 92%;
+    margin: 25px auto;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+}
+
+.revenue-title {
+    font-size: 22px;
+    color: #0B3D2E;
+    margin-bottom: 20px;
+    text-align: center;
+    font-weight: 700;
+}
+
+.revenue-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 25px;
+}
+
+.revenue-item {
+    background: #f8faf8;
+    border-left: 5px solid #388e3c;
+    padding: 15px 18px;
+    border-radius: 8px;
+    transition: 0.25s ease;
+}
+
+.revenue-item:hover {
+    background: #eef7ee;
+    transform: translateY(-4px);
+}
+
+.revenue-item .label {
+    color: #555;
+    font-size: 14px;
+}
+
+.revenue-item .value {
+    display: block;
+    font-size: 22px;
+    color: #0B3D2E;
+    font-weight: 700;
+    margin-top: 4px;
+}
+
+/* -----------------------------
+   REVENUE CARD (Doanh thu tháng)
+------------------------------ */
+
+.revenue-card-container {
+    display: flex;
+    justify-content: center;
+    margin: 25px 0 10px;
+}
+
+.revenue-card {
+    width: 260px;
+    background: white;
+    padding: 25px 20px;
+    text-align: center;
+    border-radius: 14px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    cursor: pointer;
+    text-decoration: none;
+    color: #0B3D2E;
+    transition: 0.25s ease;
+}
+
+.revenue-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 8px 22px rgba(0,0,0,0.18);
+    background: #e9f7ef;
+}
+
+/* Icon doanh thu */
+.revenue-icon {
+    width: 55px;
+    height: 55px;
+    margin: 0 auto 10px;
+    background-image: url('/images/revenue.png'); /* icon bạn đặt vào thư mục images */
+    background-size: cover;
+}
+
+/* Text */
+.revenue-value {
+    font-size: 30px;
+    font-weight: bold;
+    margin-bottom: 6px;
+}
+
+.revenue-label {
+    font-size: 16px;
+    opacity: 0.8;
+}
+
+/* ==== USERS PAGE ACTION BAR ==== */
+.actions-bar {
+    width: 92%;
+    margin: 0 auto 15px auto;
+    text-align: right;
+}
+
+.btn-create {
+    background-color: #0B3D2E;
+    color: white;
+    padding: 10px 18px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: 0.25s ease;
+}
+
+.btn-create:hover {
+    background-color: #09533f;
+    transform: translateY(-2px);
+}
+
+/* ==== TABLE STYLE ==== */
+.table-container {
+    padding: 0;
+}
+
+.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 15px;
+    overflow: hidden;
+    border-radius: 12px;
+}
+
+.admin-table thead {
+    background: #0B3D2E;
+    color: white;
+}
+
+.admin-table th,
+.admin-table td {
+    padding: 14px 12px;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.admin-table tbody tr:hover {
+    background: #f3f7f3;
+}
+
+.action-cell {
+    text-align: center;
+}
+
+/* ==== BUTTONS INSIDE TABLE ==== */
+.btn-view,
+.btn-delete {
+    padding: 6px 12px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 600;
+    margin: 0 3px;
+}
+
+.btn-view {
+    background: #e8f5e9;
+    color: #0B3D2E;
+    border: 1px solid #0B3D2E;
+}
+
+.btn-view:hover {
+    background: #d9efe0;
+}
+
+.btn-delete {
+    background: #ffdfdf;
+    color: #b30000;
+    border: 1px solid #b30000;
+}
+
+.btn-delete:hover {
+    background: #ffcccc;
+}
+
+/* ==== CENTER TEXT IN TABLE ==== */
+.admin-table th,
+.admin-table td {
+    text-align: center;
+    vertical-align: middle;
+}
+
+/* ==== ACTION BUTTONS (nhẹ nhàng hơn) ==== */
+.btn-view,
+.btn-delete {
+    padding: 6px 14px;
+    border-radius: 20px;          /* Bo tròn kiểu pill đẹp */
+    text-decoration: none;
+    font-weight: 500;             /* Bớt đậm để nhẹ mắt */
+    font-size: 14px;
+    margin: 0 4px;
+    display: inline-block;
+    transition: 0.25s ease;
+}
+
+/* Button xem */
+.btn-view {
+    background: #eef7f0;
+    color: #0B3D2E;
+    border: 1px solid #b7d5c2;
+}
+
+.btn-view:hover {
+    background: #dff3e6;
+}
+
+/* Button xóa */
+.btn-delete {
+    background: #ffecec;
+    color: #c0392b;
+    border: 1px solid #f5b4b4;
+}
+
+.btn-delete:hover {
+    background: #ffd6d6;
+    border-color: #e28c8c;
+}
+
+/* ===== DETAIL CARD ===== */
+.detail-card {
+    background: #fff;
+    width: 70%;
+    margin: 25px auto;
+    padding: 30px 35px;
+    border-radius: 14px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+}
+
+/* Section title */
+.section-title {
+    font-size: 20px;
+    margin-bottom: 14px;
+    color: #0B3D2E;
+    font-weight: 700;
+}
+
+/* Grid layout */
+.detail-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 18px 25px;
+    margin-bottom: 20px;
+}
+
+.detail-item {
+    display: flex;
+    flex-direction: column;
+}
+
+.detail-item.wide {
+    grid-column: span 2;
+}
+
+/* Label */
+.detail-item label {
+    font-weight: 600;
+    margin-bottom: 6px;
+    font-size: 14px;
+    color: #333;
+}
+
+/* Disabled input style */
+.detail-item input {
+    background: #f7f9f7;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #dcdcdc;
+    font-size: 15px;
+    color: #444;
+}
+
+/* No customer data message */
+.no-data p {
+    color: #c0392b;
+    font-style: italic;
+}
+
+/* Divider */
+.divider {
+    margin: 25px 0;
+    border: none;
+    height: 1px;
+    background: #ddd;
+}
+
+
+
+/* Action buttons */
+.action-buttons {
+    margin-top: 30px;
+    display: flex;
+    justify-content: space-between;
+}
+
+/* Back button */
+.btn-back {
+    background: #e8f5e9;
+    color: #0B3D2E;
+    padding: 10px 20px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.btn-back:hover {
+    background: #d7ecdb;
+}
+
+/* Delete button */
+.btn-delete {
+    background: #ffe5e5;
+    color: #c0392b;
+    padding: 10px 20px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.btn-delete:hover {
+    background: #ffd1d1;
+}
+
+/* Hàng riêng cho nút xem chi tiết */
+.view-detail-row {
+    margin-top: 10px;
+    text-align: left;
+}
+
+/* Chỉnh lưới 2 cột đẹp hơn */
+.detail-grid {
+    grid-template-columns: repeat(2, 1fr);
+}
+
+/* BUTTON FULL WIDTH */
+.view-detail-row-full {
+    margin-top: 15px;
+    grid-column: 1 / -1;  /* chiếm toàn bộ 2 cột */
+}
+
+.btn-view-full {
+    display: block;
+    width: 100%;
+    padding: 12px 0;
+    background: #388e3c;
+    color: white;
+    text-align: center;
+    font-weight: 600;
+    border-radius: 8px;
+    transition: 0.25s ease;
+}
+
+.btn-view-full:hover {
+    background: #2d6e30;
+}
+
+
+
+/* ===== CARD GRID ===== */
+.card-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 25px;
+    padding: 10px 5px;
+}
+
+/* ===== BOOK CARD ===== */
+.book-card {
+    background: #ffffff;
+    padding: 18px;
+    border-radius: 14px;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.12);
+    transition: 0.25s ease;
+    cursor: pointer;
+    border: 1px solid #e8e8e8;
+}
+
+.book-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.16);
+}
+
+/* ===== OUT OF STOCK ===== */
+.book-card.out-of-stock {
+    border-left: 6px solid #d9534f;
+    background: #fff4f4;
+}
+
+/* ===== BOOK IMAGE ===== */
+.book-img {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+    border-radius: 10px;
+    margin-bottom: 12px;
+}
+
+/* ===== BOOK INFO ===== */
+.book-info h4 {
+    font-size: 16px;
+    font-weight: 700;
+    color: #0B3D2E;
+    margin: 5px 0 8px;
+}
+
+.book-info p {
+    color: #555;
+    margin: 3px 0 10px;
+}
+
+
+.card-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+}
+
+.book-card {
+    background: white;
+    padding: 15px;
+    border-radius: 12px;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+    transition: 0.25s ease;
+    cursor: pointer;
+    text-align: center;
+}
+
+.book-card:hover {
+    transform: translateY(-5px);
+}
+
+.book-card.out-of-stock {
+    opacity: 0.55;
+    border-left: 5px solid red;
+}
+
+.book-img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    border-radius: 10px;
+}
+
+.book-actions {
+    margin-top: 10px;
+}
+
+
+
+.btn-restock {
+    padding: 6px 12px;
+    background: #388e3c;
+    color: white;
+    border-radius: 6px;
+    display: block;
+    margin-bottom: 6px;
+}
+
+.status-green {
+    color: #0B7A28;
+    font-weight: bold;
+}
+
+.status-red {
+    color: #D40000;
+    font-weight: bold;
+}
+
+.status-blue {
+    color: #005BBB;
+    font-weight: bold;
+}
+
+.status-yellow {
+    color: #C79C00;
+    font-weight: bold;
+}
+
+.form-group {
+    margin-bottom: 18px;
+}
+
+.form-group label {
+    font-weight: 600;
+    color: #0B3D2E;
+    margin-bottom: 6px;
+    display: block;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #dcdcdc;
+    background: #f7f9f7;
+    font-size: 15px;
+}
+
+.btn-cancel {
+    margin-left: 15px;
+    padding: 10px 18px;
+    background: #eee;
+    border-radius: 8px;
+    font-weight: 600;
+    text-decoration: none;
+    color: #333;
+}
+
+.btn-cancel:hover {
+    background: #ddd;
+}
+
+.error-message {
+    color: #c0392b;
+    background: #ffe6e6;
+    padding: 10px 15px;
+    border-radius: 6px;
+    width: 60%;
+    margin: 10px auto;
+    font-weight: 600;
+}
+
+/* Tabs */
+.status-tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+.status-tab {
+    padding: 8px 16px;
+    border-radius: 6px;
+    background: #e7e7e7;
+    cursor: pointer;
+    text-decoration: none;
+    color: #333;
+    font-weight: bold;
+    transition: 0.2s;
+}
+.status-tab:hover {
+    background: #ccc;
+}
+.status-tab.active {
+    background: #0B3D2E;
+    color: white;
+}
+
+/* Status color in table */
+.pending { color: #d4a017; font-weight: bold; }
+.confirmed { color: #1d6ae5; font-weight: bold; }
+.processing { color: #0b8ecf; font-weight: bold; }
+.shipping { color: #8e44ad; font-weight: bold; }
+.delivered { color: #27ae60; font-weight: bold; }
+.cancelled { color: #c0392b; font-weight: bold; }
+.returned { color: #e67e22; font-weight: bold; }
+.refunded { color: #16a085; font-weight: bold; }
+
+
+.btn-confirm {
+    background: #e8f5e9;
+    border: 1px solid #0B3D2E;
+    color: #0B3D2E;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-weight: 600;
+    transition: 0.25s ease;
+}
+
+.btn-confirm:hover {
+    background: #d5ecdb;
+}
+
+
+.revenue-chart-highlight {
+    background: white;
+    padding: 25px 30px;
+    border-radius: 18px;
+    max-width: 900px;
+    margin: 35px auto;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.10);
+    border-left: 6px solid #0B3D2E;
+
+    transition: 0.25s ease;
+    cursor: pointer;
+}
+
+.revenue-chart-highlight:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 28px rgba(0,0,0,0.14);
+}
+
+.chart-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 18px;
+}
+
+.chart-header h3 {
+    font-size: 22px;
+    font-weight: 700;
+    color: #0B3D2E;
+}
+
+.chart-icon {
+    font-size: 28px;
+}
+
+.chart-wrapper {
+    height: 320px;
+}
+
+.recent-sold-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 18px;
+    padding: 10px 5px;
+}
+
+.recent-sold-card {
+    background: #ffffff;
+    border-radius: 14px;
+    overflow: hidden;
+    padding-bottom: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    transition: 0.25s ease;
+}
+
+.recent-sold-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+}
+
+.sold-img-wrapper {
+    position: relative;
+}
+
+.sold-book-img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    border-bottom: 1px solid #eee;
+}
+
+.sold-badge {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    background: #e53935;
+    color: white;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.sold-info {
+    padding: 12px;
+}
+
+.sold-title {
+    font-size: 15px;
+    font-weight: 700;
+    min-height: 32px;
+    color: #0B3D2E;
+}
+
+.sold-author {
+    font-size: 13px;
+    color: #555;
+    margin: 4px 0 8px;
+}
+
+.sold-price {
+    font-size: 17px;
+    color: #d35400;
+    font-weight: bold;
+}
+
+.sold-view-btn {
+    display: block;
+    text-align: center;
+    background: #0B3D2E;
+    color: white;
+    padding: 8px 0;
+    margin: 8px 12px 0;
+    border-radius: 6px;
+    text-decoration: none;
+    transition: 0.25s ease;
+}
+
+.sold-view-btn:hover {
+    background: #145843;
+}

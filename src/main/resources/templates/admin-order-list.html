@@ -2,8 +2,10 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <link rel="stylesheet" href="/css/admin.css">
-    <title>Order Management</title>
+    <title>Quản lý đơn hàng</title>
+
 </head>
+
 <body>
 
 <header th:replace="admin-dashboard :: header"></header>
@@ -11,8 +13,56 @@
 <h1 class="dashboard-title">Quản lý đơn hàng</h1>
 
 <div class="frame-box">
-    <table border="1" width="100%" cellpadding="10">
-        <tr style="background:#0B3D2E;color:white;">
+
+    <!-- Tabs lọc trạng thái -->
+    <div class="status-tabs">
+
+        <a th:href="@{/admin/orders(status='Pending')}"
+           th:class="'status-tab ' + (${status}=='Pending' ? 'active' : '')">
+            Pending
+        </a>
+
+        <a th:href="@{/admin/orders(status='Confirmed')}"
+           th:class="'status-tab ' + (${status}=='Confirmed' ? 'active' : '')">
+            Confirmed
+        </a>
+
+        <a th:href="@{/admin/orders(status='Processing')}"
+           th:class="'status-tab ' + (${status}=='Processing' ? 'active' : '')">
+            Processing
+        </a>
+
+        <a th:href="@{/admin/orders(status='Shipping')}"
+           th:class="'status-tab ' + (${status}=='Shipping' ? 'active' : '')">
+            Shipping
+        </a>
+
+        <a th:href="@{/admin/orders(status='Delivered')}"
+           th:class="'status-tab ' + (${status}=='Delivered' ? 'active' : '')">
+            Delivered
+        </a>
+
+        <a th:href="@{/admin/orders(status='Cancelled')}"
+           th:class="'status-tab ' + (${status}=='Cancelled' ? 'active' : '')">
+            Cancelled
+        </a>
+
+        <a th:href="@{/admin/orders(status='Returned')}"
+           th:class="'status-tab ' + (${status}=='Returned' ? 'active' : '')">
+            Returned
+        </a>
+
+        <a th:href="@{/admin/orders(status='Refunded')}"
+           th:class="'status-tab ' + (${status}=='Refunded' ? 'active' : '')">
+            Refunded
+        </a>
+
+    </div>
+
+    <!-- Table -->
+    <table class="admin-table">
+        <thead>
+        <tr>
             <th>Mã đơn</th>
             <th>Khách hàng</th>
             <th>Địa chỉ</th>
@@ -21,24 +71,49 @@
             <th>Tổng tiền</th>
             <th>Hành động</th>
         </tr>
+        </thead>
 
+        <tbody>
         <tr th:each="o : ${orders}">
             <td th:text="${o.orderId}"></td>
             <td th:text="${o.customer.fullName}"></td>
             <td th:text="${o.address}"></td>
             <td th:text="${o.paymentMethod}"></td>
-            <td th:text="${o.status}"></td>
-            <td th:text="${o.totalAmount}"></td>
 
             <td>
-                <a th:href="@{'/admin/orders/' + ${o.orderId}}">Xem</a>
-                <a th:href="@{'/admin/orders/delete/' + ${o.orderId}}"
-                   onclick="return confirm('Xóa đơn này?')"
-                   style="color:red;">Xóa</a>
+                <span th:text="${o.status}"
+                      th:classappend="${o.status.toLowerCase()}">
+                </span>
             </td>
-        </tr>
 
+            <td th:text="${#numbers.formatDecimal(o.totalAmount,0,'POINT',0,'COMMA')} + '₫'"></td>
+
+            <!--            <td>-->
+            <!--                <a th:href="@{'/admin/orders/' + ${o.orderId}}" class="btn-view">Xem</a>-->
+            <!--                <a th:href="@{'/admin/orders/delete/' + ${o.orderId}}"-->
+            <!--                   onclick="return confirm('Xóa đơn này?')"-->
+            <!--                   class="btn-delete">Xóa</a>-->
+            <!--            </td>-->
+
+            <td>
+                <!-- Nếu trạng thái Pending -> hiện nút Confirm -->
+                <a th:if="${o.status == 'Pending'}"
+                   th:href="@{'/admin/orders/confirm/' + ${o.orderId}}"
+                   class="btn-view"
+                   onclick="return confirm('Xác nhận đơn hàng này?')">
+                    Xác nhận
+                </a>
+
+                <!-- Luôn có nút Xem -->
+                <a th:href="@{'/admin/orders/' + ${o.orderId}}" class="btn-view">
+                    Xem
+                </a>
+            </td>
+
+        </tr>
+        </tbody>
     </table>
+
 </div>
 
 <footer th:replace="admin-dashboard :: footer"></footer>

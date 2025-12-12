@@ -1,30 +1,116 @@
+
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
   <link rel="stylesheet" href="/css/admin.css">
-  <title>Customer Detail</title>
+  <title>Chi tiết khách hàng</title>
 </head>
 <body>
 
 <header th:replace="admin-dashboard :: header"></header>
 
-<h1 class="dashboard-title">Customer Detail</h1>
+<h1 class="dashboard-title">Chi tiết khách hàng</h1>
 
-<div class="frame-box" style="width: 60%; margin:auto;">
+<div class="detail-card">
 
-  <p><strong>ID:</strong> <span th:text="${customer.customerId}"></span></p>
-  <p><strong>Name:</strong> <span th:text="${customer.fullName}"></span></p>
-  <p><strong>Email:</strong> <span th:text="${customer.email}"></span></p>
-  <p><strong>Phone:</strong> <span th:text="${customer.phone}"></span></p>
-  <p><strong>Address:</strong> <span th:text="${customer.address}"></span></p>
-  <p><strong>Birthdate:</strong> <span th:text="${customer.dateOfBirth}"></span></p>
+  <!-- ACCOUNT SECTION -->
+  <h2 class="section-title">Tài khoản liên kết</h2>
 
-  <p>
-    <a href="/admin/customers">Back</a> |
-    <a th:href="@{'/admin/customers/delete/' + ${customer.customerId}}"
-       onclick="return confirm('Delete this customer?')"
-       style="color:red;">Delete</a>
-  </p>
+  <div class="detail-grid">
+    <div class="detail-item">
+      <label>Tên đăng nhập</label>
+      <input type="text" th:value="${customer.user.userName}" disabled>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- CUSTOMER INFO -->
+  <h2 class="section-title">Thông tin khách hàng</h2>
+
+  <div class="detail-grid">
+
+    <div class="detail-item">
+      <label>ID khách hàng</label>
+      <input type="text" th:value="${customer.customerId}" disabled>
+    </div>
+
+    <div class="detail-item">
+      <label>Họ và tên</label>
+      <input type="text" th:value="${customer.fullName}" disabled>
+    </div>
+
+    <div class="detail-item">
+      <label>Email</label>
+      <input type="text" th:value="${customer.email}" disabled>
+    </div>
+
+    <div class="detail-item">
+      <label>Số điện thoại</label>
+      <input type="text" th:value="${customer.phone}" disabled>
+    </div>
+
+    <div class="detail-item">
+      <label>Địa chỉ</label>
+      <input type="text" th:value="${customer.address}" disabled>
+    </div>
+
+    <div class="detail-item">
+      <label>Ngày sinh</label>
+      <input type="text" th:value="${customer.dateOfBirth}" disabled>
+    </div>
+
+  </div>
+
+  <hr class="divider">
+
+  <!-- CUSTOMER ORDERS -->
+  <h2 class="section-title">Đơn hàng của khách hàng</h2>
+
+  <div th:if="${orders == null or orders.isEmpty()}">
+    <p class="no-data">Khách hàng này chưa có đơn hàng nào.</p>
+  </div>
+
+  <div th:if="${orders != null and !orders.isEmpty()}" class="table-container">
+
+    <table class="admin-table">
+      <thead>
+      <tr>
+        <th>Mã đơn</th>
+        <th>Ngày tạo</th>
+        <th>Tổng tiền</th>
+        <th>Trạng thái</th>
+        <th>Hành động</th>
+      </tr>
+      </thead>
+
+      <tbody>
+      <tr th:each="o : ${orders}">
+        <td th:text="${o.orderId}"></td>
+        <td th:text="${o.orderDate}"></td>
+        <td th:text="${o.totalAmount + ' ₫'}"></td>
+        <td th:text="${o.status}"></td>
+
+        <td class="action-cell">
+          <a th:href="@{'/admin/orders/' + ${o.orderId}}" class="btn-view">Xem</a>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+
+  </div>
+
+  <!-- ACTION BUTTONS -->
+  <div class="action-buttons">
+    <a href="/admin/customers" class="btn-back">Quay lại</a>
+
+    <!--    <a th:href="@{'/admin/customers/delete/' + ${customer.customerId}}"-->
+    <!--       onclick="return confirm('Bạn có chắc muốn xóa khách hàng này?')"-->
+    <!--       class="btn-delete">-->
+    <!--      Xóa khách hàng-->
+    <!--    </a>-->
+  </div>
+
 </div>
 
 <footer class="admin-footer">© 2025 UTE BookStore Admin</footer>

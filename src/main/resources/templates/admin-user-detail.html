@@ -10,47 +10,96 @@
 
 <h1 class="dashboard-title">Thông tin tài khoản</h1>
 
-<div class="frame-box" style="width: 70%; margin:auto;">
+<div class="detail-card">
 
     <!-- USER INFO -->
-    <h3>Thông tin tài khoản</h3>
-    <p><strong>Tên đăng nhập:</strong> <span th:text="${user.userName}"></span></p>
-    <p><strong>Họ và tên:</strong> <span th:text="${user.fullName}"></span></p>
-    <p><strong>Vai trò:</strong> <span th:text="${user.role}"></span></p>
-    <p><strong>Ngày đăng ký:</strong> <span th:text="${user.registrationDate}"></span></p>
+    <h2 class="section-title">Tài khoản</h2>
 
-    <hr>
+    <div class="detail-grid">
+        <div class="detail-item">
+            <label>Tên đăng nhập</label>
+            <input type="text" th:value="${user.userName}" disabled>
+        </div>
+
+        <div class="detail-item">
+            <label>Họ và tên</label>
+            <input type="text" th:value="${user.fullName}" disabled>
+        </div>
+
+        <div class="detail-item">
+            <label>Vai trò</label>
+            <input type="text" th:value="${user.role}" disabled>
+        </div>
+
+        <div class="detail-item">
+            <label>Ngày đăng ký</label>
+            <input type="text" th:value="${user.registrationDate}" disabled>
+        </div>
+    </div>
+
+    <hr class="divider">
 
     <!-- CUSTOMER INFO -->
-    <h3>Thông tin khách hàng</h3>
+    <h2 class="section-title">Thông tin khách hàng</h2>
 
-    <!-- Nếu user không liên kết customer -->
-    <div th:if="${user.customer == null}">
-        <p style="color: red;"><i>Không có thông tin khách hàng.</i></p>
+    <div th:if="${user.customer == null}" class="no-data">
+        <p>Không có thông tin khách hàng.</p>
     </div>
 
     <!-- Nếu user có customer -->
-    <div th:if="${user.customer != null}">
-        <p><strong>ID khách hàng:</strong> <span th:text="${user.customer.customerId}"></span></p>
-        <p><strong>Họ và tên:</strong> <span th:text="${user.customer.fullName}"></span></p>
-        <p><strong>Email:</strong> <span th:text="${user.customer.email}"></span></p>
-        <p><strong>Số điện thoại:</strong> <span th:text="${user.customer.phone}"></span></p>
-        <p><strong>Địa chỉ:</strong> <span th:text="${user.customer.address}"></span></p>
-        <p><strong>Ngày sinh:</strong> <span th:text="${user.customer.dateOfBirth}"></span></p>
+    <div th:if="${user.customer != null}" class="detail-grid">
 
-        <p>
-            <a th:href="@{'/admin/customers/' + ${user.customer.customerId}}">Xem chi tiết khách hàng</a>
-        </p>
+        <div class="detail-item">
+            <label>ID khách hàng</label>
+            <input type="text" th:value="${user.customer.customerId}" disabled>
+        </div>
+
+        <div class="detail-item">
+            <label>Họ và tên</label>
+            <input type="text" th:value="${user.customer.fullName}" disabled>
+        </div>
+
+        <div class="detail-item">
+            <label>Email</label>
+            <input type="text" th:value="${user.customer.email}" disabled>
+        </div>
+
+        <div class="detail-item">
+            <label>Số điện thoại</label>
+            <input type="text" th:value="${user.customer.phone}" disabled>
+        </div>
+
+        <!-- Hàng Địa chỉ + Ngày sinh -->
+        <div class="detail-item">
+            <label>Địa chỉ</label>
+            <input type="text" th:value="${user.customer.address}" disabled>
+        </div>
+
+        <div class="detail-item">
+            <label>Ngày sinh</label>
+            <input type="text" th:value="${user.customer.dateOfBirth}" disabled>
+        </div>
+
     </div>
 
-    <hr>
+    <!-- Xem chi tiết KH — xuống hàng riêng -->
+    <div th:if="${user.customer != null}" class="view-detail-row">
+        <a th:href="@{'/admin/customers/' + ${user.customer.customerId}}"
+           class="btn-view-full">
+            Xem chi tiết khách hàng
+        </a>
+    </div>
 
-    <p>
-        <a href="/admin/users">Back</a> |
-        <a th:href="@{'/admin/users/delete/' + ${user.userName}}"
-           onclick="return confirm('Bạn có chắc chắn muốn xóa tài khoản này?')"
-           style="color:red;">Delete</a>
-    </p>
+    <div class="action-buttons">
+        <a href="/admin/users" class="btn-back">Quay lại</a>
+
+        <!--        <a th:href="@{'/admin/users/delete/' + ${user.userName}}"-->
+        <!--           onclick="return confirm('Bạn có chắc chắn muốn xóa tài khoản này?')"-->
+        <!--           class="btn-delete">-->
+        <!--            Xóa tài khoản-->
+        <!--        </a>-->
+    </div>
+
 </div>
 
 <footer class="admin-footer">© 2025 UTE BookStore Admin</footer>
