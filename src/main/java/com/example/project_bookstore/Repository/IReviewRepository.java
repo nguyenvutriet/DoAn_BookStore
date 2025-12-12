@@ -25,6 +25,7 @@ public interface IReviewRepository extends JpaRepository<Review, String> {
     @Query("SELECT COALESCE(AVG(r.rating), 0) FROM Review r WHERE r.book.bookId = :bookId")
     Double findAverageRatingByBookId(@Param("bookId") String bookId);
 
-
+    // Lấy review theo customer + book (để kiểm tra đã đánh giá hay chưa)
+    Review findByCustomer_CustomerIdAndBook_BookId(String customerId, String bookId);
 
 }

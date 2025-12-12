@@ -66,5 +66,9 @@ public class CustomersService {
         repo.delete(cus);
     }
 
+    public Customers findByEmail(String email) {
+        return repo.findByEmail(email);
+    }
+
 
 }

@@ -23,7 +23,6 @@ import java.util.*;
 @Controller
 public class CheckoutController {
 
-
     @Autowired
     private ICartDetailRepository cartDetailRepo;
 
@@ -235,8 +234,6 @@ public class CheckoutController {
 
         return "fallure";
     }
-
-
 
 }
 

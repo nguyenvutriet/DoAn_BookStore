@@ -1,5 +1,6 @@
 package com.example.project_bookstore.Repository;
 
+import com.example.project_bookstore.Entity.Customers;
 import com.example.project_bookstore.Entity.Users;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -19,7 +20,5 @@ public interface IUsersRepository extends JpaRepository<Users, String> {
     @Modifying
     @Query("UPDATE Users SET password=:pass WHERE userName=:user")
     public int updatePassword(@Param("user") String username, @Param("pass") String password);
-
-
 
 }

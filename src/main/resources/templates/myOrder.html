@@ -181,67 +181,81 @@
                     <th>Địa chỉ nhận</th>
                     <th>Tổng tiền</th>
                     <th>Trạng thái</th>
+                    <th>Xác nhận</th>
                     <th>Hành động</th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr th:each="order : ${orders}">
-                    <!-- Ngày đặt -->
-                    <td class="order-date" th:text="${order.getOrderDate()}">
 
-                    </td>
+                    <!-- Ngày đặt -->
+                    <td class="order-date" th:text="${order.orderDate}"></td>
 
                     <!-- Phương thức thanh toán -->
                     <td>
-                            <span class="order-method" th:text="${order.getPaymentMethod()}">
-
-                            </span>
+                        <span class="order-method" th:text="${order.paymentMethod}"></span>
                     </td>
 
                     <!-- Địa chỉ nhận -->
-                    <td class="order-address" th:title="${order.getAddress()}" th:text="${order.getAddress()}">
-                        123 Đường ABC, Quận 1, TP.HCM
+                    <td class="order-address"
+                        th:title="${order.address}"
+                        th:text="${order.address}">
                     </td>
 
                     <!-- Tổng tiền -->
-                    <td class="order-total" th:text="${#numbers.formatDecimal(order.getTotalAmount(), 0, 'COMMA', 2, 'POINT')} + ' đ'">
-
+                    <td class="order-total"
+                        th:text="${#numbers.formatDecimal(order.totalAmount, 0, 'COMMA', 2, 'POINT')} + ' đ'">
                     </td>
 
                     <!-- Trạng thái -->
                     <td>
-                            <span
-                                    class="order-status"
-                                    th:classappend="${order.status == 'Pending' ? 'status-pending' :
-                                               order.status == 'Confirmed' ? 'status-confirmed' :
-                                               order.status == 'Delivered' ? 'status-shipped' : ''
-                                               }"
-                                    th:text="${order.getStatus()}">
-
-                            </span>
+        <span class="order-status"
+              th:classappend="${
+                    order.status == 'Pending' ? 'status-pending' :
+                    order.status == 'Confirmed' ? 'status-confirmed' :
+                    order.status == 'Delivered' ? 'status-shipped' : ''
+              }"
+              th:text="${order.status}">
+        </span>
                     </td>
 
-                    <!-- Hành động: Nút "Đã nhận được hàng" chỉ hiện khi status = "ĐÃ_XÁC_NHẬN" -->
-                    <td th:if="${order.getStatus()!='Delivered'}">
-                        <form th:if="${order.getStatus() == 'Confirmed'}"
-                              th:action="@{/user/order/{id}/received(id=${order.getOrderId()})}"
-                              method="post"
-                              style="display: inline;">
+                    <!-- Hành động -->
+                    <td>
+                        <!-- Khi đã xác nhận: Cho phép nhấn nút "Đã nhận hàng" -->
+                        <form th:if="${order.status == 'Confirmed'}"
+                              th:action="@{/user/order/{id}/received(id=${order.orderId})}"
+                              method="post">
                             <button type="submit" class="btn-received">✓ Đã nhận được hàng</button>
                         </form>
-                        <span th:unless="${order.getStatus() == 'Confirmed'}" style="color: #999;">-</span>
+
+                        <!-- Khi chưa đến lúc thao tác -->
+                        <span th:if="${order.status == 'Pending'}" style="color:#999;">-</span>
+
+                        <!-- Khi đã giao: Không hiện nút này -->
+                        <span th:if="${order.status == 'Delivered'}" style="color:#999;">-</span>
                     </td>
-                    <td th:if="${order.getStatus()=='Delivered'}">
-                        <form th:action="@{/user/order/{id}/received(id=${order.getOrderId()})}" method="post" style="display: inline;">
-                            <button type="submit" class="btn-received">Đánh giá</button>
-                        </form>
-                    </td>
-                    <td th:if="${order.getStatus()=='Cancelled'}">
+
+                    <!-- CỘT ĐÁNH GIÁ -->
+                    <td>
+                        <!-- Nếu đơn đã giao: hiện nút đánh giá -->
+                        <a th:if="${order.status == 'Delivered'}"
+                           th:href="@{/review/order/{orderId}(orderId=${order.orderId})}"
+                           class="btn-review">
+                            ★ Đánh giá
+                        </a>
+
+                        <!-- Nếu chưa giao → đi tới trang chi tiết đơn hàng -->
+                        <a th:unless="${order.status == 'Delivered'}"
+                           th:href="@{/review/detail/{orderId}(orderId=${order.orderId})}"
+                           class="btn-review">
+                            👁️ Xem chi tiết
+                        </a>
 
                     </td>
 
                 </tr>
                 </tbody>
+
             </table>
         </div>
 

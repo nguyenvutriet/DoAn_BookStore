@@ -295,6 +295,27 @@ main {
     color: #FF8C00 !important;
 }
 
+
+/* Giao diện sao  */
+.book-rating {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.star {
+    color: #ffc107 !important;
+    /* Added !important to override inherited color from <a> tag */
+    font-size: 1.2rem;
+    line-height: 1;
+    letter-spacing: 0.5px;
+}
+
+.rating-count {
+    font-size: 0.875rem;
+    color: #6c757d;
+}
+
 /* Tác giả — xám */
 .book-card .card-text.author,
 .book-card .card-text.author * {

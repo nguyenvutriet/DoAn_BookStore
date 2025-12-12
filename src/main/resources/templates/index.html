@@ -166,7 +166,6 @@
 
 <!-- Start Main Content -->
 <main id="main-content" class="container mt-4">
-
     <section class="books-section mb-5">
         <h2 class="section-title mb-3">New Books</h2>
 
@@ -182,6 +181,17 @@
                                  style="width: 150px; height: 220px; object-fit: cover;">
                         </div>
                         <h5 class="card-title mb-2" th:text="${book.title}">Tên sách</h5>
+                        <!-- RATING -->
+                        <!-- Updated star markup to use CSS classes instead of inline styles -->
+                        <div class="book-rating mb-2">
+                            <span th:each="i : ${#numbers.sequence(1,5)}"
+                                  class="star"
+                                  th:text="${i <= avgRatings[book.bookId]} ? '★' : '☆'">
+                            </span>
+                            <span class="rating-count"
+                                  th:text="'(' + ${ratingCounts[book.bookId]} + ')'">
+                            </span>
+                        </div>
                         <p class="card-text mb-1 text-muted"
                            th:text="${book.author}">Tác giả</p>
                         <p class="card-text text-danger font-weight-bold mt-auto"
@@ -217,6 +227,16 @@
                                  style="width: 150px; height: 220px; object-fit: cover;">
                         </div>
                         <h5 class="card-title mb-2" th:text="${book.title}">Tên sách</h5>
+                        <div class="book-rating mb-2">
+                            <span th:each="i : ${#numbers.sequence(1,5)}"
+                                  class="star"
+                                  th:text="${i <= avgRatings[book.bookId]} ? '★' : '☆'">
+                            </span>
+                            <span class="rating-count"
+                                  th:text="'(' + ${ratingCounts[book.bookId]} + ')'">
+                            </span>
+                        </div>
+
                         <p class="card-text mb-1 text-muted" th:text="${book.author}">Tác giả</p>
                         <p class="card-text text-danger font-weight-bold mt-auto"
                            th:text="${#numbers.formatInteger(book.price, 3, 'COMMA')} + ' ₫'">
@@ -233,8 +253,6 @@
         </div>
     </section>
 
-
-
     <section class="books-section mb-5">
         <h2 class="section-title mb-3">Most-favored Books</h2>
 
@@ -249,6 +267,17 @@
                                  style="width: 150px; height: 220px; object-fit: cover;">
                         </div>
                         <h5 class="card-title mb-2" th:text="${book.title}">Tên sách</h5>
+                        <!-- RATING -->
+                        <!-- Updated star markup to use CSS classes instead of inline styles -->
+                        <div class="book-rating mb-2">
+                            <span th:each="i : ${#numbers.sequence(1,5)}"
+                                  class="star"
+                                  th:text="${i <= avgRatings[book.bookId]} ? '★' : '☆'">
+                            </span>
+                            <span class="rating-count"
+                                  th:text="'(' + ${ratingCounts[book.bookId]} + ')'">
+                            </span>
+                        </div>
                         <p class="card-text mb-1 text-muted"
                            th:text="${book.author}">Tác giả</p>
                         <p class="card-text text-danger font-weight-bold mt-auto"
