@@ -494,6 +494,33 @@
 
     });
 </script>
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    const errArr = /*[[${param.error}]]*/ null;
+    const err = errArr ? errArr[0] : null;
+
+    if (err === 'out_of_stock') {
+        alert(
+            '❌ Một hoặc nhiều sản phẩm vượt quá số lượng tồn kho.\n' +
+            'Vui lòng điều chỉnh số lượng trước khi đặt hàng.'
+        );
+    }
+
+    if (err === 'order_failed') {
+        alert(
+            '❌ Đặt hàng thất bại do lỗi hệ thống.\n' +
+            'Vui lòng thử lại sau.'
+        );
+    }
+
+    if (err === 'item_null') {
+        alert(
+            '⚠️ Phiên thanh toán đã hết hạn.\n' +
+            'Vui lòng chọn lại sản phẩm.'
+        );
+    }
+    /*]]>*/
+</script>
 
 
 </body>

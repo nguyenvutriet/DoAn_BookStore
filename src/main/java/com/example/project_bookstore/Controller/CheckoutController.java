@@ -3,6 +3,7 @@ package com.example.project_bookstore.Controller;
 import com.example.project_bookstore.Entity.*;
 import com.example.project_bookstore.Repository.*;
 import com.example.project_bookstore.Service.EmailService;
+import com.example.project_bookstore.Service.OrdersService;
 import com.example.project_bookstore.Service.VNPayService;
 import com.example.project_bookstore.dto.PaymentDTO;
 import jakarta.servlet.http.HttpServletRequest;
@@ -40,8 +41,11 @@ public class CheckoutController {
     private ICartRepository cartRepo;
     @Autowired
     private IBooksRepository booksRepository;
+
+    private final OrdersService orderService;
     private final VNPayService vnPayService;
     private final EmailService emailService;
+
 
 
 
@@ -74,7 +78,7 @@ public class CheckoutController {
         List<CartSelectedItem> items = (List<CartSelectedItem>) session.getAttribute("checkout_items");
 
         if (items == null) {
-            return "redirect:/gio_hang";
+            return "redirect:/gio_hang?error=item_null";
         }
 
         // Lấy thông tin đầy đủ từ CartDetail
@@ -173,7 +177,19 @@ public class CheckoutController {
         order.setOrderDetail_Order(details);
 
         // Lưu order
-        ordersRepo.save(order);
+//        ordersRepo.save(order);
+        try {
+            orderService.placeOrder(order, details);
+        } catch (Exception e) {
+
+            if (e.getMessage() != null &&
+                    e.getMessage().contains("Số lượng đặt vượt quá số lượng tồn kho")) {
+                return "redirect:/gio_hang?error=out_of_stock";
+            }
+            // ❗ MỌI LỖI KHÁC → quay về checkout với lỗi chung
+            return "redirect:/gio_hang?error=order_failed";
+        }
+
         // ========== GỬI EMAIL ==========
 
         try {

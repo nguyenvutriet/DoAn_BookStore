@@ -1,7 +1,9 @@
 package com.example.project_bookstore.Repository;
 
 import com.example.project_bookstore.Entity.Books;
+import jakarta.persistence.LockModeType;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -83,4 +85,11 @@ public interface IBooksRepository extends JpaRepository<Books, String> {
     List<Books> findOutOfStockByCategory(String categoryId);
 
     boolean existsByBookId(String bookId);
+
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query("SELECT b FROM Books b WHERE b.bookId = :bookId")
+    Books findByIdForUpdate(@Param("bookId") String bookId);
+
+
+
 }
