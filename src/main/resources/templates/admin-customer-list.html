@@ -2,38 +2,45 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <link rel="stylesheet" href="/css/admin.css">
-    <title>Customers</title>
+    <title>Quản lý khách hàng</title>
 </head>
 <body>
 
 <header th:replace="admin-dashboard :: header"></header>
 
-<h1 class="dashboard-title">Customer Management</h1>
+<h1 class="dashboard-title">Quản lý khách hàng</h1>
 
-<div class="frame-box">
-    <table border="1" width="100%" cellpadding="10">
-        <tr style="background:#0B3D2E;color:white;">
+<div class="frame-box table-container">
+
+    <table class="admin-table">
+        <thead>
+        <tr>
             <th>ID</th>
-            <th>Full Name</th>
+            <th>Họ và tên</th>
             <th>Email</th>
-            <th>Phone</th>
-            <th>Action</th>
+            <th>Số điện thoại</th>
+            <th>Hành động</th>
         </tr>
+        </thead>
 
+        <tbody>
         <tr th:each="c : ${customers}">
             <td th:text="${c.customerId}"></td>
             <td th:text="${c.fullName}"></td>
             <td th:text="${c.email}"></td>
             <td th:text="${c.phone}"></td>
 
-            <td>
-                <a th:href="@{'/admin/customers/' + ${c.customerId}}">View</a> |
-                <a th:href="@{'/admin/customers/delete/' + ${c.customerId}}"
-                   onclick="return confirm('Delete this customer?')"
-                   style="color:red;">Delete</a>
+            <td class="action-cell">
+                <a th:href="@{'/admin/customers/' + ${c.customerId}}" class="btn-view">Xem</a>
+
+                <!--                <a th:href="@{'/admin/customers/delete/' + ${c.customerId}}"-->
+                <!--                   onclick="return confirm('Bạn có chắc muốn xóa khách hàng này?')"-->
+                <!--                   class="btn-delete">Xóa</a>-->
             </td>
         </tr>
+        </tbody>
     </table>
+
 </div>
 
 <footer th:replace="admin-dashboard :: footer"></footer>

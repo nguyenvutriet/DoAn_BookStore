@@ -3,56 +3,110 @@
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="/css/admin.css">
-    <title>Order Detail</title>
+    <title>Chi tiết đơn hàng</title>
+
+    <style>
+        .total-box {
+            margin-top: 20px;
+            padding: 15px;
+            background: #e8fff0;
+            border-left: 5px solid #27ae60;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #1e824c;
+
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .total-label {
+            font-weight: bold;
+        }
+
+        .total-amount {
+            font-size: 20px;
+        }
+    </style>
+
 </head>
+
 <body>
 
 <header th:replace="admin-dashboard :: header"></header>
 
 <h1 class="dashboard-title">Chi tiết đơn hàng</h1>
 
-<div class="frame-box" style="width: 70%; margin: auto;">
+<div class="detail-card">
 
-    <!-- Order Info -->
-    <h3>Thông tin đơn hàng</h3>
+    <!-- THÔNG TIN ĐƠN -->
+    <h2 class="section-title">Thông tin đơn hàng</h2>
 
-    <p><strong>Mã đơn hàng:</strong>
-        <span th:text="${order.orderId}"></span>
-    </p>
+    <div class="detail-grid">
 
-    <p><strong>Khách hàng:</strong>
-        <span th:text="${order.customer != null ? order.customer.fullName : 'Không xác định'}"></span>
-        (<span th:text="${order.customer != null ? order.customer.customerId : ''}"></span>)
-    </p>
+        <div class="detail-item">
+            <label>Mã đơn hàng</label>
+            <input type="text" th:value="${order.orderId}" disabled>
+        </div>
 
-    <p><strong>Địa chỉ giao hàng:</strong>
-        <span th:text="${order.address}"></span>
-    </p>
+        <div class="detail-item">
+            <label>Ngày đặt</label>
+            <input type="text" th:value="${#dates.format(order.orderDate,'dd/MM/yyyy HH:mm')}" disabled>
+        </div>
 
-    <p><strong>Hình thức thanh toán:</strong>
-        <span th:text="${order.paymentMethod}"></span>
-    </p>
+        <div class="detail-item">
+            <label>Phương thức thanh toán</label>
+            <input type="text" th:value="${order.paymentMethod}" disabled>
+        </div>
 
-    <p><strong>Trạng thái:</strong>
-        <span th:text="${order.status}"></span>
-    </p>
+        <div class="detail-item">
+            <label>Trạng thái</label>
+            <input type="text" th:value="${order.status}" disabled>
+        </div>
 
-    <p><strong>Ngày đặt:</strong>
-        <span th:text="${#dates.format(order.orderDate, 'dd/MM/yyyy HH:mm')}"></span>
-    </p>
+        <div class="detail-item">
+            <label>Địa chỉ giao hàng</label>
+            <input type="text" th:value="${order.address}" disabled>
+        </div>
 
-    <p><strong>Tổng tiền:</strong>
-        <span th:text="${order.totalAmount}"></span>
-    </p>
+    </div>
 
-    <hr>
 
-    <!-- Order Details -->
-    <h3>Sản phẩm trong đơn</h3>
+    <!-- KHÁCH HÀNG -->
+    <h2 class="section-title">Thông tin khách hàng</h2>
 
-    <table border="1" width="100%" cellpadding="10">
+    <div class="detail-grid">
+
+        <div class="detail-item">
+            <label>ID khách hàng</label>
+            <input type="text" th:value="${order.customer.customerId}" disabled>
+        </div>
+
+        <div class="detail-item">
+            <label>Họ và tên</label>
+            <input type="text" th:value="${order.customer.fullName}" disabled>
+        </div>
+
+        <div class="detail-item">
+            <label>Email</label>
+            <input type="text" th:value="${order.customer.email}" disabled>
+        </div>
+
+        <div class="detail-item">
+            <label>Số điện thoại</label>
+            <input type="text" th:value="${order.customer.phone}" disabled>
+        </div>
+
+    </div>
+
+
+    <!-- SẢN PHẨM TRONG ĐƠN -->
+    <h2 class="section-title">Sản phẩm trong đơn</h2>
+
+    <table class="admin-table">
         <thead>
-        <tr style="background:#0B3D2E; color:white;">
+        <tr>
             <th>Mã sách</th>
             <th>Tên sách</th>
             <th>Số lượng</th>
@@ -66,18 +120,31 @@
             <td th:text="${d.book.bookId}"></td>
             <td th:text="${d.book.title}"></td>
             <td th:text="${d.quantity}"></td>
-            <td th:text="${d.unitPrice}"></td>
-            <td th:text="${d.unitPrice * d.quantity}"></td>
+            <td th:text="${#numbers.formatDecimal(d.unitPrice,0,'POINT',0,'COMMA')} + '₫'"></td>
+            <td th:text="${#numbers.formatDecimal(d.unitPrice * d.quantity,0,'POINT',0,'COMMA')} + '₫'"></td>
         </tr>
         </tbody>
     </table>
 
-    <p style="margin-top:20px;">
-        <a href="/admin/orders">Back</a> |
-        <a th:href="@{'/admin/orders/delete/' + ${order.orderId}}"
-           onclick="return confirm('Bạn có chắc chắn muốn xóa đơn hàng này?')"
-           style="color:red;">Delete</a>
-    </p>
+    <!-- TỔNG TIỀN – đặt dưới bảng -->
+    <div class="total-box">
+        <span class="total-label">Tổng tiền:</span>
+        <span class="total-amount"
+              th:text="${#numbers.formatDecimal(order.totalAmount,0,'POINT',0,'COMMA')} + '₫'">
+    </span>
+    </div>
+
+
+    <!-- NÚT -->
+    <div class="action-buttons">
+        <a href="/admin/orders" class="btn-back">Quay lại</a>
+
+        <!--        <a th:href="@{'/admin/orders/delete/' + ${order.orderId}}"-->
+        <!--           onclick="return confirm('Bạn chắc chắn muốn xóa đơn hàng này?')"-->
+        <!--           class="btn-delete">-->
+        <!--            Xóa đơn-->
+        <!--        </a>-->
+    </div>
 
 </div>
 

@@ -1,45 +1,158 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
+    <meta charset="UTF-8">
+    <title>Chi tiết sách</title>
     <link rel="stylesheet" href="/css/admin.css">
-    <title>Book Detail</title>
+
+    <style>
+        .book-cover {
+            width: 200px;
+            height: 280px;
+            object-fit: cover;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            display: block;
+            margin: 0 auto 10px auto;
+        }
+
+        .flex-section {
+            display: flex;
+            gap: 35px;
+            flex-wrap: wrap;
+        }
+
+        .left-col {
+            flex: 1;
+            min-width: 260px;
+            text-align: center;
+        }
+
+        .right-col {
+            flex: 2;
+            min-width: 330px;
+        }
+
+        .description-box {
+            background: #f7fdf7;
+            border-left: 5px solid #2a8c44;
+            padding: 15px 18px;
+            border-radius: 10px;
+            font-size: 15px;
+            color: #333;
+            min-height: 90px;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.08);
+            line-height: 1.55;
+            white-space: pre-wrap;
+        }
+    </style>
 </head>
+
 <body>
 
-<header th:replace="admin-dashboard :: header"></header>
+<header th:replace="~{admin-dashboard :: header}"></header>
 
-<h1 class="dashboard-title">Thông tin chi tiết Sách</h1>
+<h1 class="dashboard-title">Chi tiết sách</h1>
 
-<div class="frame-box" style="width: 70%; margin:auto;">
+<div class="detail-card">
 
-    <img th:src="@{'/images/' + ${book.picture}}"
-         style="width:180px; height:auto; float:right; margin-left:20px;">
+    <div class="flex-section">
 
-    <p><strong>Mã sách:</strong> <span th:text="${book.bookId}"></span></p>
-    <p><strong>Tiêu đề:</strong> <span th:text="${book.title}"></span></p>
-    <p><strong>Tác giả:</strong> <span th:text="${book.author}"></span></p>
-    <p><strong>Nhà xuất bản:</strong> <span th:text="${book.publisher}"></span></p>
-    <p><strong>Năm xuất bản:</strong> <span th:text="${book.publicationYear}"></span></p>
-    <p><strong>Giá:</strong> <span th:text="${book.price}"></span></p>
-    <p><strong>Số lượng tồn:</strong> <span th:text="${book.quantity}"></span></p>
-    <p><strong>Thể loại:</strong> <span th:text="${book.category.categoryName}"></span></p>
+        <!-- =======================
+             CỘT TRÁI (ẢNH + TÊN SÁCH)
+        ======================== -->
+        <div class="left-col">
 
-    <p><strong>Mô tả:</strong></p>
-    <div style="background:#f9f9f9; padding:10px; border-radius:5px;">
-        <span th:text="${book.description}"></span>
+            <!-- ẢNH -->
+            <img class="book-cover"
+                 th:src="@{'/images/books/' + ${book.picture}}"
+                 alt="Book Image">
+
+            <!-- TÊN SÁCH -->
+            <h3 th:text="${book.title}"
+                style="margin-top:12px; color:#0B3D2E; font-size:22px;">
+            </h3>
+
+            <!-- GIÁ -->
+            <div style="margin-top:8px; font-size:18px; font-weight:bold; color:#d35400;">
+                <span th:text="${#numbers.formatDecimal(book.price,0,'POINT',0,'COMMA')} + '₫'"></span>
+            </div>
+
+        </div>
+
+        <!-- =======================
+             CỘT PHẢI (THÔNG TIN CHI TIẾT)
+        ======================== -->
+        <div class="right-col">
+
+            <h2 class="section-title">Thông tin chung</h2>
+
+            <div class="detail-grid">
+
+                <div class="detail-item">
+                    <label>Mã sách</label>
+                    <input th:value="${book.bookId}" disabled>
+                </div>
+
+                <div class="detail-item">
+                    <label>Tác giả</label>
+                    <input th:value="${book.author}" disabled>
+                </div>
+
+                <div class="detail-item">
+                    <label>Nhà xuất bản</label>
+                    <input th:value="${book.publisher}" disabled>
+                </div>
+
+                <div class="detail-item">
+                    <label>Năm xuất bản</label>
+                    <input th:value="${book.publicationYear}" disabled>
+                </div>
+
+                <div class="detail-item">
+                    <label>Thể loại</label>
+                    <input th:value="${book.category.categoryName}" disabled>
+                </div>
+
+                <div class="detail-item">
+                    <label>Mã thể loại</label>
+                    <input th:value="${book.category.categoryId}" disabled>
+                </div>
+
+                <div class="detail-item">
+                    <label>Tồn kho</label>
+                    <input th:value="${book.quantity}" disabled>
+                </div>
+
+            </div>
+        </div>
     </div>
 
-    <br>
+    <!-- ======================= -->
+    <!-- PHẦN MÔ TẢ -->
+    <!-- ======================= -->
+    <h2 class="section-title" style="margin-top:25px;">Mô tả</h2>
 
-    <p>
-        <a href="/admin/books">Back</a> |
+    <div class="description-box" th:text="${book.description}">
+        ...
+    </div>
+
+    <hr class="divider">
+
+    <!-- BUTTONS -->
+    <div class="action-buttons">
+        <a href="/admin/books" class="btn-back">Quay lại</a>
+
         <a th:href="@{'/admin/books/delete/' + ${book.bookId}}"
-           onclick="return confirm('Bạn chắc chắn muốn xóa?')"
-           style="color:red;">Delete</a>
-    </p>
+           onclick="return confirm('Bạn chắc chắn muốn xóa sách này?')"
+           class="btn-delete">
+            Xóa sách
+        </a>
+    </div>
+
 </div>
 
-<footer th:replace="admin-dashboard :: footer"></footer>
+<footer class="admin-footer">© 2025 UTE BookStore Admin</footer>
 
 </body>
 </html>

@@ -1,44 +1,173 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Review Detail</title>
+    <title>Chi tiết đánh giá</title>
     <link rel="stylesheet" href="/css/admin.css">
+
+    <style>
+        .book-cover {
+            width: 160px;
+            height: 220px;
+            object-fit: cover;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            display: block;
+            margin: 0 auto 10px auto;
+        }
+
+        .review-box {
+            background: #f7fdf7;
+            border-left: 5px solid #2a8c44;
+            padding: 15px 18px;
+            border-radius: 10px;
+            font-size: 15px;
+            color: #333;
+            min-height: 70px;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.08);
+        }
+
+        .star {
+            font-size: 22px;
+            color: #f1c40f;
+            margin-right: 3px;
+        }
+        .star.gray {
+            color: #ccc;
+        }
+
+        .flex-section {
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+
+        .left-col {
+            flex: 1;
+            min-width: 260px;
+            text-align: center;
+        }
+
+        .right-col {
+            flex: 2;
+            min-width: 320px;
+        }
+
+        .rating-stars {
+            margin-top: 8px;
+            margin-bottom: 15px;
+        }
+
+    </style>
 </head>
 <body>
 
 <header th:replace="admin-dashboard :: header"></header>
 
-<h1 class="dashboard-title">Review Detail</h1>
+<h1 class="dashboard-title">Chi tiết đánh giá</h1>
 
-<div class="frame-box" style="width:60%; margin:auto;">
+<div class="detail-card">
 
-    <p><strong>ID:</strong> <span th:text="${review.reviewId}"></span></p>
-    <p><strong>Rating:</strong> <span th:text="${review.rating}"></span></p>
-    <p><strong>Comment:</strong> <span th:text="${review.comment}"></span></p>
-    <p><strong>Created:</strong> <span th:text="${review.creationDate}"></span></p>
+    <div class="flex-section">
 
-    <hr>
+        <!-- CỘT TRÁI -->
+        <div class="left-col">
 
-    <h3>Customer Information</h3>
-    <p><strong>ID:</strong> <span th:text="${review.customer.customerId}"></span></p>
-    <p><strong>Name:</strong> <span th:text="${review.customer.fullName}"></span></p>
+            <!-- ẢNH -->
+            <img class="book-cover"
+                 th:src="@{'/images/books/' + ${review.book.picture}}"
+                 alt="Book Cover">
 
-    <hr>
 
-    <h3>Book Information</h3>
-    <p><strong>ID:</strong> <span th:text="${review.book.bookId}"></span></p>
-    <p><strong>Title:</strong> <span th:text="${review.book.title}"></span></p>
+            <!-- TÊN SÁCH -->
+            <h3 th:text="${review.book.title}" style="margin-top:10px; color:#0B3D2E;"></h3>
 
-    <p style="margin-top:20px;">
-        <a href="/admin/reviews">Back</a> |
+            <!-- SAO -->
+            <div class="rating-stars">
+                <span th:each="i : ${#numbers.sequence(1,5)}"
+                      th:classappend="${i <= review.rating} ? 'star' : 'star gray'">
+                    ★
+                </span>
+            </div>
+
+        </div>
+
+        <!-- CỘT PHẢI -->
+        <div class="right-col">
+
+            <h2 class="section-title">Thông tin chung</h2>
+
+            <div class="detail-grid">
+
+                <!-- Mã review -->
+                <div class="detail-item">
+                    <label>Mã đánh giá</label>
+                    <input th:value="${review.reviewId}" disabled>
+                </div>
+
+                <!-- NGÀY TẠO -->
+                <div class="detail-item">
+                    <label>Ngày tạo</label>
+                    <input th:value="${#dates.format(review.creationDate, 'dd/MM/yyyy HH:mm')}" disabled>
+                </div>
+
+                <!-- Mã khách hàng -->
+                <div class="detail-item">
+                    <label>Mã khách hàng</label>
+                    <input th:value="${review.customer.customerId}" disabled>
+                </div>
+
+                <!-- Tên khách hàng -->
+                <div class="detail-item">
+                    <label>Tên khách hàng</label>
+                    <input th:value="${review.customer.fullName}" disabled>
+                </div>
+
+                <!-- Mã sách -->
+                <div class="detail-item">
+                    <label>Mã sách</label>
+                    <input th:value="${review.book.bookId}" disabled>
+                </div>
+
+                <!-- Mã thể loại -->
+                <div class="detail-item">
+                    <label>Mã thể loại</label>
+                    <input th:value="${review.book.category.categoryId}" disabled>
+                </div>
+
+                <!-- Tên thể loại -->
+                <div class="detail-item">
+                    <label>Thể loại</label>
+                    <input th:value="${review.book.category.categoryName}" disabled>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- NỘI DUNG REVIEW -->
+    <h2 class="section-title" style="margin-top:25px;">Nội dung đánh giá</h2>
+
+    <div class="review-box" th:text="${review.comment}">
+        Nội dung đánh giá ...
+    </div>
+
+    <hr class="divider">
+
+    <div class="action-buttons">
+        <a href="/admin/reviews" class="btn-back">Quay lại</a>
+
         <a th:href="@{'/admin/reviews/delete/' + ${review.reviewId}}"
-           style="color:red;"
-           onclick="return confirm('Delete this review?')">Delete</a>
-    </p>
+           onclick="return confirm('Bạn chắc chắn muốn xóa đánh giá này?')"
+           class="btn-delete">
+            Xóa đánh giá
+        </a>
+    </div>
 
 </div>
 
-<footer th:replace="admin-dashboard :: footer"></footer>
+<footer class="admin-footer">© 2025 UTE BookStore Admin</footer>
 
 </body>
 </html>

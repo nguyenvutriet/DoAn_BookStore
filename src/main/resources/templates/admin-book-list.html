@@ -1,60 +1,222 @@
+
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
+  <meta charset="UTF-8">
+  <title>Quản lý sách</title>
   <link rel="stylesheet" href="/css/admin.css">
-  <title>Book Management</title>
+
+  <style>
+    /* CATEGORY TABS */
+    .category-tabs {
+      display: flex;
+      gap: 12px;
+      margin: 15px 0 25px 0;
+      flex-wrap: wrap;
+    }
+
+    .category-tab {
+      padding: 8px 18px;
+      background: #f1f1f1;
+      border-radius: 20px;
+      text-decoration: none;
+      color: #0B3D2E;
+      font-weight: 600;
+      border: 1px solid #dcdcdc;
+      transition: 0.25s ease;
+    }
+
+    .category-tab:hover {
+      background: #e6f3eb;
+      border-color: #0B3D2E;
+    }
+
+    .category-tab.active {
+      background: #0B3D2E;
+      color: white;
+      border-color: #0B3D2E;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+    }
+
+    /* GRID */
+    .book-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+      gap: 22px;
+      margin-bottom: 30px;
+    }
+
+    /* BOOK CARD */
+    .book-card {
+      background: white;
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+      transition: 0.25s ease;
+      border: 1px solid #ececec;
+    }
+
+    .book-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.13);
+    }
+
+    .book-img {
+      width: 100%;
+      height: 230px;
+      object-fit: cover;
+      background: #f4f4f4;
+    }
+
+    .book-info {
+      padding: 15px;
+    }
+
+    .book-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: #0B3D2E;
+      margin-bottom: 5px;
+      min-height: 40px;
+    }
+
+    .book-author {
+      font-size: 13px;
+      color: #555;
+      margin-bottom: 7px;
+    }
+
+    .book-price {
+      font-size: 17px;
+      font-weight: bold;
+      color: #d35400;
+      margin-bottom: 10px;
+    }
+
+    .qty-badge {
+      display: inline-block;
+      padding: 5px 12px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .qty-green {
+      background: #e9f9ee;
+      color: #1e9443;
+    }
+
+    .qty-red {
+      background: #ffeaea;
+      color: #c60000;
+    }
+
+    .card-actions {
+      padding: 12px 15px 18px 15px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    h2.section-title {
+      margin: 25px 0 12px 0;
+      font-size: 22px;
+      color: #0B3D2E;
+      font-weight: 700;
+      border-left: 5px solid #0B3D2E;
+      padding-left: 12px;
+    }
+
+  </style>
 </head>
+
 <body>
 
-<header th:replace="admin-dashboard :: header"></header>
+<header th:replace="~{admin-dashboard :: header}"></header>
 
-<h1 class="dashboard-title">Quản lý Sách</h1>
+<h1 class="dashboard-title">Quản lý sách</h1>
 
-<div class="frame-box">
+<div class="detail-card">
 
-  <!-- THÔNG BÁO LỖI -->
-  <p th:if="${error}" style="color:red; font-weight:bold;">
-    <span th:text="${error}"></span>
-  </p>
-
-  <div class="quick-actions">
-    <a href="/admin/books/new">+ Thêm sách mới</a>
+  <!-- BUTTON ADD NEW -->
+  <div class="actions-bar" style="margin-bottom: 15px;">
+    <a href="/admin/books/new" class="btn-create">+ Thêm sách mới</a>
   </div>
 
-  <table border="1" width="100%" cellpadding="10">
-    <tr style="background:#0B3D2E;color:white;">
-      <th>ID</th>
-      <th>Tiêu đề</th>
-      <th>Tác giả</th>
-      <th>Nhà xuất bản</th>
-      <th>Giá</th>
-      <th>Số lượng</th> <!-- NEW COLUMN -->
-      <th>Thể loại</th>
-      <th>Hành động</th>
-    </tr>
+  <!-- CATEGORY TABS -->
+  <div class="category-tabs">
+    <a th:each="c : ${categories}"
+       th:href="@{/admin/books(categoryId=${c.categoryId})}"
+       th:text="${c.categoryName}"
+       th:class="'category-tab ' + (${selectedCategory} == ${c.categoryId} ? 'active' : '')">
+    </a>
+  </div>
 
-    <tr th:each="b : ${books}">
-      <td th:text="${b.bookId}"></td>
-      <td th:text="${b.title}"></td>
-      <td th:text="${b.author}"></td>
-      <td th:text="${b.publisher}"></td>
-      <td th:text="${b.price}"></td>
-      <td th:text="${b.quantity}"
-          th:style="${b.quantity == 0} ? 'color:green;font-weight:bold;' : 'color:red;font-weight:bold;'">
-      </td>
-      <td th:text="${b.category.categoryName}"></td>
+  <!-- IN STOCK -->
+  <h2 class="section-title">Sách còn hàng</h2>
 
-      <td>
-        <a th:href="@{'/admin/books/' + ${b.bookId}}">Xem</a> |
+  <div class="book-grid">
+    <div class="book-card" th:each="b : ${inStockBooks}">
+      <!--      <img class="book-img" th:src="${b.picture}" alt="Book Image">-->
+      <img class="book-img"
+           th:src="@{'/images/books/' + ${b.picture}}"
+           alt="Book Image">
+
+      <div class="book-info">
+        <div class="book-title" th:text="${b.title}"></div>
+        <div class="book-author" th:text="${b.author}"></div>
+
+        <div class="book-price"
+             th:text="${#numbers.formatDecimal(b.price,0,'POINT',0,'COMMA')} + '₫'"></div>
+
+        <span class="qty-badge qty-green"
+              th:text="'Còn ' + ${b.quantity}"></span>
+      </div>
+
+      <div class="card-actions">
+        <a th:href="@{'/admin/books/' + ${b.bookId}}" class="btn-view">Xem</a>
         <a th:href="@{'/admin/books/delete/' + ${b.bookId}}"
            onclick="return confirm('Xóa sách này?')"
-           style="color:red;">Xóa</a>
-      </td>
-    </tr>
-  </table>
+           class="btn-delete">
+          Xóa
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- OUT OF STOCK -->
+  <h2 class="section-title">Sách hết hàng</h2>
+
+  <div class="book-grid">
+    <div class="book-card" th:each="b : ${outOfStockBooks}">
+      <!--      <img class="book-img" th:src="${b.picture}" alt="Book Image">-->
+      <img class="book-img"
+           th:src="@{'/images/books/' + ${b.picture}}"
+           alt="Book Image">
+
+      <div class="book-info">
+        <div class="book-title" th:text="${b.title}"></div>
+        <div class="book-author" th:text="${b.author}"></div>
+
+        <div class="book-price"
+             th:text="${#numbers.formatDecimal(b.price,0,'POINT',0,'COMMA')} + '₫'"></div>
+
+        <span class="qty-badge qty-red">Hết hàng</span>
+      </div>
+
+      <div class="card-actions">
+        <a th:href="@{'/admin/books/' + ${b.bookId}}" class="btn-view">Xem</a>
+        <a th:href="@{'/admin/books/delete/' + ${b.bookId}}"
+           onclick="return confirm('Xóa sách này?')"
+           class="btn-delete">
+          Xóa
+        </a>
+      </div>
+    </div>
+  </div>
+
 </div>
 
-<footer th:replace="admin-dashboard :: footer"></footer>
+<footer th:replace="~{admin-dashboard :: footer}"></footer>
 
 </body>
 </html>

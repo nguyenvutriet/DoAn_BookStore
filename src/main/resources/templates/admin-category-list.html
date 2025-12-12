@@ -2,50 +2,60 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <link rel="stylesheet" href="/css/admin.css">
-    <title>Categories</title>
+    <title>Category Management</title>
 </head>
 <body>
 
 <header th:replace="admin-dashboard :: header"></header>
 
-<h1 class="dashboard-title">Category Management</h1>
+<h1 class="dashboard-title">Quản lý thể loại</h1>
 
-<p th:if="${errorMessage}" style="color:red; font-weight:bold; text-align:center;">
+<!-- ERROR MESSAGE -->
+<p th:if="${errorMessage}" class="error-message" style="text-align:center;">
     <span th:text="${errorMessage}"></span>
 </p>
 
-
-<div class="quick-actions">
-    <a href="/admin/categories/new">New Category</a>
+<!-- ACTION BAR -->
+<div class="actions-bar">
+    <a href="/admin/categories/new" class="btn-create">+ Thể loại mới</a>
 </div>
 
-<div class="frame-box">
-    <table border="1" width="100%" cellpadding="10">
-        <tr style="background:#0B3D2E;color:white;">
-            <th>ID</th>
-            <th>Name</th>
-            <th>Total Books</th>
-            <th>Sold Books</th>
-            <th>Action</th>
-        </tr>
+<!-- CATEGORY TABLE -->
+<div class="frame-box table-container">
 
+    <table class="admin-table">
+        <thead>
+        <tr>
+            <th>Mã thể loại</th>
+            <th>Tên thể loại</th>
+            <th>Tổng sách</th>
+            <th>Số sách đã bán</th>
+            <th>Hành động</th>
+        </tr>
+        </thead>
+
+        <tbody>
         <tr th:each="c : ${categories}">
             <td th:text="${c.categoryId}"></td>
             <td th:text="${c.categoryName}"></td>
             <td th:text="${totalBooksMap[c.categoryId]}"></td>
             <td th:text="${soldBooksMap[c.categoryId]}"></td>
 
-            <td>
-                <a th:href="@{'/admin/categories/' + ${c.categoryId}}">View</a> |
+            <td class="action-cell">
+                <a th:href="@{'/admin/categories/' + ${c.categoryId}}" class="btn-view">Xem</a>
+
                 <a th:href="@{'/admin/categories/delete/' + ${c.categoryId}}"
-                   onclick="return confirm('Delete this category?')"
-                   style="color:red;">Delete</a>
+                   onclick="return confirm('Xóa thể loại này?')"
+                   class="btn-delete">Xóa</a>
             </td>
         </tr>
+        </tbody>
+
     </table>
+
 </div>
 
-<footer th:replace="admin-dashboard :: footer"></footer>
+<footer class="admin-footer">© 2025 UTE BookStore Admin</footer>
 
 </body>
 </html>

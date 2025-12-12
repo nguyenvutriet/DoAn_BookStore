@@ -22,4 +22,6 @@ public interface ICategoryRepository extends JpaRepository<Category, String> {
            """)
     Long countSoldBooksByCategory(@Param("categoryId") String categoryId);
 
+    boolean existsByCategoryNameIgnoreCase(String name);
+
 }

@@ -32,7 +32,7 @@ public class Orders {
     @DecimalMin(value = "0.00", inclusive = true)
     private BigDecimal totalAmount;
 
-    @Column(name = "address", length = 100)
+    @Column(name = "address", length = 500)
     @NotNull
     private String address;
 
