@@ -50,6 +50,12 @@ public class RegisterController {
 
     @PostMapping("/infor")
     public String registerUser(@RequestParam("fullName") String fullName, @RequestParam("email") String email, @RequestParam("phone") String phone, @RequestParam("address") String address, @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Date dateOfBirth, Model model){
+
+        if (!email.matches("^[A-Za-z0-9._%+-]+@gmail\\.com$")){
+            model.addAttribute("error", "Email không hợp lệ");
+            return "register-infor";
+        }
+
         Customers cu = customersService.getCustomerByEmail(email);
         if(cu!=null){
             model.addAttribute("error","Email đã tồn tại");

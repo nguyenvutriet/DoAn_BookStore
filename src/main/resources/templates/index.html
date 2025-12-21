@@ -42,43 +42,53 @@
                 <div class="navbar-menu">
                     <ul class="navbar-nav">
                         <li class="nav-item">
-                            <a class="nav-link" th:href="@{/home}">Tất cả</a>
+                            <a class="nav-link"
+                               th:href="@{/home(pageNew=0, pageBest=0, pageFav=0, size=${size})}">Tất cả</a>
                         </li>
 
                         <li class="nav-item">
-                            <a class="nav-link" th:href="@{/home(categoryId='C01')}">Kinh doanh</a>
+                            <a class="nav-link"
+                               th:href="@{/home(categoryId='C01', pageNew=0, pageBest=0, pageFav=0, size=${size})}">Kinh doanh</a>
                         </li>
 
                         <li class="nav-item">
-                            <a class="nav-link" th:href="@{/home(categoryId='C02')}">Sức khỏe</a>
+                            <a class="nav-link"
+                               th:href="@{/home(categoryId='C02', pageNew=0, pageBest=0, pageFav=0, size=${size})}">Sức khỏe</a>
                         </li>
 
                         <li class="nav-item">
-                            <a class="nav-link" th:href="@{/home(categoryId='C03')}">Marketing</a>
+                            <a class="nav-link"
+                               th:href="@{/home(categoryId='C03', pageNew=0, pageBest=0, pageFav=0, size=${size})}">Marketing</a>
                         </li>
 
                         <li class="nav-item">
-                            <a class="nav-link" th:href="@{/home(categoryId='C04')}">Lập trình</a>
+                            <a class="nav-link"
+                               th:href="@{/home(categoryId='C04', pageNew=0, pageBest=0, pageFav=0, size=${size})}">Lập trình</a>
                         </li>
 
                         <li class="nav-item">
-                            <a class="nav-link" th:href="@{/home(categoryId='C05')}">Truyện tranh</a>
+                            <a class="nav-link"
+                               th:href="@{/home(categoryId='C05', pageNew=0, pageBest=0, pageFav=0, size=${size})}">Truyện tranh</a>
                         </li>
 
                         <li class="nav-item">
-                            <a class="nav-link" th:href="@{/home(categoryId='C06')}">Công nghệ</a>
+                            <a class="nav-link"
+                               th:href="@{/home(categoryId='C06', pageNew=0, pageBest=0, pageFav=0, size=${size})}">Công nghệ</a>
                         </li>
 
                         <li class="nav-item">
-                            <a class="nav-link" th:href="@{/home(categoryId='C07')}">Đời sống</a>
+                            <a class="nav-link"
+                               th:href="@{/home(categoryId='C07', pageNew=0, pageBest=0, pageFav=0, size=${size})}">Đời sống</a>
                         </li>
 
                         <li class="nav-item">
-                            <a class="nav-link" th:href="@{/home(categoryId='C08')}">Lịch sử</a>
+                            <a class="nav-link"
+                               th:href="@{/home(categoryId='C08', pageNew=0, pageBest=0, pageFav=0, size=${size})}">Lịch sử</a>
                         </li>
 
                         <li class="nav-item">
-                            <a class="nav-link" th:href="@{/home(categoryId='C09')}">Giáo dục</a>
+                            <a class="nav-link"
+                               th:href="@{/home(categoryId='C09', pageNew=0, pageBest=0, pageFav=0, size=${size})}">Giáo dục</a>
                         </li>
                     </ul>
                 </div>
@@ -133,8 +143,9 @@
     </div>
 </header>
 
-<main id="main-content" class="container mt-4">
-    <section class="books-section mb-5">
+<main id="main-content" class="container mt-4" th:fragment="mainContent">
+
+    <section id="sec-new" class="books-section mb-5">
         <h2 class="section-title mb-3">New Books</h2>
 
         <div class="books-grid">
@@ -148,27 +159,66 @@
                                  style="width: 150px; height: 220px; object-fit: cover;">
                         </div>
                         <h5 class="card-title mb-2" th:text="${book.title}">Tên sách</h5>
-                        <p class="card-text mb-1 text-muted"
-                           th:text="${book.author}">Tác giả</p>
+                        <div class="book-rating"
+                             th:with="r=${avgRatings[book.bookId]}, c=${ratingCounts[book.bookId]}">
+                            <span class="stars">
+                                <span th:each="i : ${#numbers.sequence(1,5)}"
+                                      th:text="${i <= r} ? '★' : '☆'"
+                                      class="star"></span>
+                            </span>
+                            <span class="rating-count" th:text="'(' + ${c} + ')'">(0)</span>
+                        </div>
+                        <p class="card-text mb-1 text-muted" th:text="${book.author}">Tác giả</p>
                         <p class="card-text text-danger font-weight-bold mt-auto"
-                           th:text="${#numbers.formatInteger(book.price, 3, 'COMMA')} + ' ₫'">
-                            0 ₫
-                        </p>
-
+                           th:text="${#numbers.formatInteger(book.price, 3, 'COMMA')} + ' ₫'">0 ₫</p>
                     </div>
                 </a>
             </div>
-
-            <div class="book-empty" th:if="${#lists.isEmpty(newBooks)}">
-                <p class="text-muted text-center">
-                    Hiện chưa có sách mới trong danh mục này.
-                </p>
-            </div>
         </div>
+
+        <div class="book-empty" th:if="${#lists.isEmpty(newBooks)}">
+            <p class="text-muted text-center">Hiện chưa có sách mới trong danh mục này.</p>
+        </div>
+
+        <nav class="mt-3" th:if="${newBooksPage != null and newBooksPage.totalPages > 1}">
+            <ul class="pagination justify-content-center">
+
+                <!-- PREV -->
+                <li class="page-item" th:classappend="${newBooksPage.first} ? 'disabled'">
+                    <a class="page-link"
+                       th:if="${!newBooksPage.first}"
+                       th:href="@{/home(categoryId=${selectedCategoryId}, pageNew=${pageNew-1}, pageBest=${pageBest}, pageFav=${pageFav}, size=${size})} + '#sec-new'">«</a>
+
+                    <span class="page-link" th:unless="${!newBooksPage.first}">«</span>
+                </li>
+
+                <!-- NUMBERS -->
+                <li class="page-item"
+                    th:each="i : ${#numbers.sequence(0, newBooksPage.totalPages-1)}"
+                    th:classappend="${i == pageNew} ? 'active'">
+                    <a class="page-link"
+                       th:text="${i+1}"
+                       th:href="@{/home(categoryId=${selectedCategoryId}, pageNew=${i}, pageBest=${pageBest}, pageFav=${pageFav}, size=${size})} + '#sec-new'"></a>
+                </li>
+
+                <!-- NEXT -->
+                <li class="page-item" th:classappend="${newBooksPage.last} ? 'disabled'">
+                    <a class="page-link"
+                       th:if="${!newBooksPage.last}"
+                       th:href="@{/home(categoryId=${selectedCategoryId}, pageNew=${pageNew+1}, pageBest=${pageBest}, pageFav=${pageFav}, size=${size})} + '#sec-new'">»</a>
+
+                    <span class="page-link" th:unless="${!newBooksPage.last}">»</span>
+                </li>
+
+            </ul>
+
+        </nav>
     </section>
 
 
-    <section class="books-section mb-5">
+
+    <!-- ================= BEST-SELLING BOOKS ================= -->
+    <section id="sec-best" class="books-section mb-5">
         <h2 class="section-title mb-3">Best-Selling Books</h2>
 
         <div class="books-grid">
@@ -182,25 +232,63 @@
                                  style="width: 150px; height: 220px; object-fit: cover;">
                         </div>
                         <h5 class="card-title mb-2" th:text="${book.title}">Tên sách</h5>
+                        <div class="book-rating"
+                             th:with="r=${avgRatings[book.bookId]}, c=${ratingCounts[book.bookId]}">
+                            <span class="stars">
+                                <span th:each="i : ${#numbers.sequence(1,5)}"
+                                      th:text="${i <= r} ? '★' : '☆'"
+                                      class="star"></span>
+                            </span>
+                            <span class="rating-count" th:text="'(' + ${c} + ')'">(0)</span>
+                        </div>
                         <p class="card-text mb-1 text-muted" th:text="${book.author}">Tác giả</p>
                         <p class="card-text text-danger font-weight-bold mt-auto"
-                           th:text="${#numbers.formatInteger(book.price, 3, 'COMMA')} + ' ₫'">
-                            0 ₫
-                        </p>
+                           th:text="${#numbers.formatInteger(book.price, 3, 'COMMA')} + ' ₫'">0 ₫</p>
                     </div>
                 </a>
             </div>
-            <div class="book-empty" th:if="${#lists.isEmpty(bestSellingBooks)}">
-                <p class="text-muted text-center">
-                    Chưa có sách bán chạy nào trong danh mục này.
-                </p>
-            </div>
         </div>
+
+        <div class="book-empty" th:if="${#lists.isEmpty(bestSellingBooks)}">
+            <p class="text-muted text-center">Chưa có sách bán chạy nào trong danh mục này.</p>
+        </div>
+
+        <nav class="mt-3" th:if="${bestSellingBooksPage != null and bestSellingBooksPage.totalPages > 1}">
+            <ul class="pagination justify-content-center">
+
+                <!-- PREV -->
+                <li class="page-item" th:classappend="${newBooksPage.first} ? 'disabled'">
+                    <a class="page-link"
+                       th:if="${!newBooksPage.first}"
+                       th:href="@{/home(categoryId=${selectedCategoryId}, pageNew=${pageNew-1}, pageBest=${pageBest}, pageFav=${pageFav}, size=${size})} + '#sec-new'">«</a>
+
+                    <span class="page-link" th:unless="${!newBooksPage.first}">«</span>
+                </li>
+
+                <!-- NUMBERS -->
+                <li class="page-item"
+                    th:each="i : ${#numbers.sequence(0, newBooksPage.totalPages-1)}"
+                    th:classappend="${i == pageNew} ? 'active'">
+                    <a class="page-link"
+                       th:text="${i+1}"
+                       th:href="@{/home(categoryId=${selectedCategoryId}, pageNew=${i}, pageBest=${pageBest}, pageFav=${pageFav}, size=${size})} + '#sec-new'"></a>
+                </li>
+
+                <!-- NEXT -->
+                <li class="page-item" th:classappend="${newBooksPage.last} ? 'disabled'">
+                    <a class="page-link"
+                       th:if="${!newBooksPage.last}"
+                       th:href="@{/home(categoryId=${selectedCategoryId}, pageNew=${pageNew+1}, pageBest=${pageBest}, pageFav=${pageFav}, size=${size})} + '#sec-new'">»</a>
+
+                    <span class="page-link" th:unless="${!newBooksPage.last}">»</span>
+                </li>
+
+            </ul>
+        </nav>
     </section>
 
-
-
-    <section class="books-section mb-5">
+    <!-- ================= MOST-FAVORED BOOKS ================= -->
+    <section id="sec-fav" class="books-section mb-5">
         <h2 class="section-title mb-3">Most-favored Books</h2>
 
         <div class="books-grid">
@@ -213,10 +301,18 @@
                                  alt="Book Image"
                                  style="width: 150px; height: 220px; object-fit: cover;">
                         </div>
-                        <h5 class="card-title mb-2" th:text="${book.title}">Tên sách
-                        </h5>
-                        <p class="card-text mb-1 text-muted"
-                           th:text="${book.author}">Tác giả</p>
+                        <h5 class="card-title mb-2" th:text="${book.title}">Tên sách</h5>
+                        <div class="book-rating"
+                             th:with="r=${avgRatings[book.bookId]}, c=${ratingCounts[book.bookId]}">
+                            <span class="stars">
+                                <span th:each="i : ${#numbers.sequence(1,5)}"
+                                      th:text="${i <= r} ? '★' : '☆'"
+                                      class="star"></span>
+                            </span>
+                            <span class="rating-count" th:text="'(' + ${c} + ')'">(0)</span>
+                        </div>
+
+                        <p class="card-text mb-1 text-muted" th:text="${book.author}">Tác giả</p>
                         <p class="card-text text-danger font-weight-bold mt-auto"
                            th:text="${#numbers.formatInteger(book.price, 3, 'COMMA')} + ' ₫'">
                             0 ₫
@@ -224,13 +320,45 @@
                     </div>
                 </a>
             </div>
-
-            <div class="book-empty" th:if="${#lists.isEmpty(favoriteBooks)}">
-                <p class="text-muted text-center">
-                    Chưa có sách yêu thích nào trong danh mục này.
-                </p>
-            </div>
         </div>
+
+        <div class="book-empty" th:if="${#lists.isEmpty(favoriteBooks)}">
+            <p class="text-muted text-center">Chưa có sách yêu thích nào trong danh mục này.</p>
+        </div>
+
+        <nav class="mt-3" th:if="${favoriteBooksPage != null and favoriteBooksPage.totalPages > 1}">
+            <ul class="pagination justify-content-center">
+
+                <!-- PREV -->
+                <li class="page-item" th:classappend="${newBooksPage.first} ? 'disabled'">
+                    <a class="page-link"
+                       th:if="${!newBooksPage.first}"
+                       th:href="@{/home(categoryId=${selectedCategoryId}, pageNew=${pageNew-1}, pageBest=${pageBest}, pageFav=${pageFav}, size=${size})} + '#sec-new'">«</a>
+
+                    <span class="page-link" th:unless="${!newBooksPage.first}">«</span>
+                </li>
+
+                <!-- NUMBERS -->
+                <li class="page-item"
+                    th:each="i : ${#numbers.sequence(0, newBooksPage.totalPages-1)}"
+                    th:classappend="${i == pageNew} ? 'active'">
+                    <a class="page-link"
+                       th:text="${i+1}"
+                       th:href="@{/home(categoryId=${selectedCategoryId}, pageNew=${i}, pageBest=${pageBest}, pageFav=${pageFav}, size=${size})} + '#sec-new'"></a>
+                </li>
+
+                <!-- NEXT -->
+                <li class="page-item" th:classappend="${newBooksPage.last} ? 'disabled'">
+                    <a class="page-link"
+                       th:if="${!newBooksPage.last}"
+                       th:href="@{/home(categoryId=${selectedCategoryId}, pageNew=${pageNew+1}, pageBest=${pageBest}, pageFav=${pageFav}, size=${size})} + '#sec-new'">»</a>
+
+                    <span class="page-link" th:unless="${!newBooksPage.last}">»</span>
+                </li>
+
+            </ul>
+
+        </nav>
     </section>
 
 </main>
@@ -468,3 +596,44 @@
 
     }); // Kết thúc DOMContentLoaded
 </script>
+
+<script>
+    document.addEventListener('click', async function (e) {
+
+        const a = e.target.closest('.pagination a.page-link');
+        if (!a) return;
+
+        // CHẶN khi disabled
+        if (a.closest('.page-item')?.classList.contains('disabled')) return;
+
+        e.preventDefault();
+
+        const res = await fetch(a.href, {
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        });
+        const html = await res.text();
+
+        const currentMain = document.getElementById('main-content');
+
+        // Parse HTML trả về và lấy đúng #main-content
+        const doc = new DOMParser().parseFromString(html, 'text/html');
+        const newMain = doc.querySelector('#main-content');
+
+        if (newMain) {
+            currentMain.outerHTML = newMain.outerHTML; // thay toàn bộ <main>
+        } else {
+            // trường hợp server trả fragment chỉ là nội dung bên trong main
+            currentMain.innerHTML = html;
+        }
+
+        // cuộn theo hash
+        if (a.href.includes('#')) {
+            const hash = a.href.substring(a.href.indexOf('#'));
+            const el = document.querySelector(hash);
+            if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        } else {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    });
+</script>
+

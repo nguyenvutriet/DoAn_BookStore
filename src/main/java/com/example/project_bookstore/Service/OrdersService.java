@@ -8,6 +8,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -17,6 +18,18 @@ public class OrdersService {
     private IOrdersRepository repo;
     @Autowired
     private IOrderDetailRepository orderDetailRepo;
+
+    public String generateId(){
+        List<Orders> orders = repo.findAll();
+        List<Integer> dsSo = new java.util.ArrayList();
+        for(Orders o : orders){
+            int id = Integer.parseInt(o.getOrderId().substring(1));
+            dsSo.add(id);
+        }
+        int idMax = Collections.max(dsSo);
+        idMax = idMax+1;
+        return "O" + idMax;
+    }
 
 
     public List<Orders> getOrders(String customerId){

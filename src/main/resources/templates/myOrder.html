@@ -182,7 +182,7 @@
                     <th>Tổng tiền</th>
                     <th>Trạng thái</th>
                     <th>Xác nhận</th>
-                    <th>Hành động</th>
+                    <th>Xem đơn hàng</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -203,8 +203,8 @@
                     </td>
 
                     <!-- Tổng tiền -->
-                    <td class="order-total"
-                        th:text="${#numbers.formatDecimal(order.totalAmount, 0, 'COMMA', 2, 'POINT')} + ' đ'">
+                    <td class="order-total" th:text="${#numbers.formatDecimal(order.getTotalAmount(), 0, 'COMMA', 2, 'POINT')} + ' đ'">
+
                     </td>
 
                     <!-- Trạng thái -->
@@ -237,28 +237,26 @@
                               th:action="@{/user/order/{id}/received(id=${order.getOrderId()})}"
                               method="post"
                               style="display: inline;">
-                            <button type="submit" class="btn-received">✓ Đã nhận được hàng</button>
+                            <button type="submit" class="btn-received">✓ Đã nhận </button>
                         </form>
 
                     </td>
 
-                    <!-- CỘT ĐÁNH GIÁ -->
-                    <td>
-                        <!-- Nếu đơn đã giao: hiện nút đánh giá -->
-                        <a th:if="${order.status == 'Delivered'}"
-                           th:href="@{/review/order/{orderId}(orderId=${order.orderId})}"
+                    <td th:if="${order.status == 'Delivered'}">
+                        <a th:href="@{/review/order/{orderId}(orderId=${order.orderId})}"
                            class="btn-review">
                             ★ Đánh giá
                         </a>
+                    </td>
 
-                        <!-- Nếu chưa giao → đi tới trang chi tiết đơn hàng -->
-                        <a th:unless="${order.status == 'Delivered'}"
-                           th:href="@{/review/detail/{orderId}(orderId=${order.orderId})}"
+                    <!-- CỘT XEM -->
+                    <td>
+                        <a th:href="@{/review/detail/{orderId}(orderId=${order.orderId})}"
                            class="btn-review">
                             👁️ Xem
                         </a>
-
                     </td>
+
                 </tr>
                 </tbody>
             </table>

@@ -1,385 +1,165 @@
-/* ---------------------------------------------------
-   🌿 PROFILE MAIN AREA
---------------------------------------------------- */
-
-.profile-wrapper {
-    max-width: 650px;
-    margin: 40px auto;
-    background: #ffffff;
-    padding: 30px 35px;
-    border-radius: 14px;
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+:root {
+    --primary-deep: #0b3d2e;
+    --text-dark: #1a1a1a;
+    --text-light: #666666;
+    --border-soft: #eeeeee;
+    --bg-global: #fcfcfc;
+    --white: #ffffff;
 }
 
-.profile-title {
-    text-align: center;
-    font-size: 26px;
-    font-weight: 700;
-    color: #0b3d2e;
-    margin-bottom: 25px;
+body {
+    background-color: var(--bg-global);
+    font-family: 'Poppins', sans-serif;
+    color: var(--text-dark);
 }
-
-/* Each input row */
-.profile-row {
-    margin-bottom: 18px;
-}
-
-.profile-row label {
-    font-weight: 600;
-    color: #333;
-    display: block;
-    margin-bottom: 6px;
-}
-
-.profile-row input {
-    width: 100%;
-    padding: 10px 14px;
-    border: 1px solid #dcdcdc;
-    border-radius: 8px;
-    font-size: 15px;
-    transition: 0.25s;
-}
-
-.profile-row input:focus {
-    border-color: #0b3d2e;
-    box-shadow: 0 0 0 2px rgba(11, 61, 46, 0.2);
-    outline: none;
-}
-
-/* Buttons */
-.profile-buttons {
-    margin-top: 15px;
-    display: flex;
-    justify-content: space-between;
-}
-
-.profile-buttons a {
-    color: #0b3d2e;
-    font-weight: 600;
-    text-decoration: none;
-}
-
-.profile-buttons a:hover {
-    text-decoration: underline;
-}
-
-.profile-buttons .btn-submit {
-    background: #0b3d2e;
-    color: #fff;
-    padding: 10px 18px;
-    border-radius: 8px;
-    border: none;
-    font-size: 15px;
-    cursor: pointer;
-    transition: 0.25s;
-}
-
-.profile-buttons .btn-submit:hover {
-    background: #145f47;
-}
-
-/* Date input better style */
-.profile-row input[type="date"] {
-    padding: 8px 12px;
-}
-/* ---------------------------------------------------
-   🌿 PROFILE PAGE – PREMIUM UI (FULL & FIXED)
---------------------------------------------------- */
 
 .profile-container {
     max-width: 900px;
-    margin: 50px auto;
-    padding: 20px;
+    margin: 100px auto;
+    padding: 0 20px;
+}
+
+/* Tiêu đề thanh lịch */
+.profile-header-section {
+    text-align: left;
+    margin-bottom: 50px;
+    border-left: 4px solid var(--primary-deep);
+    padding-left: 25px;
 }
 
 .profile-title {
-    text-align: center;
-    font-size: 32px;
-    font-weight: 700;
-    color: #0b3d2e;
-    margin-bottom: 30px;
+    font-size: 28px;
+    font-weight: 600;
+    margin: 0;
     letter-spacing: -0.5px;
 }
 
-.profile-box {
-    background: #ffffff;
-    padding: 40px 50px;
-    border-radius: 18px;
-    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12);
-    border: 1px solid #e5e5e5;
+.profile-subtitle {
+    color: var(--text-light);
+    font-size: 14px;
+    margin-top: 5px;
 }
 
-/* Form grid with 2 columns for better space usage */
+/* Card thiết kế phẳng và thoáng */
+.profile-card {
+    background: var(--white);
+    padding: 50px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+    border: 1px solid var(--border-soft);
+}
+
+/* Bố cục Grid 2 cột */
 .form-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 35px 50px; /* Tăng khoảng cách dọc + ngang */
-    margin-top: 10px;
+    gap: 40px 60px;
 }
 
-.form-row {
+.form-group {
     display: flex;
     flex-direction: column;
 }
 
-.form-row label {
-    font-weight: 600;
-    font-size: 16px;
-    margin-bottom: 12px; /* Label cách input */
-    color: #333;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    font-size: 14px;
-}
-
-.form-row input {
-    padding: 16px 18px; /* Input thoáng */
-    border-radius: 12px;
-    border: 2px solid #e0e0e0;
-    font-size: 16px;
-    font-family: "Poppins", sans-serif;
-    transition: all 0.3s ease;
-    background-color: #fafafa;
-}
-
-.form-row input:hover {
-    border-color: #d0d0d0;
-    background-color: #ffffff;
-}
-
-.form-row input:focus {
-    border-color: #0b3d2e;
-    box-shadow: 0 0 0 3px rgba(11, 61, 46, 0.15);
-    outline: none;
-    background-color: #ffffff;
-}
-
-.form-row input[readonly] {
-    background-color: #f5f5f5;
-    cursor: not-allowed;
-    color: #666;
-}
-
-/* Button groups */
-.button-group {
-    margin-top: 40px;
-    display: flex;
-    justify-content: center;
-    gap: 25px;
-}
-
-.button-group .btn {
-    padding: 14px 32px;
-    font-size: 16px;
-    border-radius: 12px;
-    min-width: auto;
-    transition: all 0.3s ease;
-    font-weight: 600;
-    cursor: pointer;
-    border: none;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-}
-
-.btn:hover {
-    opacity: 0.9;
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-}
-
-.btn:active {
-    transform: translateY(0);
-}
-
-/* Buttons style */
-.btn-primary {
-    background: linear-gradient(135deg, #0b3d2e 0%, #145f47 100%);
-    border: none;
-    color: white;
-}
-
-.btn-primary:hover {
-    background: linear-gradient(135deg, #145f47 0%, #1a7a5e 100%);
-}
-
-.btn-secondary {
-    background: #b4b4b4;
-    border: none;
-    color: white;
-}
-
-.btn-secondary:hover {
-    background: #a0a0a0;
-}
-
-.btn-success {
-    background: linear-gradient(135deg, #27ae60 0%, #229954 100%);
-    border: none;
-    color: white;
-}
-
-.btn-success:hover {
-    background: linear-gradient(135deg, #229954 0%, #1e8449 100%);
-}
-
-.btn-danger {
-    background: #e74c3c;
-    border: none;
-    color: white;
-}
-
-.btn-danger:hover {
-    background: #c0392b;
-}
-
-/* Mobile Responsive */
-@media (max-width: 768px) {
-    .profile-container {
-        padding: 10px;
-        margin: 20px auto;
-    }
-
-    .profile-box {
-        padding: 25px 20px;
-    }
-
-    .profile-title {
-        font-size: 24px;
-        margin-bottom: 20px;
-    }
-
-    .form-grid {
-        grid-template-columns: 1fr; /* 1 cột trên mobile */
-        gap: 20px;
-    }
-
-    .button-group {
-        flex-direction: column;
-        gap: 12px;
-    }
-
-    .button-group .btn {
-        width: 100%;
-        min-width: auto;
-        padding: 12px 20px;
-    }
-
-    .form-row label {
-        font-size: 13px;
-    }
-
-    .form-row input {
-        padding: 12px 14px;
-        font-size: 14px;
-    }
-}
-
-/* Layout 1 cột */
-.form-column {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-}
-
-/* Dòng chứa label + input */
-.form-row {
-    display: flex;
-    flex-direction: column;
-}
-
-/* Input */
-.form-row input {
-    padding: 10px;
-    border-radius: 6px;
-    border: 1px solid #ccc;
-    font-size: 15px;
-}
-.profile-container {
-    max-width: 800px; /* Tăng chiều rộng tối đa */
-    margin: 50px auto;
-    padding: 30px;
-    background-color: #f8f9fa; /* Nền nhẹ nhàng */
-    border-radius: 12px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); /* Hiệu ứng nổi */
-}
-
-.profile-title {
-    text-align: center;
-    color: #007bff; /* Màu xanh dương thương hiệu */
-    margin-bottom: 30px;
+.form-group label {
+    font-size: 12px;
     font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-light);
+    margin-bottom: 12px;
 }
 
-.profile-box {
-    display: grid;
-    gap: 20px; /* Khoảng cách giữa các hàng form */
+.form-group input {
+    border: none;
+    border-bottom: 1px solid var(--border-soft);
+    padding: 10px 0;
+    font-size: 16px;
+    color: var(--text-dark);
+    background: transparent;
+    transition: all 0.3s ease;
+    border-radius: 0; /* Chỉ dùng gạch chân để trông tinh tế hơn */
 }
 
-.form-row {
-    display: flex;
-    flex-direction: column;
-    margin-bottom: 15px; /* Giảm khoảng cách mặc định */
+/* Khi có thể chỉnh sửa */
+.form-group input:focus:not([readonly]) {
+    outline: none;
+    border-bottom: 1px solid var(--primary-deep);
 }
 
-.form-row label {
-    font-weight: 600;
-    color: #343a40;
-    margin-bottom: 5px;
-    display: flex;
-    align-items: center;
-}
-
-.form-row label i {
-    margin-right: 8px; /* Khoảng cách giữa icon và label */
-    color: #007bff; /* Màu icon */
-}
-
-.form-row input[readonly] {
-    background-color: #e9ecef; /* Màu nền cho input chỉ đọc */
+/* Trạng thái chỉ đọc */
+.form-group input[readonly] {
+    color: #999;
     cursor: default;
 }
 
-.form-row input:not([readonly]) {
-    border: 1px solid #007bff; /* Viền nổi bật khi có thể chỉnh sửa */
-    box-shadow: 0 0 5px rgba(0, 123, 255, 0.2);
+/* Mã khách hàng - Làm mờ hẳn để phân cấp thông tin */
+.readonly-gray {
+    font-size: 14px !important;
+    font-style: italic;
 }
 
-.form-row input {
-    padding: 10px 15px;
-    border-radius: 8px;
-    border: 1px solid #ced4da;
-    transition: all 0.3s ease;
-}
-
-.button-group {
+/* Khu vực nút bấm tối giản */
+.profile-actions {
+    margin-top: 60px;
     display: flex;
-    justify-content: flex-end; /* Đẩy nút sang phải */
-    gap: 15px;
-    margin-top: 20px;
+    justify-content: center;   /* <-- CHỈNH Ở ĐÂY */
+    align-items: center;
+    gap: 30px;
 }
 
-.button-group .btn {
-    padding: 10px 20px;
-    border-radius: 8px;
-    font-weight: 500;
-    transition: background-color 0.3s ease;
+
+.btn-link {
+    font-size: 14px;
+    color: var(--text-light);
+    text-decoration: none;
+    transition: color 0.3s;
 }
 
-#editBtn {
-    background-color: #ffc107; /* Vàng */
-    border-color: #ffc107;
-    color: #343a40;
+.btn-link:hover {
+    color: var(--text-dark);
 }
 
-#editBtn:hover {
-    background-color: #e0a800;
+.btn-main {
+    padding: 12px 35px;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    border: 1px solid var(--primary-deep);
 }
 
-#cancelBtn {
-    background-color: #dc3545; /* Đỏ */
-    border-color: #dc3545;
+.btn-edit {
+    background: var(--primary-deep);
+    color: var(--white);
 }
 
-#saveButtons .btn-success {
-    background-color: #28a745; /* Xanh lá */
-    border-color: #28a745;
+.btn-edit:hover {
+    background: #145f47;
+    box-shadow: 0 5px 15px rgba(11, 61, 46, 0.2);
+}
+
+.btn-save {
+    background: var(--primary-deep);
+    color: var(--white);
+}
+
+.btn-cancel {
+    background: transparent;
+    color: var(--text-light);
+    border: 1px solid var(--border-soft);
+}
+
+.btn-cancel:hover {
+    background: #fafafa;
+    color: var(--text-dark);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .form-grid { grid-template-columns: 1fr; gap: 30px; }
+    .profile-card { padding: 30px; }
+    .profile-actions { flex-direction: column-reverse; width: 100%; }
+    .btn-main { width: 100%; text-align: center; }
 }

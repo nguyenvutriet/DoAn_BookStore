@@ -235,7 +235,7 @@ body {
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); /* Đổ bóng nhẹ và sâu */
     width: 100%;
     max-width: 400px; /* Chiều rộng tối đa chuẩn */
-    margin-top: 100px; /* Đẩy xuống khỏi header */
+    /*margin-top: 100px; !* Đẩy xuống khỏi header *!*/
     margin-bottom: 50px;
 }
 
@@ -429,12 +429,11 @@ body {
 --------------------------------------------------- */
 
 #main-content {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 60px 20px;
-    background-color: #f0f2f5; /* Nền nhẹ */
+    padding-top: 30px;   /* khoảng cách nhỏ dưới header */
+    padding-bottom: 30px;
+    background-color: #f0f2f5;
 }
+
 
 .change-password-box {
     max-width: 420px;
@@ -529,4 +528,10 @@ body {
     margin-top: 20px;
     text-align: center;
     font-weight: 500;
+}
+.login-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start; /* 👈 quan trọng: KHÔNG center dọc */
+    min-height: calc(100vh - 160px); /* header + footer */
 }

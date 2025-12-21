@@ -588,3 +588,230 @@ body {
         font-size: 0.9rem;
     }
 }
+
+/* Modal styling with green theme */
+.review-modal-content {
+    border-radius: 20px;
+    border: none;
+    overflow: hidden;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+}
+
+.review-modal-header {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    color: white;
+    padding: 25px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: none;
+}
+
+.review-modal-header .modal-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin: 0;
+}
+
+.btn-close-custom {
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: white;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-close-custom:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: rotate(90deg);
+}
+
+.btn-close-custom i {
+    font-size: 1.2rem;
+}
+
+/* Book info card in modal */
+.book-info-card-modal {
+    display: flex;
+    gap: 20px;
+    padding: 20px;
+    background: linear-gradient(135deg, #f0f9f4 0%, #e8f5e9 100%);
+    border-radius: 12px;
+    margin-bottom: 25px;
+    border: 2px solid #28a745;
+}
+
+.book-thumbnail-modal {
+    width: 100px;
+    height: 140px;
+    object-fit: cover;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+.book-details-modal h3 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #1e7e34;
+    margin-bottom: 10px;
+}
+
+.book-details-modal p {
+    margin: 5px 0;
+    color: #495057;
+    font-size: 0.95rem;
+}
+
+.book-details-modal strong {
+    color: #28a745;
+}
+
+/* Form styling in modal */
+.review-form-modal {
+    padding: 0 5px;
+}
+
+.form-group-modal {
+    margin-bottom: 25px;
+}
+
+.form-label-modal {
+    display: block;
+    font-weight: 600;
+    color: #28a745;
+    margin-bottom: 12px;
+    font-size: 1rem;
+}
+
+/* Star rating in modal */
+.star-rating-modal {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: flex-end;
+    gap: 8px;
+    align-items: center;
+}
+
+.star-rating-modal input[type="radio"] {
+    display: none;
+}
+
+.star-rating-modal label {
+    font-size: 2.5rem;
+    color: #ddd;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin: 0;
+}
+
+.star-rating-modal label:hover,
+.star-rating-modal label:hover ~ label,
+.star-rating-modal input[type="radio"]:checked ~ label {
+    color: #ffc107;
+    transform: scale(1.1);
+}
+
+.rating-value-modal {
+    margin-left: 15px;
+    font-weight: 600;
+    color: #28a745;
+    font-size: 1rem;
+}
+
+/* Textarea in modal */
+.form-control-modal {
+    width: 100%;
+    min-height: 120px;
+    padding: 15px;
+    border: 2px solid #28a745;
+    border-radius: 10px;
+    font-size: 0.95rem;
+    resize: vertical;
+    transition: all 0.3s ease;
+    font-family: inherit;
+}
+
+.form-control-modal:focus {
+    outline: none;
+    border-color: #20c997;
+    box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.1);
+}
+
+.char-counter-modal {
+    text-align: right;
+    color: #6c757d;
+    font-size: 0.85rem;
+    margin-top: 5px;
+}
+
+/* Action buttons in modal */
+.form-actions-modal {
+    display: flex;
+    gap: 12px;
+    margin-top: 30px;
+}
+
+.btn-submit-modal {
+    flex: 1;
+    padding: 14px 30px;
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+}
+
+.btn-submit-modal:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(40, 167, 69, 0.4);
+}
+
+.btn-cancel-modal {
+    flex: 1;
+    padding: 14px 30px;
+    background: white;
+    color: #6c757d;
+    border: 2px solid #dee2e6;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-cancel-modal:hover {
+    background: #f8f9fa;
+    border-color: #adb5bd;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .book-info-card-modal {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    .book-thumbnail-modal {
+        width: 120px;
+        height: 170px;
+    }
+
+    .form-actions-modal {
+        flex-direction: column;
+    }
+
+    .star-rating-modal label {
+        font-size: 2rem;
+    }
+}

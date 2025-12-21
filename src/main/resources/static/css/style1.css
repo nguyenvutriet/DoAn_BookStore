@@ -571,3 +571,87 @@ main {
 #scrollTopBtn:hover {
     background-color: #2c6f3b;
 }
+
+/*PHÂN TRANG*/
+/* ================== PAGINATION (đẹp, đồng bộ UI) ================== */
+/* FIX: pagination nằm ngang, căn giữa, không còn bullet */
+.pagination {
+    display: flex !important;
+    justify-content: center;
+    align-items: center;
+
+    list-style: none !important;
+    padding-left: 0 !important;
+    margin: 18px 0 0 !important;
+
+    gap: 10px;          /* giờ mới ăn vì có flex */
+    flex-wrap: wrap;    /* nhiều trang vẫn đẹp */
+}
+
+.pagination .page-item {
+    list-style: none !important;
+    margin: 0 !important;
+}
+
+/* khối phân trang */
+.pagination {
+    gap: 10px;                 /* tạo khoảng cách giữa các nút */
+    flex-wrap: wrap;           /* không bị tràn khi nhiều trang */
+    margin-top: 18px;
+}
+
+/* nút */
+.pagination .page-item .page-link {
+    min-width: 44px;
+    height: 44px;
+    padding: 0 14px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    border: none;
+    border-radius: 999px;      /* bo tròn pill */
+    font-weight: 600;
+    font-size: 14px;
+
+    background: #ffffff;
+    color: #1e6f47;
+
+    box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+    transition: transform 0.15s ease, box-shadow 0.2s ease, background 0.2s ease, color 0.2s ease;
+}
+
+/* hover */
+.pagination .page-item .page-link:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 24px rgba(0,0,0,0.12);
+    background: rgba(45, 134, 89, 0.08);
+    color: #1e6f47;
+}
+
+/* active */
+.pagination .page-item.active .page-link {
+    background: linear-gradient(135deg, #2d8659 0%, #1e6f47 100%);
+    color: #ffffff;
+    box-shadow: 0 10px 26px rgba(45, 134, 89, 0.30);
+}
+
+/* disabled */
+.pagination .page-item.disabled .page-link {
+    background: #f2f4f7;
+    color: #9aa4b2;
+    box-shadow: none;
+    cursor: not-allowed;
+    opacity: 0.8;
+}
+
+/* focus (bỏ viền xanh bootstrap) */
+.pagination .page-link:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(45, 134, 89, 0.25);
+}
+
+/* nút « » đẹp hơn (tùy chọn) */
+.pagination .page-link {
+    letter-spacing: 0.2px;
+}

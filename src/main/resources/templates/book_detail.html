@@ -18,6 +18,58 @@
 </head>
 
 <body>
+<!-- ===== MODAL ===== -->
+<div id="previewModal" class="preview-modal">
+    <!-- Enhanced modal design with header, footer, and better layout -->
+    <div class="preview-content-enhanced">
+        <!-- Modal Header -->
+        <div class="preview-header">
+            <div class="preview-title">
+                <span class="book-icon">📖</span>
+                <h3>Đọc thử sách</h3>
+                <span class="preview-badge">5 trang đầu</span>
+            </div>
+            <button class="close-preview-btn" onclick="closePreview()">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+        </div>
+
+        <!-- PDF Canvas Container -->
+        <div class="pdf-canvas-container">
+            <div class="pdf-loading" id="pdfLoading">
+                <div class="spinner"></div>
+                <p>Đang tải sách...</p>
+            </div>
+            <canvas id="pdf-canvas"></canvas>
+        </div>
+
+        <!-- Modal Footer with Navigation -->
+        <div class="preview-footer">
+            <button id="prevBtn" class="nav-btn prev-btn" onclick="changePage(-1)">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="15 18 9 12 15 6"></polyline>
+                </svg>
+                Trang trước
+            </button>
+
+            <div class="page-info">
+                <span id="currentPageNum">1</span>
+                <span class="page-separator">/</span>
+                <span id="totalPages">5</span>
+            </div>
+
+            <button id="nextBtn" class="nav-btn next-btn" onclick="changePage(1)">
+                Trang sau
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+            </button>
+        </div>
+    </div>
+</div>
 
 <!-- ===== HEADER GIỮ NGUYÊN ===== -->
 <header id="header">
@@ -216,7 +268,11 @@
     </div> <!-- Kết thúc book-detail -->
 
     <!-- ===== KHU ĐÁNH GIÁ SÁCH ===== -->
+
     <div class="container mt-5 rating-container">
+        <div id="book-details" th:attr="data-book-id=${book.bookId}">
+            <button type="button" class="btn-preview" onclick="openPreview()">📖 ĐỌC THỬ </button>
+        </div>
 
         <hr class="my-4">
 
@@ -358,6 +414,90 @@
     });
 
 </script>
+
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.min.js"></script>
+<script>
+    let currentPage = 1;
+    let pdfDoc = null;
+    const pdfCanvas = document.getElementById('pdf-canvas');
+    const ctx = pdfCanvas.getContext('2d');
+    const totalPagesElement = document.getElementById('totalPages');  // Lấy phần tử hiển thị tổng số trang
+    const currentPageElement = document.getElementById('currentPageNum');  // Lấy phần tử hiển thị số trang hiện tại
+
+    // Hàm tải PDF từ backend và render lên canvas
+    function loadPdf(pdfUrl) {
+        const pdfLoading = document.getElementById('pdfLoading');  // Lấy phần tử hiển thị "Đang tải sách..."
+
+        // Hiển thị phần tử loading trước khi bắt đầu tải PDF
+        pdfLoading.style.display = 'flex';
+
+        pdfjsLib.getDocument(pdfUrl).promise.then(pdf => {
+            pdfDoc = pdf;
+            totalPagesElement.textContent = pdfDoc.numPages;  // Cập nhật tổng số trang
+            renderPage(currentPage);
+
+            // Ẩn phần tử loading khi tài liệu đã được tải xong
+            pdfLoading.style.display = 'none';
+        }).catch(error => {
+            console.error('Error loading PDF:', error);
+            pdfLoading.innerHTML = 'Lỗi khi tải sách';  // Hiển thị thông báo lỗi nếu có
+        });
+    }
+
+    // Hàm render trang PDF lên canvas
+    function renderPage(pageNum) {
+        pdfDoc.getPage(pageNum).then(page => {
+            const scale = 1.5;
+            const viewport = page.getViewport({ scale: scale });
+            pdfCanvas.height = viewport.height;
+            pdfCanvas.width = viewport.width;
+            const renderContext = {
+                canvasContext: ctx,
+                viewport: viewport
+            };
+            page.render(renderContext);
+
+            // Cập nhật số trang hiện tại
+            currentPageElement.textContent = currentPage;
+        });
+    }
+
+    // Hàm thay đổi trang PDF (Next/Previous)
+    function changePage(direction) {
+        const totalPages = pdfDoc.numPages;
+        if (direction === -1 && currentPage > 1) {
+            currentPage--;
+        } else if (direction === 1 && currentPage < totalPages) {
+            currentPage++;
+        }
+        renderPage(currentPage);
+    }
+
+    // Hàm mở modal và tải PDF
+    function openPreview() {
+        document.getElementById('previewModal').style.display = 'block';
+
+        // Lấy bookId từ data-book-id
+        const bookId = document.getElementById('book-details').getAttribute('data-book-id');
+        console.log("Book ID from data-book-id:", bookId);  // Kiểm tra bookId đã lấy đúng chưa
+
+        // Tạo URL tải PDF từ backend
+        const pdfUrl = `/api/books/${bookId}/preview`;
+
+        // Tải PDF
+        loadPdf(pdfUrl);
+    }
+
+    // Hàm đóng modal
+    function closePreview() {
+        document.getElementById('previewModal').style.display = 'none';
+        const iframe = document.getElementById('pdf-canvas');
+        iframe.src = '';  // Reset khi đóng modal
+    }
+</script>
+
 
 
 <!-- ===== FOOTER GIỮ NGUYÊN ===== -->

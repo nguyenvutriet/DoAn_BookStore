@@ -2,6 +2,7 @@ package com.example.project_bookstore.Repository;
 
 import com.example.project_bookstore.Entity.Books;
 import jakarta.persistence.LockModeType;
+import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
@@ -18,64 +19,142 @@ import java.util.List;
 public interface IBooksRepository extends JpaRepository<Books, String> {
     long count();
 
-    // Lấy tất cả sách theo categoryId
-    List<Books> findByCategory_CategoryId(String categoryId);
+    // ================= NEW BOOKS (PHÂN TRANG) =================
+    Page<Books> findAllByOrderByPublicationYearDesc(Pageable pageable);
 
-    // ========= NEW BOOKS =========
-    // Không filter category
-    List<Books> findTop8ByOrderByPublicationYearDesc();
+    Page<Books> findByCategory_CategoryIdOrderByPublicationYearDesc(String categoryId, Pageable pageable);
 
-    // Có filter category
-    List<Books> findTop8ByCategory_CategoryIdOrderByPublicationYearDesc(String categoryId);
+    // ================= BEST-SELLING (PHÂN TRANG) =================
+    // Dùng association đang có trong repo của bạn: b.orderDetail_Book
+    // IMPORTANT: có countQuery riêng để Page chạy đúng khi GROUP BY
+    @Query(
+            value = """
+                SELECT b
+                FROM Books b
+                JOIN b.orderDetail_Book od
+                GROUP BY b
+                ORDER BY SUM(od.quantity) DESC
+            """,
+            countQuery = """
+                SELECT COUNT(DISTINCT b)
+                FROM Books b
+                JOIN b.orderDetail_Book od
+            """
+    )
+    Page<Books> findBestSellingBooks(Pageable pageable);
 
-    /* ========== BEST-SELLING BOOKS (OrderDetail) ========== */
+    @Query(
+            value = """
+                SELECT b
+                FROM Books b
+                JOIN b.orderDetail_Book od
+                WHERE b.category.categoryId = :categoryId
+                GROUP BY b
+                ORDER BY SUM(od.quantity) DESC
+            """,
+            countQuery = """
+                SELECT COUNT(DISTINCT b)
+                FROM Books b
+                JOIN b.orderDetail_Book od
+                WHERE b.category.categoryId = :categoryId
+            """
+    )
+    Page<Books> findBestSellingBooksByCategory(@Param("categoryId") String categoryId, Pageable pageable);
 
-    // Top sách bán chạy nhất theo tổng quantity trong OrderDetail (không filter category)
-    @Query("""
-           SELECT b
-           FROM Books b
-           JOIN b.orderDetail_Book od
-           GROUP BY b
-           ORDER BY SUM(od.quantity) DESC
-           """)
-    List<Books> findBestSellingBooks(Pageable pageable);
+    // ================= FAVORITE (PHÂN TRANG) =================
+    // Dùng association đang có trong comment cũ: b.reviews
+    // Nếu sách không có review vẫn hiện: LEFT JOIN + COALESCE
+    @Query(
+            value = """
+                SELECT b
+                FROM Books b
+                LEFT JOIN b.reviews r
+                GROUP BY b
+                ORDER BY COALESCE(AVG(r.rating), 0) DESC, COUNT(r) DESC
+            """,
+            countQuery = """
+                SELECT COUNT(b)
+                FROM Books b
+            """
+    )
+    Page<Books> findFavoriteBooks(Pageable pageable);
 
-    // Top sách bán chạy nhất theo category
-    @Query("""
-           SELECT b
-           FROM Books b
-           JOIN b.orderDetail_Book od
-           WHERE b.category.categoryId = :categoryId
-           GROUP BY b
-           ORDER BY SUM(od.quantity) DESC
-           """)
-    List<Books> findBestSellingBooksByCategory(@Param("categoryId") String categoryId,
-                                               Pageable pageable);
+    @Query(
+            value = """
+                SELECT b
+                FROM Books b
+                LEFT JOIN b.reviews r
+                WHERE b.category.categoryId = :categoryId
+                GROUP BY b
+                ORDER BY COALESCE(AVG(r.rating), 0) DESC, COUNT(r) DESC
+            """,
+            countQuery = """
+                SELECT COUNT(b)
+                FROM Books b
+                WHERE b.category.categoryId = :categoryId
+            """
+    )
+    Page<Books> findFavoriteBooksByCategory(@Param("categoryId") String categoryId, Pageable pageable);
 
 
-    /* ========== FAVORITE BOOKS (Review.rating) ========== */
-
-    // Top sách được đánh giá cao nhất (AVG(rating) desc, không filter category)
-    @Query("""
-           SELECT b
-           FROM Books b
-           LEFT JOIN b.reviews r
-           GROUP BY b
-           ORDER BY COALESCE(AVG(r.rating), 0) DESC, COUNT(r) DESC
-           """)
-    List<Books> findFavoriteBooks(Pageable pageable);
-
-    // Top sách được đánh giá cao nhất theo category
-    @Query("""
-           SELECT b
-           FROM Books b
-           LEFT JOIN b.reviews r
-           WHERE b.category.categoryId = :categoryId
-           GROUP BY b
-           ORDER BY COALESCE(AVG(r.rating), 0) DESC, COUNT(r) DESC
-           """)
-    List<Books> findFavoriteBooksByCategory(@Param("categoryId") String categoryId,
-                                            Pageable pageable);
+    //    // Lấy tất cả sách theo categoryId
+//    List<Books> findByCategory_CategoryId(String categoryId);
+//
+//    // ========= NEW BOOKS =========
+//    // Không filter category
+//    List<Books> findTop8ByOrderByPublicationYearDesc();
+//
+//    // Có filter category
+//    List<Books> findTop8ByCategory_CategoryIdOrderByPublicationYearDesc(String categoryId);
+//
+//    /* ========== BEST-SELLING BOOKS (OrderDetail) ========== */
+//
+//    // Top sách bán chạy nhất theo tổng quantity trong OrderDetail (không filter category)
+//    @Query("""
+//           SELECT b
+//           FROM Books b
+//           JOIN b.orderDetail_Book od
+//           GROUP BY b
+//           ORDER BY SUM(od.quantity) DESC
+//           """)
+//    List<Books> findBestSellingBooks(Pageable pageable);
+//
+//    // Top sách bán chạy nhất theo category
+//    @Query("""
+//           SELECT b
+//           FROM Books b
+//           JOIN b.orderDetail_Book od
+//           WHERE b.category.categoryId = :categoryId
+//           GROUP BY b
+//           ORDER BY SUM(od.quantity) DESC
+//           """)
+//    List<Books> findBestSellingBooksByCategory(@Param("categoryId") String categoryId,
+//                                               Pageable pageable);
+//
+//
+//    /* ========== FAVORITE BOOKS (Review.rating) ========== */
+//
+//    // Top sách được đánh giá cao nhất (AVG(rating) desc, không filter category)
+//    @Query("""
+//           SELECT b
+//           FROM Books b
+//           LEFT JOIN b.reviews r
+//           GROUP BY b
+//           ORDER BY COALESCE(AVG(r.rating), 0) DESC, COUNT(r) DESC
+//           """)
+//    List<Books> findFavoriteBooks(Pageable pageable);
+//
+//    // Top sách được đánh giá cao nhất theo category
+//    @Query("""
+//           SELECT b
+//           FROM Books b
+//           LEFT JOIN b.reviews r
+//           WHERE b.category.categoryId = :categoryId
+//           GROUP BY b
+//           ORDER BY COALESCE(AVG(r.rating), 0) DESC, COUNT(r) DESC
+//           """)
+//    List<Books> findFavoriteBooksByCategory(@Param("categoryId") String categoryId,
+//                                            Pageable pageable);
     //sách còn hàng
     @Query("SELECT b FROM Books b WHERE b.category.categoryId = :categoryId AND b.quantity > 0")
     List<Books> findInStockByCategory(String categoryId);

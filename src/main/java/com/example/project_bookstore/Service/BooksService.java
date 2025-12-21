@@ -4,9 +4,14 @@ import com.example.project_bookstore.Entity.Books;
 import com.example.project_bookstore.Repository.IBooksRepository;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Page;
+
 
 import org.springframework.stereotype.Service;
+
 
 import java.util.List;
 
@@ -51,40 +56,64 @@ public class BooksService {
                         new RuntimeException("Không tìm thấy sách với id = " + bookId));
     }
 
-    public List<Books> getNewBooks(String categoryId) {
+    // NEW: sort theo publicationYear desc
+    public Page<Books> getNewBooksPage(String categoryId, Pageable pageable) {
         if (categoryId == null || categoryId.isBlank()) {
-            // TẤT CẢ: lấy top 8, không filter category
-            return booksRepository.findTop8ByOrderByPublicationYearDesc();
-        } else {
-            // Theo category
-            return booksRepository
-                    .findTop8ByCategory_CategoryIdOrderByPublicationYearDesc(categoryId);
+            return booksRepository.findAllByOrderByPublicationYearDesc(pageable);
         }
+        return booksRepository.findByCategory_CategoryIdOrderByPublicationYearDesc(categoryId, pageable);
     }
+
+    // BEST-SELLING: tổng quantity OrderDetail desc
+    public Page<Books> getBestSellingBooksPage(String categoryId, Pageable pageable) {
+        if (categoryId == null || categoryId.isBlank()) {
+            return booksRepository.findBestSellingBooks(pageable);
+        }
+        return booksRepository.findBestSellingBooksByCategory(categoryId, pageable);
+    }
+
+    // FAVORITE: avg(review.rating) desc
+    public Page<Books> getFavoriteBooksPage(String categoryId, Pageable pageable) {
+        if (categoryId == null || categoryId.isBlank()) {
+            return booksRepository.findFavoriteBooks(pageable);
+        }
+        return booksRepository.findFavoriteBooksByCategory(categoryId, pageable);
+    }
+
+//    public List<Books> getNewBooks(String categoryId) {
+//        if (categoryId == null || categoryId.isBlank()) {
+//            // TẤT CẢ: lấy top 8, không filter category
+//            return booksRepository.findTop8ByOrderByPublicationYearDesc();
+//        } else {
+//            // Theo category
+//            return booksRepository
+//                    .findTop8ByCategory_CategoryIdOrderByPublicationYearDesc(categoryId);
+//        }
+//    }
 
     /* ========== BEST-SELLING BOOKS (OrderDetail) ========== */
 
-    public List<Books> getBestSellingBooks(String categoryId) {
-        if (categoryId == null || categoryId.isBlank()) {
-            // Top 8 bán chạy toàn bộ
-            return booksRepository.findBestSellingBooks(PageRequest.of(0, 8));
-        } else {
-            // Top 8 bán chạy trong 1 category
-            return booksRepository.findBestSellingBooksByCategory(categoryId, PageRequest.of(0, 8));
-        }
-    }
-
-    /* ========== FAVORITE BOOKS (Review.rating) ========== */
-
-    public List<Books> getFavoriteBooks(String categoryId) {
-        if (categoryId == null || categoryId.isBlank()) {
-            // Top 8 được đánh giá cao nhất toàn bộ
-            return booksRepository.findFavoriteBooks(PageRequest.of(0, 8));
-        } else {
-            // Top 8 được đánh giá cao nhất theo category
-            return booksRepository.findFavoriteBooksByCategory(categoryId, PageRequest.of(0, 8));
-        }
-    }
+//    public List<Books> getBestSellingBooks(String categoryId) {
+//        if (categoryId == null || categoryId.isBlank()) {
+//            // Top 8 bán chạy toàn bộ
+//            return booksRepository.findBestSellingBooks(PageRequest.of(0, 8));
+//        } else {
+//            // Top 8 bán chạy trong 1 category
+//            return booksRepository.findBestSellingBooksByCategory(categoryId, PageRequest.of(0, 8));
+//        }
+//    }
+//
+//    /* ========== FAVORITE BOOKS (Review.rating) ========== */
+//
+//    public List<Books> getFavoriteBooks(String categoryId) {
+//        if (categoryId == null || categoryId.isBlank()) {
+//            // Top 8 được đánh giá cao nhất toàn bộ
+//            return booksRepository.findFavoriteBooks(PageRequest.of(0, 8));
+//        } else {
+//            // Top 8 được đánh giá cao nhất theo category
+//            return booksRepository.findFavoriteBooksByCategory(categoryId, PageRequest.of(0, 8));
+//        }
+//    }
 
     public List<Books> searchBooks(String q, String categoryId) {
         String keyword = (q == null) ? "" : q.trim();

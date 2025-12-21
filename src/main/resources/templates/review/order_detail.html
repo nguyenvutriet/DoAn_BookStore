@@ -164,10 +164,22 @@
     </div>
 
     <div class="order-row">
+      <span class="label">Tổng tiền hàng:</span>
+      <span class="value price" id="totalItemsAmount">0 đ</span>
+    </div>
+
+    <div class="order-row">
+      <span class="label">Phí ship:</span>
+      <span class="value" id="shippingFee">0 đ</span>
+    </div>
+
+
+    <div class="order-row">
       <span class="label">Tổng tiền:</span>
-      <span class="value price"
+      <span class="value price" id="orderTotal"
             th:text="|${#numbers.formatDecimal(order.totalAmount,0,'COMMA',2,'POINT')} đ|"></span>
     </div>
+
   </div>
 
   <!-- PRODUCT LIST -->
@@ -184,10 +196,12 @@
     <div style="flex: 1;">
       <p class="book-title" th:text="${item.book.title}"></p>
 
-      <p class="book-qty">Số lượng: <b th:text="${item.quantity}"></b></p>
+      <p class="book-qty">Số lượng: <b class="item-qty" th:text="${item.quantity}"></b></p>
 
-      <p class="price"
+
+      <p class="price item-unit-price"
          th:text="|${#numbers.formatDecimal(item.unitPrice,0,'COMMA',2,'POINT')} đ|"></p>
+
 
       <p style="margin-top:6px; font-size:0.9rem; color:#555;">
         Thành tiền:
@@ -205,6 +219,59 @@
   </footer>
 
 </div>
+<script>
+  function parseMoney(text) {
+    if (!text) return 0;
+    let s = text.replace(/[^\d.,-]/g, '').trim();
+    if (!s) return 0;
+
+    const lastDot = s.lastIndexOf('.');
+    const lastComma = s.lastIndexOf(',');
+
+    // Có cả . và , -> xác định ký tự nào là thập phân theo vị trí xuất hiện cuối cùng
+    if (lastDot !== -1 && lastComma !== -1) {
+      if (lastDot > lastComma) {
+        // Format: 151,170.00  -> , là nghìn, . là thập phân
+        s = s.replace(/,/g, '');
+      } else {
+        // Format: 151.170,00  -> . là nghìn, , là thập phân
+        s = s.replace(/\./g, '').replace(',', '.');
+      }
+    } else if (lastComma !== -1 && lastDot === -1) {
+      // Chỉ có , -> thường là nghìn (VN hiển thị kiểu 151,170)
+      s = s.replace(/,/g, '');
+    }
+    // Chỉ có . thì Number() tự hiểu tốt (có thể là thập phân)
+
+    const n = Number(s);
+    return Number.isFinite(n) ? n : 0;
+  }
+
+  // Đồng bộ kiểu: 181,200.00 đ
+  function formatMoney(n) {
+    return Number(n).toLocaleString('en-US', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    }) + ' đ';
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    let itemsTotal = 0;
+
+    document.querySelectorAll('.book-card').forEach(card => {
+      const unitPrice = parseMoney(card.querySelector('.item-unit-price')?.textContent);
+      const qty = Number(card.querySelector('.item-qty')?.textContent) || 0;
+      itemsTotal += unitPrice * qty;
+    });
+
+    const orderTotal = parseMoney(document.getElementById('orderTotal')?.textContent);
+    const ship = Math.max(0, orderTotal - itemsTotal);
+
+    document.getElementById('totalItemsAmount').textContent = formatMoney(itemsTotal);
+    document.getElementById('shippingFee').textContent = formatMoney(ship);
+  });
+</script>
+
 
 </body>
 </html>

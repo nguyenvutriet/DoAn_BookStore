@@ -130,66 +130,50 @@
 </header>
 
 <main class="profile-container">
+    <div class="profile-header-section">
+        <h2 class="profile-title">Tài khoản cá nhân</h2>
+        <p class="profile-subtitle">Cập nhật thông tin để nhận được dịch vụ tốt nhất từ UTE BookStore</p>
+    </div>
 
-    <h2 class="profile-title">Thông tin hồ sơ khách hàng</h2>
-
-    <form id="profileForm" th:action="@{/user/profile/update}" method="post" class="profile-box">
-
+    <form id="profileForm" th:action="@{/user/profile/update}" method="post" class="profile-card">
         <input type="hidden" th:value="${customer.getCustomerId()}" name="customerId"/>
 
-        <div class="form-column" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-
-            <div>
-                <div class="form-row">
-                    <label><i class="fas fa-user"></i> Họ tên</label>
-                    <input type="text" name="fullName" th:value="${customer.getFullName()}" readonly>
-                </div>
-
-                <div class="form-row">
-                    <label><i class="fas fa-phone"></i> Số điện thoại</label>
-                    <input type="text" name="phone" th:value="${customer.getPhone()}" readonly>
-                </div>
-
-                <div class="form-row">
-                    <label><i class="fas fa-envelope"></i> Email</label>
-                    <input type="email" name="email" th:value="${customer.getEmail()}" readonly>
-                </div>
+        <div class="form-grid">
+            <div class="form-group">
+                <label>Họ và tên</label>
+                <input type="text" name="fullName" th:value="${customer.getFullName()}" readonly>
             </div>
-
-            <div>
-                <div class="form-row">
-                    <label><i class="fas fa-map-marker-alt"></i> Địa chỉ</label>
-                    <input type="text" name="address" th:value="${customer.getAddress()}" readonly>
-                </div>
-
-                <div class="form-row">
-                    <label><i class="fas fa-calendar-alt"></i> Ngày sinh</label>
-                    <input type="date" name="birthDate" th:value="${#dates.format(customer.getDateOfBirth(), 'yyyy-MM-dd')}" readonly>
-                </div>
-
-                <div class="form-row">
-                    <label><i class="fas fa-id-badge"></i> Mã khách hàng</label>
-                    <input type="text" th:value="${customer.getCustomerId()}" readonly style="background-color: #f1f1f1;">
-                </div>
+            <div class="form-group">
+                <label>Số điện thoại</label>
+                <input type="text" name="phone" th:value="${customer.getPhone()}" readonly>
             </div>
-
+            <div class="form-group">
+                <label>Địa chỉ Email</label>
+                <input type="email" name="email" th:value="${customer.getEmail()}" readonly>
+            </div>
+            <div class="form-group">
+                <label>Địa chỉ</label>
+                <input type="text" name="address" th:value="${customer.getAddress()}" readonly>
+            </div>
+            <div class="form-group">
+                <label>Ngày sinh</label>
+                <input type="date" name="birthDate" th:value="${#dates.format(customer.getDateOfBirth(), 'yyyy-MM-dd')}" readonly>
+            </div>
+            <div class="form-group">
+                <label>Mã định danh</label>
+                <input type="text" th:value="${customer.getCustomerId()}" readonly class="readonly-gray">
+            </div>
         </div>
-        <div class="button-group" id="actionButtons">
-            <a href="/home" class="btn btn-primary">Quay lại trang chủ</a>
-            <button type="button" id="editBtn" class="btn btn-warning">
-                <i class="fas fa-edit"></i> Cập nhật thông tin
-            </button>
+
+        <div class="profile-actions" id="actionButtons">
+            <a href="/home" class="btn-link">← Quay lại trang chủ</a>
+            <button type="button" id="editBtn" class="btn-main btn-edit">Thay đổi thông tin</button>
         </div>
 
-        <div class="button-group" id="saveButtons" style="display:none;">
-            <button type="button" id="cancelBtn" class="btn btn-danger">
-                <i class="fas fa-times"></i> Hủy
-            </button>
-            <button type="submit" class="btn btn-success">
-                <i class="fas fa-save"></i> Lưu thay đổi
-            </button>
+        <div class="profile-actions" id="saveButtons" style="display:none;">
+            <button type="button" id="cancelBtn" class="btn-main btn-cancel">Hủy bỏ</button>
+            <button type="submit" class="btn-main btn-save">Xác nhận lưu</button>
         </div>
-
     </form>
 </main>
 
@@ -264,22 +248,47 @@
     const cancelBtn = document.getElementById("cancelBtn");
     const actionButtons = document.getElementById("actionButtons");
     const saveButtons = document.getElementById("saveButtons");
+
+    // Các field được phép chỉnh sửa
+    const editableFields = ["fullName", "phone", "address", "birthDate"];
+
     const inputs = document.querySelectorAll("#profileForm input");
+
+    // Lưu giá trị ban đầu
+    const originalValues = {};
+    inputs.forEach(input => {
+        if (input.name) {
+            originalValues[input.name] = input.value;
+        }
+    });
 
     // Nhấn Cập nhật
     editBtn.addEventListener("click", () => {
-        inputs.forEach(i => i.removeAttribute("readonly"));
+        inputs.forEach(input => {
+            if (editableFields.includes(input.name)) {
+                input.removeAttribute("readonly");
+            }
+        });
+
         actionButtons.style.display = "none";
-        saveButtons.style.display = "block";
+        saveButtons.style.display = "flex"; // căn giữa
     });
 
     // Nhấn Hủy
     cancelBtn.addEventListener("click", () => {
-        inputs.forEach(i => i.setAttribute("readonly", "readonly"));
+        inputs.forEach(input => {
+            if (input.name) {
+                input.value = originalValues[input.name];
+            }
+            input.setAttribute("readonly", "readonly");
+        });
+
         saveButtons.style.display = "none";
-        actionButtons.style.display = "block";
+        actionButtons.style.display = "flex";
     });
 </script>
+
+
 
 </body>
 </html>

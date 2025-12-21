@@ -37,7 +37,7 @@ public class Books {
     @Column(name = "description", length = 2000)
     private String description;
 
-    @Column(name = "price", precision = 12, scale = 2)
+    @Column(name = "price", precision = 12, scale = 0)
     @NotNull
     @Min(0)
     private BigDecimal price;

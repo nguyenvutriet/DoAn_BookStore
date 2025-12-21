@@ -4,7 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Đánh giá sản phẩm</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" type="text/css" href="/css/review.css">
+    <link rel="stylesheet" type="text/css" href="/css/review-modal.css">
 </head>
 
 <body>
@@ -18,41 +21,50 @@
 
     <main class="books-list">
         <div class="book-card" th:each="item : ${order.orderDetail_Order}">
-            <!-- Added book image container with layout -->
             <div class="book-content-wrapper">
                 <div class="book-image-container">
-
                     <img class="book-image"
                          th:src="@{/images/books/{img}(img=${item.book.picture})}"
                          th:alt="${item.book.title}">
-
-
                 </div>
 
                 <div class="book-content">
                     <div class="book-header">
                         <h2 class="book-title" th:text="${item.book.title}"></h2>
 
-                        <!-- Trạng thái: Đã đánh giá -->
                         <span th:if="${ratedMap[item.book.bookId]}" class="badge badge-done">
                             ✓ Đã đánh giá
                         </span>
                     </div>
 
                     <div class="book-actions">
-                        <!-- Nút Đánh giá (khi chưa đánh giá) -->
-                        <a th:if="${!ratedMap[item.book.bookId]}"
-                           class="btn btn-primary"
-                           th:href="@{/review/add/{o}/{b}(o=${order.orderId}, b=${item.book.bookId})}">
+                        <!-- Changed link to button that opens modal -->
+                        <button th:if="${!ratedMap[item.book.bookId]}"
+                                class="btn btn-primary"
+                                onclick="openReviewModal(this)"
+                                th:data-book-id="${item.book.bookId}"
+                                th:data-order-id="${order.orderId}"
+                                th:data-book-title="${item.book.title}"
+                                th:data-book-author="${item.book.author}"
+                                th:data-book-publisher="${item.book.publisher}"
+                                th:data-book-price="${item.book.price}"
+                                th:data-book-picture="${item.book.picture}">
                             ⭐ Đánh giá ngay
-                        </a>
+                        </button>
 
-                        <!-- Nút Đánh giá lại (khi đã đánh giá) -->
-                        <a th:if="${ratedMap[item.book.bookId]}"
-                           class="btn btn-secondary"
-                           th:href="@{/review/add/{o}/{b}(o=${order.orderId}, b=${item.book.bookId})}">
+                        <button th:if="${ratedMap[item.book.bookId]}"
+                                class="btn btn-secondary"
+                                onclick="openReviewModal(this)"
+                                th:data-book-id="${item.book.bookId}"
+                                th:data-order-id="${order.orderId}"
+                                th:data-book-title="${item.book.title}"
+                                th:data-book-author="${item.book.author}"
+                                th:data-book-publisher="${item.book.publisher}"
+                                th:data-book-price="${item.book.price}"
+                                th:data-book-picture="${item.book.picture}"
+                                th:data-is-update="true">
                             🔄 Đánh giá lại
-                        </a>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -63,6 +75,161 @@
         <a href="/user/myOrder" class="back-link">← Quay lại đơn hàng</a>
     </footer>
 </div>
+
+<!-- Added Review Modal -->
+<div class="modal fade" id="reviewModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content review-modal-content">
+            <!-- Modal Header -->
+            <div class="review-modal-header">
+                <h2 class="modal-title">Đánh giá sách</h2>
+                <button type="button" class="btn-close-custom" data-bs-dismiss="modal" aria-label="Close">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <!-- Modal Body -->
+            <div class="modal-body">
+                <!-- Book Info -->
+                <div class="book-info-card-modal">
+                    <img id="modalBookImage" src="/placeholder.svg" alt="Book Cover" class="book-thumbnail-modal">
+                    <div class="book-details-modal">
+                        <h3 id="modalBookTitle">Tên sách</h3>
+                        <p><strong>Tác giả:</strong> <span id="modalBookAuthor"></span></p>
+                        <p><strong>Nhà xuất bản:</strong> <span id="modalBookPublisher"></span></p>
+                        <p><strong>Giá:</strong> <span id="modalBookPrice"></span></p>
+                    </div>
+                </div>
+
+                <!-- Review Form -->
+                <form id="reviewModalForm" class="review-form-modal">
+                    <input type="hidden" id="modalBookId" name="bookId">
+                    <input type="hidden" id="modalOrderId" name="orderId">
+
+                    <!-- Star Rating -->
+                    <div class="form-group-modal">
+                        <label class="form-label-modal">Xếp hạng</label>
+                        <div class="star-rating-modal">
+                            <input type="radio" id="modalStar5" name="rating" value="5" required>
+                            <label for="modalStar5">★</label>
+                            <input type="radio" id="modalStar4" name="rating" value="4">
+                            <label for="modalStar4">★</label>
+                            <input type="radio" id="modalStar3" name="rating" value="3">
+                            <label for="modalStar3">★</label>
+                            <input type="radio" id="modalStar2" name="rating" value="2">
+                            <label for="modalStar2">★</label>
+                            <input type="radio" id="modalStar1" name="rating" value="1">
+                            <label for="modalStar1">★</label>
+                            <span class="rating-value-modal" id="modalRatingText"></span>
+                        </div>
+                    </div>
+
+                    <!-- Comment -->
+                    <div class="form-group-modal">
+                        <label for="modalComment" class="form-label-modal">Bình luận của bạn</label>
+                        <textarea id="modalComment" name="comment" class="form-control-modal"
+                                  placeholder="Chia sẻ những suy nghĩ của bạn về cuốn sách này..."
+                                  maxlength="500"></textarea>
+                        <div class="char-counter-modal"><span id="modalCharCount">0</span>/500</div>
+                    </div>
+
+                    <!-- Buttons -->
+                    <div class="form-actions-modal">
+                        <button type="submit" class="btn-submit-modal">Gửi đánh giá</button>
+                        <button type="button" class="btn-cancel-modal" data-bs-dismiss="modal">Hủy</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    let reviewModal;
+
+    document.addEventListener('DOMContentLoaded', function() {
+        reviewModal = new bootstrap.Modal(document.getElementById('reviewModal'));
+
+        // Star rating display
+        const ratingRadios = document.querySelectorAll('input[name="rating"]');
+        const ratingText = document.getElementById('modalRatingText');
+        const ratingTexts = {
+            '1': 'Rất tệ',
+            '2': 'Tệ',
+            '3': 'Bình thường',
+            '4': 'Tốt',
+            '5': 'Tuyệt vời'
+        };
+
+        ratingRadios.forEach(radio => {
+            radio.addEventListener('change', function() {
+                ratingText.textContent = ratingTexts[this.value] + ` (${this.value}/5)`;
+            });
+        });
+
+        // Character counter
+        const commentField = document.getElementById('modalComment');
+        const charCount = document.getElementById('modalCharCount');
+
+        commentField.addEventListener('input', function() {
+            charCount.textContent = this.value.length;
+        });
+
+        // Form submission
+        document.getElementById('reviewModalForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            let formData = new FormData(this);
+
+            fetch('/review/save', {
+                method: 'POST',
+                body: formData
+            })
+                .then(response => {
+                    if (response.ok) {
+                        reviewModal.hide();
+                        location.reload(); // Reload to update badge status
+                    } else {
+                        alert('Có lỗi xảy ra. Vui lòng thử lại!');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Có lỗi xảy ra. Vui lòng thử lại!');
+                });
+        });
+    });
+
+    function openReviewModal(button) {
+        const bookId = button.getAttribute('data-book-id');
+        const orderId = button.getAttribute('data-order-id');
+        const bookTitle = button.getAttribute('data-book-title');
+        const bookAuthor = button.getAttribute('data-book-author');
+        const bookPublisher = button.getAttribute('data-book-publisher');
+        const bookPrice = button.getAttribute('data-book-price');
+        const bookPicture = button.getAttribute('data-book-picture');
+
+        // Set form data
+        document.getElementById('modalBookId').value = bookId;
+        document.getElementById('modalOrderId').value = orderId;
+
+        // Set book info
+        document.getElementById('modalBookTitle').textContent = bookTitle;
+        document.getElementById('modalBookAuthor').textContent = bookAuthor;
+        document.getElementById('modalBookPublisher').textContent = bookPublisher;
+        document.getElementById('modalBookPrice').textContent = parseInt(bookPrice).toLocaleString('vi-VN') + ' đ';
+        document.getElementById('modalBookImage').src = '/images/books/' + bookPicture;
+
+        // Reset form
+        document.getElementById('reviewModalForm').reset();
+        document.getElementById('modalRatingText').textContent = '';
+        document.getElementById('modalCharCount').textContent = '0';
+
+        // Show modal
+        reviewModal.show();
+    }
+</script>
 
 </body>
 </html>
