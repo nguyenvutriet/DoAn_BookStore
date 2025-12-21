@@ -1,6 +1,8 @@
 <link rel="stylesheet" href="/css/style.css">   <!-- CSS user -->
 <link rel="stylesheet" href="/css/admin.css">   <!-- CSS admin -->
 
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 <body>
 
 <!-- HEADER ADMIN -->
@@ -13,11 +15,14 @@
         </div>
 
         <nav class="admin-navbar">
+            <a href="/admin/dashboard">Tổng quan</a>
             <a href="/admin/users">Tài khoản</a>
+            <a href="/admin/customers">Khách hàng</a>
             <a href="/admin/categories">Thể loại</a>
             <a href="/admin/books">Sách</a>
             <a href="/admin/orders">Đơn hàng</a>
             <a href="/admin/reviews">Đánh giá</a>
+            <a href="/admin/revenue">Doanh thu</a>
         </nav>
 
     </div>
@@ -33,42 +38,139 @@
 
 <h1 class="dashboard-title">ADMIN UTE BOOK STORE</h1>
 
-<div class="quick-actions">
-    <a href="#">Sách mới</a>
-    <a href="#">Tài khoản mới</a>
-    <a href="#">Thể loại mới</a>
-    <a href="#">Khách hàng mới</a>
+<div class="stats-container">
+
+    <div class="stat-card">
+        <div class="stat-icon user"></div>
+        <div class="stat-value" th:text="${totalUsers}">0</div>
+        <div class="stat-label">Tài khoản</div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-icon customer"></div>
+        <div class="stat-value" th:text="${totalCustomers}">0</div>
+        <div class="stat-label">Khách hàng</div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-icon book"></div>
+        <div class="stat-value" th:text="${totalBooks}">0</div>
+        <div class="stat-label">Sách</div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-icon order"></div>
+        <div class="stat-value" th:text="${totalOrders}">0</div>
+        <div class="stat-label">Đơn hàng</div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-icon review"></div>
+        <div class="stat-value" th:text="${totalReviews}">0</div>
+        <div class="stat-label">Đánh giá</div>
+    </div>
+
 </div>
+
+<a href="/admin/revenue" style="text-decoration:none; color:inherit;">
+    <div class="revenue-chart-highlight">
+
+        <div class="chart-header">
+            <span class="chart-icon">📈</span>
+            <h3>Xu hướng doanh thu 6 tháng gần nhất</h3>
+        </div>
+
+        <div class="chart-wrapper">
+            <canvas id="dashboardRevenueChart"></canvas>
+        </div>
+
+    </div>
+</a>
+
 
 <div class="frame-box">
     <h3 class="frame-title">Đã bán gần đây</h3>
-</div>
 
-<div class="frame-box">
-    <h3 class="frame-title">Đánh giá gần đây</h3>
-</div>
+    <div class="recent-sold-grid">
 
-<div class="stats">
-    <h3>Thống kê</h3>
+        <div class="recent-sold-card" th:each="b : ${recentBooks}">
 
-    <div class="stat-grid">
-<!--        <div class="stat-item"><span>Users</span><strong>0</strong></div>-->
-<!--        <div class="stat-item"><span>Books</span><strong>0</strong></div>-->
-<!--        <div class="stat-item"><span>Customers</span><strong>0</strong></div>-->
-<!--        <div class="stat-item"><span>Orders</span><strong>0</strong></div>-->
-<!--        <div class="stat-item"><span>Reviews</span><strong>0</strong></div>-->
-        <div class="stat-item"><span>Tài khoản</span><strong th:text="${totalUsers}">0</strong></div>
-        <div class="stat-item"><span>Sách</span><strong th:text="${totalBooks}">0</strong></div>
-        <div class="stat-item"><span>Khách hàng</span><strong th:text="${totalCustomers}">0</strong></div>
-        <div class="stat-item"><span>Đơn hàng</span><strong th:text="${totalOrders}">0</strong></div>
-        <div class="stat-item"><span>Đánh giá</span><strong th:text="${totalReviews}">0</strong></div>
+            <div class="sold-img-wrapper">
+                <img class="sold-book-img"
+                     th:src="@{'/images/books/' + ${b.picture}}"
+                     alt="Book Image">
+                <span class="sold-badge">Đã bán</span>
+            </div>
+
+            <div class="sold-info">
+                <div class="sold-title" th:text="${b.title}"></div>
+                <div class="sold-author" th:text="${b.author}"></div>
+
+                <div class="sold-price"
+                     th:text="${#numbers.formatDecimal(b.price,0,'POINT',0,'COMMA')} + '₫'"></div>
+            </div>
+
+            <a th:href="@{'/admin/books/' + ${b.bookId}}" class="sold-view-btn">
+                Xem chi tiết
+            </a>
+
+        </div>
 
     </div>
 </div>
+
 
 <!-- FOOTER -->
 <footer class="admin-footer">
     © 2025 UTE BookStore Admin. All rights reserved.
 </footer>
+
+
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    let months = /*[[${months}]]*/ [];
+    let revenue = /*[[${monthlyRevenue}]]*/ [];
+    /*]]>*/
+</script>
+<script>
+    const ctxDash = document.getElementById('dashboardRevenueChart');
+
+    new Chart(ctxDash, {
+        type: 'line',
+        data: {
+            labels: months,
+            datasets: [{
+                label: 'Doanh thu',
+                data: revenue,
+                borderColor: '#0B3D2E',
+                backgroundColor: 'rgba(11, 61, 46, 0.20)',
+                borderWidth: 3,
+                tension: 0.35,
+                fill: true,
+                pointRadius: 5,
+                pointBackgroundColor: '#0B3D2E'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                tooltip: {
+                    callbacks: {
+                        label: ctx => ctx.raw.toLocaleString() + " ₫"
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: value => value.toLocaleString() + " ₫"
+                    }
+                }
+            }
+        }
+    });
+</script>
 
 </body>

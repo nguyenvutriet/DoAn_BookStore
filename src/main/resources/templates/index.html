@@ -9,36 +9,20 @@
 
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap" rel="stylesheet">
 
-    <!-- Favicon -->
     <link rel="shortcut icon" type="image/png" href="/images/logo.png" />
 
-    <!-- Bootstrap CSS -->
     <link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css">
-
-    <!-- Owl Carousel CSS -->
     <link rel="stylesheet" type="text/css" href="/css/owl.carousel.min.css">
-
-    <!-- Magnific Popup CSS -->
     <link rel="stylesheet" type="text/css" href="/css/magnific-popup.css">
-
-    <!-- IcoMoon CSS -->
     <link rel="stylesheet" type="text/css" href="/css/icomoon.css">
-
-    <!-- IcoFont CSS -->
     <link rel="stylesheet" type="text/css" href="/css/icofont.min.css">
-
-    <!-- Animate CSS -->
     <link rel="stylesheet" type="text/css" href="/css/animate.css">
-
-    <!-- Main CSS -->
     <link rel="stylesheet" type="text/css" href="/css/style1.css">
-
-    <!-- Responsive CSS -->
     <link rel="stylesheet" type="text/css" href="/css/responsive.css">
+    <link rel="stylesheet" type="text/css" href="/css/chatbot.css">
 </head>
 
 <body>
-<!--Start Preloader-->
 <div class="preloader">
     <div class="d-table">
         <div class="d-table-cell align-middle">
@@ -49,93 +33,75 @@
         </div>
     </div>
 </div>
-<!--End Preloader-->
-
-<!-- Start Header -->
 <header id="header">
     <div class="container">
         <nav class="navbar navbar-expand-lg">
             <div class="navbar-container">
-                <!-- Logo -->
                 <a class="logo" href="/home"><img src="/images/logo.png" alt="logo"></a>
 
-                <!-- Menu -->
                 <div class="navbar-menu">
                     <ul class="navbar-nav">
-                        <!-- Tất cả -->
                         <li class="nav-item">
                             <a class="nav-link" th:href="@{/home}">Tất cả</a>
                         </li>
 
-                        <!-- Kinh doanh -->
                         <li class="nav-item">
                             <a class="nav-link" th:href="@{/home(categoryId='C01')}">Kinh doanh</a>
                         </li>
 
-                        <!-- Sức khỏe -->
                         <li class="nav-item">
                             <a class="nav-link" th:href="@{/home(categoryId='C02')}">Sức khỏe</a>
                         </li>
 
-                        <!-- Marketing -->
                         <li class="nav-item">
                             <a class="nav-link" th:href="@{/home(categoryId='C03')}">Marketing</a>
                         </li>
 
-                        <!-- Lập trình -->
                         <li class="nav-item">
                             <a class="nav-link" th:href="@{/home(categoryId='C04')}">Lập trình</a>
                         </li>
 
-                        <!-- Truyện tranh -->
                         <li class="nav-item">
                             <a class="nav-link" th:href="@{/home(categoryId='C05')}">Truyện tranh</a>
                         </li>
 
-                        <!-- Công nghệ -->
                         <li class="nav-item">
                             <a class="nav-link" th:href="@{/home(categoryId='C06')}">Công nghệ</a>
                         </li>
 
-                        <!-- Đời sống -->
                         <li class="nav-item">
                             <a class="nav-link" th:href="@{/home(categoryId='C07')}">Đời sống</a>
                         </li>
 
-                        <!-- Lịch sử -->
                         <li class="nav-item">
                             <a class="nav-link" th:href="@{/home(categoryId='C08')}">Lịch sử</a>
                         </li>
 
-                        <!-- Giáo dục -->
                         <li class="nav-item">
                             <a class="nav-link" th:href="@{/home(categoryId='C09')}">Giáo dục</a>
                         </li>
                     </ul>
                 </div>
 
-                <!-- Search Bar -->
                 <div class="search-bar">
-                    <input type="text" placeholder="Tìm kiếm sản phẩm..." class="form-control">
-                    <button type="submit" class="btn btn-primary">Tìm</button>
+                    <input id="searchInput" type="text" placeholder="Tìm kiếm sản phẩm..." class="form-control">
+                    <button id="searchBtn" type="button" class="btn btn-primary">Tìm</button>
                 </div>
 
-                <!-- User Options (Giỏ hàng, Đăng nhập, Đăng ký) -->
+
                 <div class="user-options">
                     <ul class="navbar-nav">
 
                         <li class="nav-item">
                             <a class="nav-link" href="/gio_hang">🛒</a>
                         </li>
-                        <!-- Nếu chưa đăng nhập -->
                         <li class="nav-item" sec:authorize="isAnonymous()">
                             <a class="nav-link" th:href="@{/login}">Đăng nhập</a>
                         </li>
                         <li class="nav-item" sec:authorize="isAnonymous()">
-                            <a class="nav-link" th:href="@{/register/infor}">Đăng ký</a>
+                            <a class="nav-link" th:href="@{/register}">Đăng ký</a>
                         </li>
 
-                        <!-- Nút Logout dạng POST (chuẩn Security) -->
                         <li class="nav-item" sec:authorize="isAuthenticated()">
                             <div class="user-dropdown">
                                 <div class="user-name">
@@ -153,24 +119,24 @@
                                         <button type="submit">🚪 Đăng xuất</button>
                                     </form>
                                 </div>
+
                             </div>
+
                         </li>
+
                     </ul>
                 </div>
+
+
             </div>
         </nav>
     </div>
 </header>
 
-<!-- End Header -->
-
-<!-- Start Main Content -->
 <main id="main-content" class="container mt-4">
-
     <section class="books-section mb-5">
         <h2 class="section-title mb-3">New Books</h2>
 
-        <!-- Grid container -->
         <div class="books-grid">
             <div class="book-item" th:each="book : ${newBooks}">
                 <a th:href="@{/home/books/{id}(id=${book.bookId})}"
@@ -193,7 +159,6 @@
                 </a>
             </div>
 
-            <!-- Khi không có sách -->
             <div class="book-empty" th:if="${#lists.isEmpty(newBooks)}">
                 <p class="text-muted text-center">
                     Hiện chưa có sách mới trong danh mục này.
@@ -248,7 +213,8 @@
                                  alt="Book Image"
                                  style="width: 150px; height: 220px; object-fit: cover;">
                         </div>
-                        <h5 class="card-title mb-2" th:text="${book.title}">Tên sách</h5>
+                        <h5 class="card-title mb-2" th:text="${book.title}">Tên sách
+                        </h5>
                         <p class="card-text mb-1 text-muted"
                            th:text="${book.author}">Tác giả</p>
                         <p class="card-text text-danger font-weight-bold mt-auto"
@@ -269,33 +235,20 @@
 
 </main>
 
-<div class="col-md-6">
-    <div class="caption-img text-right">
-        <img src="/images/advise.gif" alt="Open Chatbot" id="openChatBotBtn"
-             style="cursor: pointer; position: fixed; bottom: 30px; right: 40px; width: 120px; height: 120px;">
-    </div>
+<img src="/images/advise.gif" alt="Open Chatbot" id="openChatBotBtn"
+     style="cursor: pointer; position: fixed; bottom: 20px; right: 40px; width: 110px; height: 110px;"
+     th:attr="data-authenticated=${#authorization.expression('isAuthenticated()') ? 'true' : 'false'}"
+     th:data-customer-id="${#authorization.expression('isAuthenticated()') ? #authentication.principal.username : ''}"
+/>
+
+<div id="chatBotContainer" style="display:none;">
 </div>
 
-<!-- Chatbot iframe -->
-<iframe id="chatBotIframe" src="chatbot.html" style="display:none; position: fixed; bottom: 80px; right: 10px; width: 300px; height: 400px; border: none; border-radius: 8px; z-index: 1000;"></iframe>
-
-<!-- JavaScript để mở chatbot -->
-<script>
-    // Lấy phần tử nút và iframe chat
-    const openChatBotBtn = document.getElementById('openChatBotBtn');
-    const chatBotIframe = document.getElementById('chatBotIframe');
-
-    // Mở chatbot khi nhấn vào hình ảnh
-    openChatBotBtn.addEventListener('click', function() {
-        chatBotIframe.style.display = chatBotIframe.style.display === 'block' ? 'none' : 'block'; // Toggle hiển thị
-    });
-
-</script>
+<button id="scrollTopBtn" title="Lên đầu trang">↑</button>
 
 <footer id="footer">
     <div class="container">
         <div class="footer-content">
-            <!-- Column 1 -->
             <div class="footer-column footer-about">
                 <h4>UTE BookStore</h4>
                 <p class="footer-about-text">
@@ -303,11 +256,9 @@
                 </p>
             </div>
 
-            <!-- Column 2 -->
             <div class="footer-column footer-contact">
                 <h4>Thông tin và chính sách</h4>
 
-                <!-- Địa chỉ với icon Map -->
                 <div class="contact-info">
                     <a href="http://google.com/maps?rlz=1C1VDKB_enVN1145VN1145&gs_lcrp=EgZjaHJvbWUqBwgBEC4YgAQyBggAEEUYOTIHCAEQLhiABDIHCAIQABiABDIHCAMQABiABDIHCAQQABiABDIHCAUQLhiABDIHCAYQABiABDIGCAcQRRhB0gEINDg1OGowajeoAgCwAgA&um=1&ie=UTF-8&fb=1&gl=vn&sa=X&geocode=KasWOPJjJ3UxMW-RtkEUcS8o&daddr=01+%C4%90.+V%C3%B5+V%C4%83n+Ng%C3%A2n,+Linh+Chi%E1%BB%83u,+Th%E1%BB%A7+%C4%90%E1%BB%A9c,+Th%C3%A0nh+ph%E1%BB%91+H%E1%BB%93+Ch%C3%AD+Minh" target="_blank" class="info-link">
                         <img src="/images/map.png" alt="map icon" class="contact-icon">
@@ -315,33 +266,27 @@
                     </a>
                 </div>
 
-                <!-- Đồng sáng lập Web với icon member -->
                 <div class="contact-info">
                     <img src="/images/member.png" alt="member icon" class="contact-icon">
                     <span>H.Bang, D.Ngọc, M.Quỳnh, T.Trà, V.Triết</span>
                 </div>
             </div>
 
-            <!-- Column 3 -->
             <div class="footer-column footer-contact">
                 <h4>Liên hệ</h4>
 
-                <!-- Giờ hoạt động -->
                 <p class="contact-hours">(Hoạt động từ 8h - 17h, thứ 2 - thứ 7)</p>
 
-                <!-- Số điện thoại với hình ảnh icon -->
                 <div class="contact-info">
                     <img src="/images/telephone.png" alt="phone icon" class="contact-icon">
                     <span>Gọi đặt hàng: 0328327303</span>
                 </div>
 
-                <!-- Email với hình ảnh icon -->
                 <div class="contact-info">
                     <img src="/images/email.png" alt="email icon" class="contact-icon">
                     <span>Email: banghohoang16102005@gmail.com</span>
                 </div>
 
-                <!-- Facebook -->
                 <div class="contact-info">
                     <a href="https://www.facebook.com/tola.simon1610/" target="_blank" class="contact-info">
                         <img src="/images/facebook.png" alt="facebook icon" class="contact-icon">
@@ -352,41 +297,174 @@
         </div>
     </div>
     <div class="footer-bottom">
-        <p>&copy; 2025 UTE BookStore. All rights reserved.</p>
+        <p>© 2025 UTE BookStore. All rights reserved.</p>
     </div>
 </footer>
 
-<!-- jQuery js -->
 <script src="/assets/js/jquery-3.3.1.min.js"></script>
-<!-- Bootstrap js -->
 <script src="/assets/js/bootstrap.min.js"></script>
 
-<!-- Fetch nội dung động cho body-->
 <script>
-    // Khi click nút Đăng nhập trên navbar
     document.addEventListener('DOMContentLoaded', function () {
+        // KHAI BÁO TẤT CẢ BIẾN DOM Ở ĐẦU ĐỂ TRÁNH LỖI SCOPE
         const mainContent = document.getElementById('main-content');
-        // CLICK VÀO SẢN PHẨM (CARD SÁCH)
-        document.addEventListener('click', function (e) {
-            const card = e.target.closest('.book-card');
-            if (!card) return; // không click trong card thì bỏ
+        const searchInput = document.getElementById('searchInput');
+        const searchBtn = document.getElementById('searchBtn');
+        const openChatBotBtn = document.getElementById('openChatBotBtn');
+        const chatBotContainer = document.getElementById('chatBotContainer');
+        const scrollTopBtn = document.getElementById('scrollTopBtn');
 
-            const bookId = card.getAttribute('data-id');
-            if (!bookId) return;
+        // --- LOGIC CHUNG CHO SCROLL ---
+        function getScrollTop() {
+            return window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
+        }
 
-            fetch('/books/' + bookId)   // endpoint trả về HTML chi tiết sách
-                .then(response => response.text())
-                .then(html => {
-                    mainContent.innerHTML = html;
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                })
-                .catch(err => {
-                    console.error('Lỗi khi tải chi tiết sách:', err);
+        // --- 1. LOGIC NÚT KÉO LÊN ĐẦU TRANG ---
+        if (scrollTopBtn) {
+            const toggleScrollTop = function() {
+                if (getScrollTop() > 300) {
+                    scrollTopBtn.style.display = "block";
+                } else {
+                    scrollTopBtn.style.display = "none";
+                }
+            };
+            window.addEventListener('scroll', toggleScrollTop);
+            toggleScrollTop(); // Chạy lần đầu
+            scrollTopBtn.addEventListener('click', function() {
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
                 });
-        });
-    });
+            });
+        }
+
+        // --- 2. LOGIC TÌM KIẾM (Search Bar) ---
+        if (mainContent && searchInput && searchBtn) {
+            function getCategoryIdFromUrl() {
+                const url = new URL(window.location.href);
+                return url.searchParams.get('categoryId') || '';
+            }
+
+            async function runSearch() {
+                const q = (searchInput.value || '').trim();
+                const categoryId = getCategoryIdFromUrl();
+
+                const url = new URL('/home/search', window.location.origin);
+                url.searchParams.set('q', q);
+                if (categoryId) url.searchParams.set('categoryId', categoryId);
+
+                console.log('SEARCH URL:', url.toString());
+
+                const res = await fetch(url.toString(), {
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                });
+
+                const html = await res.text();
+
+                mainContent.innerHTML = html;
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+
+            searchBtn.addEventListener('click', runSearch);
+            searchInput.addEventListener('keydown', function (e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    runSearch();
+                }
+            });
+        }
+
+        // --- 3. LOGIC CLICK VÀO SÁCH (Card Sách) ---
+        if (mainContent) {
+            document.addEventListener('click', function (e) {
+                const card = e.target.closest('.book-card');
+                // Đảm bảo card có tồn tại và đã được thêm attribute data-id
+                const bookId = card ? card.getAttribute('data-id') : null;
+
+                if (!bookId) return;
+
+                fetch('/books/' + bookId)
+                    .then(response => response.text())
+                    .then(html => {
+                        mainContent.innerHTML = html;
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                    })
+                    .catch(err => {
+                        console.error('Lỗi khi tải chi tiết sách:', err);
+                    });
+            });
+        }
+
+        // --- 4. LOGIC CHATBOT ---
+        let isChatbotLoaded = false;
+
+        function checkAuthenticationStatus() {
+            if (openChatBotBtn) {
+                return openChatBotBtn.dataset.authenticated === 'true';
+            }
+            return false;
+        }
+
+        function loadChatbotContent() {
+            fetch('/chatbot.html')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.text();
+                })
+                .then(html => {
+                    chatBotContainer.innerHTML = html;
+                    isChatbotLoaded = true;
+                    chatBotContainer.style.display = 'block';
+
+                    // Chạy lại script trong nội dung được fetch
+                    const scripts = chatBotContainer.querySelectorAll('script');
+                    scripts.forEach(oldScript => {
+                        const newScript = document.createElement('script');
+                        Array.from(oldScript.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value));
+                        newScript.appendChild(document.createTextNode(oldScript.innerHTML));
+                        oldScript.parentNode.replaceChild(newScript, oldScript);
+                    });
+                })
+                .catch(error => {
+                    console.error('Lỗi khi tải nội dung chatbot:', error);
+                    chatBotContainer.innerHTML = '<p style="padding: 10px; color: red;">Lỗi tải nội dung chat. Vui lòng kiểm tra lại đường dẫn /chatbot.html</p>';
+                    chatBotContainer.style.display = 'block';
+                });
+        }
+
+        if (openChatBotBtn) {
+            openChatBotBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+
+                if (!checkAuthenticationStatus()) {
+                    alert("Vui lòng đăng nhập để sử dụng tính năng Chatbot.");
+                    return;
+                }
+
+                if (chatBotContainer.style.display === 'block') {
+                    chatBotContainer.style.display = 'none';
+                } else {
+                    if (!isChatbotLoaded) {
+                        loadChatbotContent();
+                    } else {
+                        chatBotContainer.style.display = 'block';
+                    }
+                }
+            });
+
+            document.addEventListener('click', function(e) {
+                if (chatBotContainer.style.display === 'block') {
+                    const isClickInsideContainer = chatBotContainer.contains(e.target);
+                    const isClickOnButton = openChatBotBtn.contains(e.target);
+
+                    if (!isClickInsideContainer && !isClickOnButton) {
+                        chatBotContainer.style.display = 'none';
+                    }
+                }
+            });
+        }
+
+    }); // Kết thúc DOMContentLoaded
 </script>
-
-
-</body>
-</html>

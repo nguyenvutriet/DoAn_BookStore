@@ -34,7 +34,7 @@ public class Books {
     @NotNull
     private int publicationYear;
 
-    @Column(name = "description")
+    @Column(name = "description", length = 2000)
     private String description;
 
     @Column(name = "price", precision = 12, scale = 2)

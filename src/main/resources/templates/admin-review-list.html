@@ -1,44 +1,69 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Review Management</title>
+    <title>Quản lý đánh giá</title>
     <link rel="stylesheet" href="/css/admin.css">
 </head>
 <body>
 
+<!-- HEADER DÙNG CHUNG -->
 <header th:replace="admin-dashboard :: header"></header>
 
-<h1 class="dashboard-title">Review Management</h1>
+<h1 class="dashboard-title">Quản lý đánh giá</h1>
 
-<div class="frame-box">
-    <table border="1" width="100%" cellpadding="10">
-        <tr style="background:#0B3D2E;color:white;">
-            <th>Review ID</th>
-            <th>Rating</th>
-            <th>Customer</th>
-            <th>Book</th>
-            <th>Action</th>
+<div class="frame-box table-container">
+
+    <table class="admin-table">
+        <thead>
+        <tr>
+            <th>Mã đánh giá</th>
+            <th>Điểm</th>
+            <th>Khách hàng</th>
+            <th>Sách</th>
+            <th>Ngày tạo</th>
+            <th>Hành động</th>
         </tr>
+        </thead>
 
+        <tbody>
         <tr th:each="r : ${reviews}">
+            <!-- ID review -->
             <td th:text="${r.reviewId}"></td>
-            <td th:text="${r.rating}"></td>
-            <td th:text="${r.customer.customerId}"></td>
-            <td th:text="${r.book.title}"></td>
 
+            <!-- Rating -->
             <td>
-                <a th:href="@{'/admin/reviews/' + ${r.reviewId}}">View</a> |
+                <span th:text="${r.rating}" class="status-yellow"></span>
+            </td>
+
+            <!-- Khách hàng -->
+            <td th:text="${r.customer != null} ? ${r.customer.customerId} : 'N/A'"></td>
+
+            <!-- Tên sách -->
+            <td th:text="${r.book != null} ? ${r.book.title} : 'N/A'"></td>
+
+            <!-- Ngày tạo -->
+            <td th:text="${#dates.format(r.creationDate, 'dd/MM/yyyy')}"></td>
+
+            <!-- Hành động -->
+            <td class="action-cell">
+                <a th:href="@{'/admin/reviews/' + ${r.reviewId}}"
+                   class="btn-view">
+                    Xem
+                </a>
+
                 <a th:href="@{'/admin/reviews/delete/' + ${r.reviewId}}"
-                   style="color:red;"
-                   onclick="return confirm('Delete this review?')">
-                    Delete
+                   onclick="return confirm('Xóa đánh giá này?')"
+                   class="btn-delete">
+                    Xóa
                 </a>
             </td>
         </tr>
+        </tbody>
     </table>
+
 </div>
 
-<footer th:replace="admin-dashboard :: footer"></footer>
+<footer class="admin-footer">© 2025 UTE BookStore Admin</footer>
 
 </body>
 </html>

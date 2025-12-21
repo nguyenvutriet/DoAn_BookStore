@@ -2,6 +2,8 @@ package com.example.project_bookstore.Controller;
 
 import com.example.project_bookstore.Entity.*;
 import com.example.project_bookstore.Repository.*;
+import com.example.project_bookstore.Service.EmailService;
+import com.example.project_bookstore.Service.OrdersService;
 import com.example.project_bookstore.Service.VNPayService;
 import com.example.project_bookstore.dto.PaymentDTO;
 import jakarta.servlet.http.HttpServletRequest;
@@ -14,6 +16,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.ui.Model;
+import org.thymeleaf.context.Context;
+
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.util.*;
@@ -22,7 +26,6 @@ import java.util.*;
 
 @Controller
 public class CheckoutController {
-
 
     @Autowired
     private ICartDetailRepository cartDetailRepo;
@@ -38,7 +41,10 @@ public class CheckoutController {
     private ICartRepository cartRepo;
     @Autowired
     private IBooksRepository booksRepository;
+
+    private final OrdersService orderService;
     private final VNPayService vnPayService;
+    private final EmailService emailService;
 
 
     @PostMapping("/checkout")
@@ -70,7 +76,7 @@ public class CheckoutController {
         List<CartSelectedItem> items = (List<CartSelectedItem>) session.getAttribute("checkout_items");
 
         if (items == null) {
-            return "redirect:/gio_hang";
+            return "redirect:/gio_hang?error=item_null";
         }
 
         // Lấy thông tin đầy đủ từ CartDetail
@@ -144,14 +150,14 @@ public class CheckoutController {
         order.setAddress(form.getAddress());
         order.setCustomer(customer);
 
-        BigDecimal total = BigDecimal.ZERO;
+        BigDecimal total = form.getTotalAmount();  // ✔ lấy từ input hidden
+
+        order.setTotalAmount(total);               // ✔ lưu thẳng vào DB
+
         List<OrderDetail> details = new ArrayList<>();
 
         // ===== Tính subtotal + tạo detail =====
         for (CartSelectedItem item : form.getItems()) {
-
-            BigDecimal subtotal = item.getUnitPrice().multiply(BigDecimal.valueOf(item.getQuantity()));
-            total = total.add(subtotal);
 
             OrderdetailId id = new OrderdetailId(order.getOrderId(), item.getBookId());
 
@@ -166,11 +172,47 @@ public class CheckoutController {
         }
 
         // Set đầy đủ thông tin
-        order.setTotalAmount(total);
         order.setOrderDetail_Order(details);
 
+        System.out.println(order.getOrderId()+order.getOrderDate()+ order.getAddress());
+
         // Lưu order
-        ordersRepo.save(order);
+//        ordersRepo.save(order);
+        try {
+            orderService.placeOrder(order, details);
+        } catch (Exception e) {
+
+            if (e.getMessage() != null &&
+                    e.getMessage().contains("Số lượng đặt vượt quá số lượng tồn kho")) {
+                return "redirect:/gio_hang?error=out_of_stock";
+            }
+            // ❗ MỌI LỖI KHÁC → quay về checkout với lỗi chung
+            return "redirect:/gio_hang?error=order_failed";
+        }
+
+        // ========== GỬI EMAIL ==========
+
+        try {
+            Context context = new Context();
+
+            // Truyền dữ liệu vào template
+            context.setVariable("order", order);
+            context.setVariable("details", order.getOrderDetail_Order());
+            context.setVariable("customer", customer);
+
+            emailService.sendHtmlEmail(
+                    customer.getEmail(),
+                    "Xác nhận đơn hàng #" + order.getOrderId(),
+                    "order-email",   // file order-email.html
+                    context
+            );
+
+            System.out.println("[EMAIL] Đã gửi email xác nhận đơn hàng → " + customer.getEmail());
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("[EMAIL] Gửi email thất bại!");
+        }
 
         // Xóa cart
         Cart cart = cartRepo.findByCustomer(customer);
@@ -235,8 +277,6 @@ public class CheckoutController {
 
         return "fallure";
     }
-
-
 
 }
 

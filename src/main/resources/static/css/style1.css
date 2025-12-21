@@ -295,6 +295,27 @@ main {
     color: #FF8C00 !important;
 }
 
+
+/* Giao diện sao  */
+.book-rating {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.star {
+    color: #ffc107 !important;
+    /* Added !important to override inherited color from <a> tag */
+    font-size: 1.2rem;
+    line-height: 1;
+    letter-spacing: 0.5px;
+}
+
+.rating-count {
+    font-size: 0.875rem;
+    color: #6c757d;
+}
+
 /* Tác giả — xám */
 .book-card .card-text.author,
 .book-card .card-text.author * {
@@ -518,4 +539,35 @@ main {
     padding: 10px 12px;
     border-radius: 8px;
     font-size: 14px;
+}
+
+/* =========================================================
+   NÚT SCROLL TO TOP (Phải có CSS này để nút là hình tròn xanh)
+   ========================================================= */
+#scrollTopBtn {
+    /* Đảm bảo nút không hiển thị cho đến khi JS kích hoạt */
+    display: none;
+
+    /* Cố định vị trí */
+    position: fixed;
+    bottom: 40px;
+    right: 20px;
+    z-index: 9999;
+
+    /* Thiết kế hình tròn và màu sắc */
+    background-color: #388e3c; /* Màu xanh lá cây */
+    color: white;
+    border: none;
+    outline: none;
+    width: 45px;
+    height: 45px;
+    border-radius: 50%; /* TẠO HÌNH TRÒN */
+    cursor: pointer;
+    font-size: 22px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    transition: background 0.3s ease;
+}
+
+#scrollTopBtn:hover {
+    background-color: #2c6f3b;
 }

@@ -65,6 +65,12 @@ public class ReviewService {
     }
 
     // ================== PHẦN TẠO REVIEW MỚI ==================
+    public boolean customerHasReviewedBook(String customerId, String bookId) {
+        List<Review> reviews = reviewRepository.findByBook_BookId(bookId);
+        return reviews.stream()
+                .anyMatch(r -> r.getCustomer().getCustomerId().equals(customerId));
+    }
+
 
     public Review createReview(String bookId, int rating, String comment, Customers customer) {
 
@@ -122,4 +128,13 @@ public class ReviewService {
 
         return newId;
     }
+
+    public Review getReviewByCustomerAndBook(String customerId, String bookId) {
+        return reviewRepository.findByCustomer_CustomerIdAndBook_BookId(customerId, bookId);
+    }
+
+    public Review update(Review review) {
+        return reviewRepository.save(review);
+    }
+
 }

@@ -1,7 +1,9 @@
 package com.example.project_bookstore.Repository;
 
 import com.example.project_bookstore.Entity.Books;
+import jakarta.persistence.LockModeType;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -74,4 +76,46 @@ public interface IBooksRepository extends JpaRepository<Books, String> {
            """)
     List<Books> findFavoriteBooksByCategory(@Param("categoryId") String categoryId,
                                             Pageable pageable);
+    //sách còn hàng
+    @Query("SELECT b FROM Books b WHERE b.category.categoryId = :categoryId AND b.quantity > 0")
+    List<Books> findInStockByCategory(String categoryId);
+
+    //sách hết hàng
+    @Query("SELECT b FROM Books b WHERE b.category.categoryId = :categoryId AND b.quantity = 0")
+    List<Books> findOutOfStockByCategory(String categoryId);
+
+    boolean existsByBookId(String bookId);
+
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query("SELECT b FROM Books b WHERE b.bookId = :bookId")
+    Books findByIdForUpdate(@Param("bookId") String bookId);
+
+    @Query("""
+       SELECT b 
+       FROM Books b
+       JOIN b.orderDetail_Book od
+       GROUP BY b
+       ORDER BY SUM(od.quantity) DESC
+       """)
+    List<Books> findTopBestSelling(Pageable pageable);
+
+
+    @Query(value = """
+        SELECT b.*
+        FROM books b
+        JOIN category c ON c.categoryId = b.categoryId
+        WHERE
+            (:categoryId IS NULL OR :categoryId = '' OR b.categoryId = :categoryId)
+            AND
+            (:q IS NULL OR :q = ''
+            OR b.title        COLLATE utf8mb4_0900_ai_ci LIKE CONCAT('%', :q, '%')
+            OR b.author       COLLATE utf8mb4_0900_ai_ci LIKE CONCAT('%', :q, '%')
+            OR c.categoryName COLLATE utf8mb4_0900_ai_ci LIKE CONCAT('%', :q, '%')
+            )
+    """, nativeQuery = true)
+    List<Books> searchBooks(@Param("q") String q, @Param("categoryId") String categoryId);
+
+    @Query("SELECT b FROM Books b LEFT JOIN FETCH b.category")
+    List<Books> findAllForContext();
+
 }

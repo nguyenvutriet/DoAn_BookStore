@@ -1,10 +1,15 @@
 package com.example.project_bookstore.Service;
 
 import com.example.project_bookstore.Entity.Customers;
+import com.example.project_bookstore.Entity.Users;
 import com.example.project_bookstore.Repository.ICustomersRepository;
-import jakarta.persistence.criteria.CriteriaBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
+import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
+import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
+import tools.jackson.databind.json.JsonMapper;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -12,7 +17,7 @@ import java.util.Date;
 import java.util.List;
 
 @Service
-public class CustomersService {
+public class CustomersService{
 
     @Autowired
     private ICustomersRepository repo;
@@ -64,6 +69,10 @@ public class CustomersService {
 
     public void delete(Customers cus){
         repo.delete(cus);
+    }
+
+    public Customers findByEmail(String email) {
+        return repo.findByEmail(email);
     }
 
 

@@ -45,7 +45,7 @@ public class UserController {
     }
 
     @PostMapping("/profile/update")
-    public String updateCustomer(@RequestParam String customerId, @RequestParam String fullName, @RequestParam String phone, @RequestParam String email, @RequestParam String address, @RequestParam String birthDate){
+    public String updateCustomer(@RequestParam("customerId") String customerId, @RequestParam("fullName") String fullName, @RequestParam("phone") String phone, @RequestParam("email") String email, @RequestParam("address") String address, @RequestParam("birthDate") String birthDate){
 
         Customers cus = customersService.getCustomerById(customerId);
 
@@ -64,7 +64,7 @@ public class UserController {
             e.printStackTrace();
         }
         String username = usersService.getUserByCustomerId(customerId).getUserName();
-        return "redirect:/user/profile/" + username;
+        return "redirect:/user/profile";
     }
 
     @GetMapping("/change-password")
@@ -121,9 +121,13 @@ public class UserController {
 
     @PostMapping("/order/{id}/received")
     public String recivedOrder(@PathVariable("id") String orderId){
-        System.out.println("orderId"+orderId);
         ordersService.updateStatus(orderId, "Delivered");
-        System.out.println(ordersService.getOrderById(orderId).toString());
+        return "redirect:/user/myOrder";
+    }
+
+    @PostMapping("/order/{id}/canceled")
+    public String canceledOrder(@PathVariable("id") String orderId){
+        ordersService.updateStatus(orderId, "Cancelled");
         return "redirect:/user/myOrder";
     }
 

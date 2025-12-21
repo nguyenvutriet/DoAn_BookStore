@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chi tiết đơn hàng</title>
+
+  <!-- Reuse style từ review.css để đồng bộ giao diện -->
+  <link rel="stylesheet" type="text/css" href="/css/review.css">
+
+  <style>
+    body {
+      background: #f5f7fa;
+    }
+
+    .order-container {
+      max-width: 900px;
+      margin: 30px auto;
+      background: #ffffff;
+      padding: 25px;
+      border-radius: 14px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    }
+
+    .section-title {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: #0B3D2E;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Order Info Box */
+    .order-info-box {
+      background: #eef5f0;
+      padding: 18px 20px;
+      border-radius: 12px;
+      border-left: 6px solid #388e3c;
+      margin-bottom: 30px;
+    }
+
+    .order-row {
+      font-size: 1rem;
+      margin: 8px 0;
+    }
+    .label {
+      font-weight: 600;
+      color: #333;
+    }
+    .value {
+      color: #444;
+    }
+    .value.price {
+      color: #d60000;
+      font-size: 1.2rem;
+      font-weight: 700;
+    }
+
+    /* Book card */
+    .book-card {
+      background: #fff;
+      padding: 18px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      margin-bottom: 18px;
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+    }
+
+    .book-image-container {
+      width: 120px;
+      height: 160px;
+      flex-shrink: 0;
+      overflow: hidden;
+      border-radius: 10px;
+      border: 1px solid #ddd;
+    }
+
+    .book-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .book-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin-bottom: 6px;
+      color: #0B3D2E;
+    }
+
+    .book-qty {
+      color: #444;
+      margin: 4px 0;
+    }
+
+    .price {
+      color: #d60000;
+      font-weight: 700;
+      font-size: 1.05rem;
+    }
+
+    /* Footer */
+    .footer {
+      margin-top: 30px;
+      text-align: center;
+    }
+    .back-link {
+      text-decoration: none;
+      color: #388e3c;
+      font-size: 1rem;
+      font-weight: 600;
+      transition: 0.3s;
+    }
+    .back-link:hover {
+      text-decoration: underline;
+    }
+
+  </style>
+</head>
+
+<body>
+
+<div class="order-container">
+
+  <!-- HEADER -->
+  <header class="header">
+    <div class="header-content">
+      <h1 class="header-title">📦 Chi tiết đơn hàng</h1>
+      <p class="header-subtitle">Xem toàn bộ thông tin đơn hàng của bạn</p>
+    </div>
+  </header>
+
+  <!-- ORDER INFORMATION -->
+  <div class="order-info-box">
+    <h2 class="section-title">📝 Thông tin đơn hàng</h2>
+
+    <div class="order-row">
+      <span class="label">Mã đơn hàng:</span>
+      <span class="value" th:text="${order.orderId}"></span>
+    </div>
+
+    <div class="order-row">
+      <span class="label">Ngày đặt:</span>
+      <span class="value" th:text="${order.orderDate}"></span>
+    </div>
+
+    <div class="order-row">
+      <span class="label">Thanh toán:</span>
+      <span class="value" th:text="${order.paymentMethod}"></span>
+    </div>
+
+    <div class="order-row">
+      <span class="label">Địa chỉ giao:</span>
+      <span class="value" th:text="${order.address}"></span>
+    </div>
+
+    <div class="order-row">
+      <span class="label">Trạng thái:</span>
+      <span class="value" th:text="${order.status}"></span>
+    </div>
+
+    <div class="order-row">
+      <span class="label">Tổng tiền:</span>
+      <span class="value price"
+            th:text="|${#numbers.formatDecimal(order.totalAmount,0,'COMMA',2,'POINT')} đ|"></span>
+    </div>
+  </div>
+
+  <!-- PRODUCT LIST -->
+  <h2 class="section-title">📚 Sản phẩm trong đơn</h2>
+
+  <div th:each="item : ${order.orderDetail_Order}" class="book-card">
+
+    <div class="book-image-container">
+      <img class="book-image"
+           th:src="@{/images/books/{img}(img=${item.book.picture})}"
+           th:alt="${item.book.title}">
+    </div>
+
+    <div style="flex: 1;">
+      <p class="book-title" th:text="${item.book.title}"></p>
+
+      <p class="book-qty">Số lượng: <b th:text="${item.quantity}"></b></p>
+
+      <p class="price"
+         th:text="|${#numbers.formatDecimal(item.unitPrice,0,'COMMA',2,'POINT')} đ|"></p>
+
+      <p style="margin-top:6px; font-size:0.9rem; color:#555;">
+        Thành tiền:
+        <b style="color:#c62828;"
+           th:text="|${#numbers.formatDecimal(item.unitPrice * item.quantity,0,'COMMA',2,'POINT')} đ|">
+        </b>
+      </p>
+    </div>
+
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <a href="/user/myOrder" class="back-link">← Quay lại danh sách đơn hàng</a>
+  </footer>
+
+</div>
+
+</body>
+</html>

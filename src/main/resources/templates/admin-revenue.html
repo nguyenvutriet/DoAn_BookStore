@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Quản lý doanh thu</title>
+    <link rel="stylesheet" href="/css/admin.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+
+        body {
+            background:#F4F7F6;
+        }
+
+        /* KPI CARDS */
+        .kpi-wrapper {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 22px;
+            margin-bottom: 30px;
+        }
+
+        .kpi-card {
+            background: linear-gradient(135deg, #ffffff 0%, #f8fdfb 100%);
+            padding: 28px;
+            border-radius: 16px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            border: 2px solid #0B3D2E22;
+            transition: 0.3s ease;
+        }
+
+        .kpi-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.12);
+        }
+
+        .kpi-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #555;
+            letter-spacing: 0.5px;
+        }
+
+        .kpi-value {
+            margin-top: 6px;
+            font-size: 32px;
+            font-weight: 800;
+            color: #0B3D2E;
+        }
+
+        .growth-up {
+            color: #1B8A3D;
+            font-weight: bold;
+            margin-top: 8px;
+            font-size: 15px;
+        }
+
+        .growth-down {
+            color: #C0392B;
+            font-weight: bold;
+            margin-top: 8px;
+            font-size: 15px;
+        }
+
+
+        /* FILTER */
+        .filter-bar {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 25px;
+        }
+
+        .filter-select {
+            padding: 8px 14px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+        }
+
+        /* CHART WRAPPER */
+        .chart-box {
+            background: white;
+            padding: 22px;
+            border-radius: 16px;
+            margin-bottom: 28px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.07);
+            max-width: 850px;
+            margin-inline: auto;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 340px;
+        }
+
+        .section-title {
+            font-size: 20px;
+            margin-bottom: 12px;
+            color: #0B3D2E;
+            font-weight: 700;
+        }
+
+        /* TABLE */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 12px;
+            font-size: 14px;
+        }
+
+        th, td {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background: #0B3D2E;
+            color: white;
+            text-align: left;
+        }
+
+    </style>
+    <link rel="stylesheet" type="text/css" href="/css/predict.css">
+</head>
+
+<body>
+
+<header th:replace="admin-dashboard :: header"></header>
+
+<h1 class="dashboard-title">Quản lý Doanh thu</h1>
+
+<div class="detail-card">
+
+    <!-- KPI -->
+    <div class="kpi-wrapper">
+
+        <!-- 1. DOANH THU THÁNG NÀY -->
+        <div class="kpi-card">
+            <div class="kpi-title">Doanh thu tháng này</div>
+            <div class="kpi-value" th:text="${currentMonthRevenue} + '₫'"></div>
+        </div>
+
+        <!-- 2. TỔNG ĐƠN THÁNG NÀY -->
+        <div class="kpi-card">
+            <div class="kpi-title">Đơn hàng tháng này</div>
+            <div class="kpi-value" th:text="${currentMonthOrders}"></div>
+        </div>
+
+        <!-- 3. TĂNG TRƯỞNG -->
+        <div class="kpi-card">
+            <div class="kpi-title">Tăng trưởng so với tháng trước</div>
+
+            <div class="kpi-value"
+                 th:style="${growthRate >= 0} ? 'color:#1B8A3D' : 'color:#C0392B'"
+                 th:text="${growthRate} + '%'">
+            </div>
+
+            <div th:if="${growthRate >= 0}" class="growth-up">
+                ▲ Tăng trưởng tích cực
+            </div>
+            <div th:if="${growthRate < 0}" class="growth-down">
+                ▼ Giảm so với tháng trước
+            </div>
+        </div>
+
+        <!-- 4. LỢI NHUẬN RÒNG + TỶ SUẤT -->
+        <div class="kpi-card">
+            <div class="kpi-title">Giá trị đơn hàng trung bình</div>
+            <div class="kpi-value" th:text="${#numbers.formatDecimal(aov,0,'POINT',0,'COMMA')} + '₫'"></div>
+        </div>
+
+
+    </div>
+
+
+
+    <!-- FILTER -->
+    <div class="filter-bar">
+        <form th:action="@{/admin/revenue}" method="get">
+            <select name="filter" class="filter-select">
+                <option value="YEAR" th:selected="${filter == 'YEAR'}">Năm nay</option>
+                <option value="6M" th:selected="${filter == '6M'}">6 tháng gần đây</option>
+                <option value="Q1" th:selected="${filter == 'Q1'}">Quý 1</option>
+                <option value="Q2" th:selected="${filter == 'Q2'}">Quý 2</option>
+                <option value="Q3" th:selected="${filter == 'Q3'}">Quý 3</option>
+                <option value="Q4" th:selected="${filter == 'Q4'}">Quý 4</option>
+            </select>
+
+            <button type="submit" class="btn-submit">Lọc</button>
+        </form>
+    </div>
+
+    <!-- BAR CHART -->
+    <!--    <div class="chart-box">-->
+    <!--        <h2 class="section-title">Biểu đồ doanh thu theo tháng</h2>-->
+    <!--        <div class="chart-container">-->
+    <!--            <canvas id="revenueLineChart"></canvas>-->
+    <!--        </div>-->
+    <!--    </div>-->
+    <div class="chart-box">
+
+        <div style="display:flex; justify-content: space-between; align-items:center;">
+            <h2 class="section-title">Biểu đồ doanh thu theo tháng</h2>
+
+            <select id="chartTypeSelect"
+                    style="padding:8px 12px; border-radius:8px; border:1px solid #ccc;">
+                <option value="bar">Biểu đồ cột</option>
+                <option value="line">Biểu đồ đường</option>
+            </select>
+        </div>
+
+        <div style="height:350px; margin-top:16px;">
+            <canvas id="revenueChart"></canvas>
+        </div>
+
+    </div>
+
+
+    <!-- PIE CHART -->
+    <div class="chart-box">
+        <h2 class="section-title">Doanh thu theo thể loại</h2>
+        <div class="chart-container" style="height:300px;">
+            <canvas id="categoryPieChart"></canvas>
+        </div>
+    </div>
+
+    <!-- TABLE -->
+    <div class="chart-box">
+        <h2 class="section-title">Chi tiết doanh thu từng tháng</h2>
+
+        <table>
+            <thead>
+            <tr>
+                <th>Tháng</th>
+                <th>Doanh thu</th>
+                <th>Tăng trưởng</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <tr th:each="r, i : ${monthlyRevenue}">
+                <td th:text="${months[i.index]}"></td>
+                <td th:text="${r} + '₫'"></td>
+
+                <td th:if="${growth[i.index] >= 0}" style="color:#1B8A3D; font-weight:bold;">
+                    ▲ <span th:text="${growth[i.index]}"></span>%
+                </td>
+                <td th:if="${growth[i.index] < 0}" style="color:#C0392B; font-weight:bold;">
+                    ▼ <span th:text="${growth[i.index]}"></span>%
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+    </div>
+
+    <div class="chart-box">
+        <h2 class="section-title" >Dự đoán doanh thu ngày kế tiếp</h2>
+
+        <button class="predict-btn" onclick="loadPredict()">
+            <span class="btn-text">Chạy dự đoán</span>
+            <span class="btn-loader"></span>
+        </button>
+
+
+        <div id="predictResult" class="predict-grid" style="display:none;">
+            <div class="predict-card">
+                <div class="predict-title">MAE</div>
+                <div class="predict-value" id="mae"></div>
+                <div class="predict-desc">Sai số tuyệt đối trung bình</div>
+            </div>
+
+            <div class="predict-card">
+                <div class="predict-title">RMSE</div>
+                <div class="predict-value" id="rmse"></div>
+                <div class="predict-desc">Sai số căn phương</div>
+            </div>
+
+            <div class="predict-card">
+                <div class="predict-title">MSE</div>
+                <div class="predict-value" id="mse"></div>
+                <div class="predict-desc">Sai số bình phương</div>
+            </div>
+
+            <div class="predict-card">
+                <div class="predict-title">R²</div>
+                <div class="predict-value" id="r2"></div>
+                <div class="predict-desc">Độ phù hợp mô hình</div>
+            </div>
+
+            <div class="predict-card">
+                <div class="predict-title">Doanh thu dự kiến</div>
+                <div class="predict-value" id="nextDayRevenue"></div>
+            </div>
+        </div>
+
+        <img id="chart" style="max-width:100%;">
+
+    </div>
+
+    <!-- TOP 8 SÁCH YÊU THÍCH -->
+    <div class="chart-box" style="max-width:1100px;">
+        <h2 class="section-title">Top 8 sách được yêu thích nhất</h2>
+
+        <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap:18px;">
+
+            <div th:each="b : ${topBooks}" class="kpi-card"
+                 style="text-align:center; padding:16px; border:1px solid #ddd;">
+
+                <img th:src="@{'/images/books/' + ${b.picture}}"
+                     alt="book" style="height:140px; object-fit:cover; border-radius:8px;">
+
+                <div style="margin-top:10px; font-weight:700; color:#0B3D2E;"
+                     th:text="${b.title}"></div>
+
+                <div style="font-size:14px; color:#666;"
+                     th:text="'Tác giả: ' + ${b.author}"></div>
+
+                <div style="margin-top:6px; font-weight:bold; color:#1B5E20;"
+                     th:text="${#numbers.formatDecimal(b.price,0,'POINT',0,'COMMA')} + '₫'">
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+
+</div>
+
+<footer class="admin-footer">© 2025 UTE BookStore Admin</footer>
+
+
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    let months = /*[[${months}]]*/ [];
+    let revenue = /*[[${monthlyRevenue}]]*/ [];
+
+    let categories = /*[[${categoryLabels}]]*/ [];
+    let categoryRev = /*[[${categoryRevenue}]]*/ [];
+    /*]]>*/
+</script>
+
+<script>
+    let ctx = document.getElementById("revenueChart");
+
+    let chartType = "bar"; // mặc định
+
+    function createRevenueChart(type) {
+        return new Chart(ctx, {
+            type: type,
+            data: {
+                labels: months,
+                datasets: [{
+                    label: "Doanh thu",
+                    data: revenue,
+                    backgroundColor: type === "bar"
+                        ? "rgba(11,61,46,0.35)"
+                        : "rgba(11,61,46,0.15)",
+                    borderColor: "#0B3D2E",
+                    borderWidth: 2,
+                    tension: 0.35,
+                    fill: type === "line"
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: v => v.toLocaleString() + "₫"
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    // Khởi tạo biểu đồ ban đầu
+    let revenueChart = createRevenueChart(chartType);
+
+    // Lắng nghe sự kiện đổi chế độ biểu đồ
+    document.getElementById("chartTypeSelect").addEventListener("change", function () {
+        chartType = this.value;
+
+        revenueChart.destroy();           // phá biểu đồ cũ
+        revenueChart = createRevenueChart(chartType);  // tạo biểu đồ mới
+    });
+</script>
+<script>
+    // =========================== PIE CHART ===========================
+    const pieCtx = document.getElementById("categoryPieChart");
+
+    new Chart(pieCtx, {
+        type: 'pie',
+        data: {
+            labels: categories,
+            datasets: [{
+                data: categoryRev,
+                backgroundColor: [
+                    "#0B3D2E",
+                    "#1B5E20",
+                    "#2E7D32",
+                    "#4CAF50",
+                    "#66BB6A",
+                    "#81C784",
+                    "#A5D6A7"
+                ],
+                borderColor: "#ffffff",
+                borderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: "right",
+                    labels: {
+                        padding: 16,
+                        font: { size: 14 }
+                    }
+                }
+            }
+        }
+    });
+</script>
+
+<script>
+    function loadPredict() {
+        const btn = document.querySelector(".predict-btn");
+        const loader = btn.querySelector(".btn-loader");
+        const text = btn.querySelector(".btn-text");
+
+        btn.disabled = true;
+        loader.style.display = "inline-block";
+        text.innerText = "Đang dự đoán...";
+
+        fetch('/admin/revenue/predict')
+            .then(res => res.json())
+            .then(data => {
+                document.getElementById("predictResult").style.display = "grid";
+
+                document.getElementById("mae").innerText =
+                    Math.round(data.MAE).toLocaleString() + " ₫";
+
+                document.getElementById("rmse").innerText =
+                    Math.round(data.RMSE).toLocaleString() + " ₫";
+
+                document.getElementById("mse").innerText =
+                    Math.round(data.MSE).toLocaleString();
+
+                document.getElementById("r2").innerText =
+                    data.R2.toFixed(3);
+                document.getElementById("nextDayRevenue").innerText =
+                    Math.round(data.Tomorrow_Prediction).toLocaleString() + " ₫";
+
+                document.getElementById("chart").src =
+                    "/python/output.png?time=" + new Date().getTime();
+            })
+            .catch(err => alert("Lỗi dự đoán"))
+            .finally(() => {
+                btn.disabled = false;
+                loader.style.display = "none";
+                text.innerText = "Chạy dự đoán";
+            });
+    }
+</script>
+
+
+
+</body>
+</html>

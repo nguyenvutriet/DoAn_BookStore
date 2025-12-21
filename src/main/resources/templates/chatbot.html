@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8" />
+    <title>Chatbot AI</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="/css/chatbot.css">
+</head>
+<body>
+
+<div class="chat-widget-container">
+    <div class="chat-header">
+        <div class="bot-avatar">
+            <img src="/images/advise1.png" alt="Bot Logo" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
+        </div>
+        <div class="header-info">
+            <h4 class="chat-title">Trợ lý AI BookStore</h4>
+            <div class="bot-status">
+                <span class="status-dot"></span>
+                <span class="status-text">Online</span>
+            </div>
+        </div>
+    </div>
+
+    <div id="messages"></div>
+
+    <div id="chat-input-box">
+        <input id="msg" placeholder="Nhập tin nhắn..." autocomplete="off" />
+        <button id="sendBtn">Gửi</button>
+    </div>
+</div>
+
+<script>
+    const messagesEl = document.getElementById("messages");
+    const inputEl = document.getElementById("msg");
+    const sendBtn = document.getElementById("sendBtn");
+
+    // ⭐ BƯỚC 1: XÁC ĐỊNH CUSTOMER ID (Chỉ dựa vào DOM)
+    let customerId = null;
+    let sessionId = localStorage.getItem("sessionId") || Date.now().toString();
+    localStorage.setItem("sessionId", sessionId);
+
+    // Lấy customerId từ DOM cha (Bắt buộc phải truy cập được)
+    try {
+        const openChatBotBtn = window.parent.document.getElementById('openChatBotBtn');
+        const newCustomerId = openChatBotBtn ? openChatBotBtn.getAttribute('data-customer-id') : null;
+
+        if (newCustomerId && newCustomerId !== 'null' && newCustomerId !== '') {
+            customerId = newCustomerId;
+            localStorage.setItem("customerId", customerId);
+        } else {
+            // Nếu không có ID, xóa cache cũ. Backend sẽ chặn.
+            localStorage.removeItem("customerId");
+        }
+    } catch (e) {
+        console.warn("Lỗi: Không thể truy cập DOM cha để lấy ID người dùng.");
+    }
+
+    // ==== QUICK REPLIES ====
+    const quickReplies = [
+        { text: "Xem Sách Mới", payload: "Sách mới nhất" },
+        { text: "Bảng Giá", payload: "Bảng giá sách" },
+        { text: "Cần Hỗ Trợ", payload: "Hỗ trợ khách hàng" }
+    ];
+
+    function escapeHtml(s) {
+        return s.replace(/[&<>"']/g, m => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':'&quot;',"'":"&#39;"}[m]));
+    }
+
+    function renderMessage(role, text, isHistory = false) {
+        const row = document.createElement("div");
+        row.className = "message-row " + (role === "user" ? "user-row" : "bot-row");
+
+        const msgDiv = document.createElement("div");
+        msgDiv.className = "msg " + (role === "user" ? "msg-user" : "msg-bot");
+        msgDiv.innerHTML = escapeHtml(text);
+
+        row.appendChild(msgDiv);
+        messagesEl.appendChild(row);
+        messagesEl.scrollTop = messagesEl.scrollHeight;
+
+        if (role === "bot" && !isHistory && messagesEl.children.length === 1) {
+            appendQuickReplies();
+        }
+    }
+
+    function appendQuickReplies() {
+        // ... (Giữ nguyên) ...
+        const replyContainer = document.createElement("div");
+        replyContainer.className = "quick-replies";
+        // ... (Giữ nguyên) ...
+        const row = document.createElement("div");
+        row.className = "message-row bot-row";
+        row.appendChild(replyContainer);
+        messagesEl.appendChild(row);
+        messagesEl.scrollTop = messagesEl.scrollHeight;
+    }
+
+    // ==== LOAD LỊCH SỬ CHAT ====
+    async function loadHistory() {
+        // Backend sẽ tự chặn nếu customerId là null/''
+        if (!customerId) {
+            renderMessage("bot", "Vui lòng đăng nhập để xem lịch sử chat.");
+            return;
+        }
+        try {
+            const url = `/api/chat/history?customerId=${customerId}`;
+
+            const res = await fetch(url);
+            const data = await res.json();
+            messagesEl.innerHTML = "";
+
+            if (data.length === 0) {
+                renderMessage("bot", "Chào mừng bạn đến với UTE BookStore! Tôi là trợ lý AI, tôi có thể giúp gì cho bạn?");
+            } else {
+                data.forEach(m => renderMessage(m.role, m.message, true));
+            }
+        } catch (e) {
+            console.error("Lỗi load history:", e);
+            renderMessage("bot", "Lỗi tải lịch sử chat.");
+        }
+    }
+
+    // ==== GỬI TIN NHẮN ====
+    async function sendMsg() {
+        // Backend sẽ tự chặn nếu customerId là null/''
+        if (!customerId) {
+            renderMessage("bot", "Bạn cần đăng nhập để gửi tin nhắn.");
+            return;
+        }
+        const txt = inputEl.value.trim();
+        if (!txt) return;
+
+        renderMessage("user", txt);
+        inputEl.value = "";
+
+        try {
+            const url = `/api/chat/send?customerId=${customerId}`
+                + `&message=${encodeURIComponent(txt)}`;
+
+            const res = await fetch(url, {
+                method: "POST"
+            });
+            const body = await res.json();
+            const botReply = body.reply;
+            renderMessage("bot", botReply);
+        } catch (e) {
+            const errorMessage = "Lỗi API: Không thể nhận phản hồi từ bot.";
+            renderMessage("bot", errorMessage);
+        }
+    }
+
+    // ==== SỰ KIỆN NHẬP ====
+    inputEl.addEventListener("keydown", e => {
+        if (e.key === "Enter") {
+            e.preventDefault();
+            sendMsg();
+        }
+    });
+
+    sendBtn.addEventListener("click", sendMsg);
+
+    loadHistory();
+</script>
+
+</body>
+</html>

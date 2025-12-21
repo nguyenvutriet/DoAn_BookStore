@@ -12,11 +12,9 @@
     <link rel="shortcut icon" type="image/png" href="/images/logo.png" />
     <link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="/css/style1.css">
-    <link rel="stylesheet" type="text/css" href="/css/responsive.css">
+    <!--    <link rel="stylesheet" type="text/css" href="/css/responsive.css">-->
     <link rel="stylesheet" href="/css/book-detail.css">
 
-    <!-- Login form riêng -->
-    <link rel="stylesheet" href="/css/login.css">
 </head>
 
 <body>
@@ -137,20 +135,25 @@
     <div class="book-detail container my-5">
         <div class="row d-flex flex-wrap">
 
-            <!-- CỘT 1: Ảnh sách -->
+            <!-- CỘT 1: ẢNH sách -->
             <div class="col-md-4 col-12 text-center mb-3">
                 <div class="main-book-image">
                     <img th:src="@{'/images/books/' + ${book.picture}}" alt="" class="img-fluid main-img">
                 </div>
             </div>
 
-            <!-- CỘT 2: Thông tin sách + mua -->
+            <!-- CỘT 2: Thông tin + mua -->
             <div class="col-md-5 col-12 mb-3 d-flex flex-column">
                 <h2 class="book-title" th:text="${book.title}">Tên sách</h2>
+
                 <p class="author">Tác giả: <span th:text="${book.author}"></span></p>
 
+                <!-- Added book description section -->
+                <p class="book-description text-secondary small" th:text="${book.description}">Mô tả sách</p>
+
                 <div class="price-box">
-                    <span class="current-price" th:text="${#numbers.formatDecimal(book.price,0,'COMMA',0,'POINT')} + ' đ'"></span>
+        <span class="current-price"
+              th:text="${#numbers.formatDecimal(book.price,0,'COMMA',0,'POINT')} + ' đ'"></span>
                 </div>
 
                 <div class="quantity-box">
@@ -160,12 +163,24 @@
                     <button type="button" class="qty-btn">+</button>
                 </div>
 
-                <form th:action="@{/gio_hang/add}" method="post">
-                    <input type="hidden" name="bookId" th:value="${book.bookId}">
-                    <input type="hidden" name="quantity" class="hidden-qty" value="1">
-                    <button type="submit" class="buy-btn mt-3">CHỌN MUA</button>
-                </form>
+                <!-- Replaced single button with two equal-sized action buttons -->
+                <div class="button-group mt-3">
+<!--                    <button type="button" class="btn-add-cart">MUA NGAY</button>-->
+                    <form th:action="@{/checkout/fast-buy}" method="post" style="flex: 1;">
+                        <input type="hidden" name="bookId" th:value="${book.bookId}">
+                        <input type="hidden" name="quantity" class="hidden-qty" value="1">
+                        <button type="submit" class="btn-add-cart">MUA NGAY</button>
+                    </form>
+
+                    <form th:action="@{/gio_hang/add}" method="post" style="flex: 1;">
+                        <input type="hidden" name="bookId" th:value="${book.bookId}">
+                        <input type="hidden" name="quantity" class="hidden-qty" value="1">
+                        <button type="submit" class="btn-buy-now">THÊM VÀO GIỎ HÀNG</button>
+                    </form>
+                </div>
+
             </div>
+
 
             <!-- CỘT 3: Thông tin xuất bản -->
             <div class="col-md-3 col-12 mb-3">
@@ -196,141 +211,95 @@
                     </table>
                 </div>
             </div>
-        </div>
-    </div>
+
+        </div> <!-- Kết thúc row -->
+    </div> <!-- Kết thúc book-detail -->
+
     <!-- ===== KHU ĐÁNH GIÁ SÁCH ===== -->
-    <hr class="my-4">
+    <div class="container mt-5 rating-container">
 
-    <!-- Thông báo sau khi gửi review -->
-    <div th:if="${message}" class="alert alert-success" th:text="${message}"></div>
+        <hr class="my-4">
 
-    <!-- Tóm tắt rating -->
-    <div class="rating-summary d-flex align-items-center mb-3">
-        <div class="mr-3">
-            <strong th:text="${#numbers.formatDecimal(avgRating,1,1)} + ' / 5'">0 / 5</strong>
-        </div>
-
-        <!-- Sao trung bình -->
-        <div class="stars mr-3">
-            <span th:each="i : ${#numbers.sequence(1,5)}"
-                  th:text="${i <= avgRatingRounded} ? '★' : '☆'"
-                  style="color: gold; font-size: 1.2rem; margin-right: 2px;">
-              ★
-            </span>
-        </div>
-
-        <div>
-            <small>
-                (<span th:text="${reviewCount}">0</span> lượt đánh giá)
-            </small>
-        </div>
-    </div>
-
-    <!-- Thanh progress đơn giản -->
-    <div class="progress mb-3" style="height: 6px; max-width: 300px;">
-        <div class="progress-bar bg-warning"
-             role="progressbar"
-             th:style="'width:' + (${avgRating} / 5.0 * 100) + '%;'">
-        </div>
-    </div>
-
-    </div> <!-- end col-md-8 -->
-    </div> <!-- end row -->
-
-    <!-- Hàng mới: Form đánh giá + Log đánh giá -->
-    <div class="row mt-4">
-        <!-- Form đánh giá -->
-        <div class="col-md-6">
-            <h4>Đánh giá sách này</h4>
-
-            <!-- Nếu chưa đăng nhập -->
-            <div sec:authorize="isAnonymous()" class="alert alert-info">
-                Vui lòng <a th:href="@{/login}">đăng nhập</a> để đánh giá cuốn sách này.
+        <div class="rating-summary d-flex align-items-center mb-3">
+            <div class="mr-3">
+                <strong th:text="${#numbers.formatDecimal(avgRating,1,1)} + ' / 5'">0 / 5</strong>
             </div>
 
-            <!-- Nếu đã đăng nhập -->
-            <form sec:authorize="isAuthenticated()"
-                  th:action="@{'/home/books/' + ${book.bookId} + '/review'}"
-                  method="post"
-                  class="card card-body mt-2">
+            <div class="stars mr-3">
+            <span th:each="i : ${#numbers.sequence(1,5)}"
+                  th:text="${i <= avgRatingRounded} ? '★' : '☆'"
+                  style="color: gold; font-size: 1.2rem; margin-right: 2px;">★</span>
+            </div>
 
-                <div class="form-group">
-                    <label for="rating">Số sao (0–5)</label>
-                    <select id="rating" name="rating" class="form-control" required>
-                        <option value="0">0 ⭐</option>
-                        <option value="1">1 ⭐</option>
-                        <option value="2">2 ⭐</option>
-                        <option value="3">3 ⭐</option>
-                        <option value="4">4 ⭐</option>
-                        <option value="5">5 ⭐</option>
-                    </select>
-                </div>
+            <div>
+                <small>(<span th:text="${reviewCount}">0</span> lượt đánh giá)</small>
+            </div>
+        </div>
 
-                <div class="form-group mt-3">
-                    <label for="comment">Nhận xét</label>
-                    <textarea id="comment" name="comment" rows="4" class="form-control"
-                              placeholder="Viết cảm nhận của bạn về cuốn sách này..."></textarea>
-                </div>
-
-                <div class="mt-3 d-flex justify-content-end">
-                    <button type="submit" class="btn btn-primary">
-                        Gửi đánh giá
-                    </button>
-                </div>
-            </form>
+        <div class="progress mb-4" style="height: 6px; max-width: 300px;">
+            <div class="progress-bar bg-warning"
+                 role="progressbar"
+                 th:style="'width:' + (${avgRating} / 5.0 * 100) + '%;'">
+            </div>
         </div>
 
         <!-- Log đánh giá -->
-        <div class="col-md-6">
-            <div class="d-flex justify-content-between align-items-center mb-2">
-                <h4 class="mb-0">Nhận xét từ độc giả</h4>
-                <button id="toggleReviewLog" class="btn btn-outline-primary btn-sm">
-                    Xem/Ẩn log đánh giá
-                </button>
-            </div>
+        <div class="row w-100 mt-4">
+            <div class="col-12">
 
-            <div id="reviewLog" class="mt-2" style="display: none;">
-
-                <!-- Nếu không có review -->
-                <p class="text-muted" th:if="${reviewCount == 0}">
-                    Chưa có đánh giá nào cho cuốn sách này. Hãy là người đầu tiên!
-                </p>
-
-                <!-- Danh sách review -->
-                <div th:if="${reviewCount > 0}">
-                    <div class="review-item border rounded p-3 mb-2"
-                         th:each="r : ${reviews}">
-                        <div class="d-flex justify-content-between">
-                            <div>
-                                <!-- Sao của từng review -->
-                                <span th:each="i : ${#numbers.sequence(1,5)}"
-                                      th:text="${i <= r.rating} ? '★' : '☆'"
-                                      style="color: gold; font-size: 1rem; margin-right: 1px;">
-                    ★
-                  </span>
-                            </div>
-                            <div>
-                                <small class="text-muted"
-                                       th:text="${#dates.format(r.creationDate, 'dd/MM/yyyy')}">
-                                    01/01/2024
-                                </small>
-                            </div>
-                        </div>
-
-                        <p class="mb-1 mt-2" th:text="${r.comment}">Nội dung đánh giá...</p>
-
-                        <small class="text-muted">
-                            Khách hàng:
-                            <span th:text="${r.customer.fullName}">Tên khách</span>
-                        </small>
-                    </div>
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <h4 class="mb-0">Nhận xét từ độc giả</h4>
                 </div>
 
+                <!-- Removed toggle button and set display to block by default -->
+                <div id="reviewLog" class="mt-2" style="display: block;">
+
+                    <p class="text-muted" th:if="${reviewCount == 0}">
+                        Chưa có đánh giá nào cho cuốn sách này!
+                    </p>
+
+                    <div th:if="${reviewCount > 0}">
+                        <!-- Default shows first 3 reviews, rest are hidden -->
+                        <div class="review-item border rounded p-3 mb-3"
+                             th:each="r,stat : ${reviews}"
+                             th:data-index="${stat.index}"
+                             th:class="${stat.index >= 3} ? 'review-item border rounded p-3 mb-3 review-hidden' : 'review-item border rounded p-3 mb-3'">
+
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                <span th:each="i : ${#numbers.sequence(1,5)}"
+                                      th:text="${i <= r.rating} ? '★' : '☆'"
+                                      style="color: gold; font-size: 1rem; margin-right: 1px;">★</span>
+                                </div>
+                                <div>
+                                    <small class="text-muted"
+                                           th:text="${#dates.format(r.creationDate, 'dd/MM/yyyy')}">01/01/2024</small>
+                                </div>
+                            </div>
+
+                            <p class="mb-1 mt-2" th:text="${r.comment}">Nội dung đánh giá...</p>
+
+                            <small class="text-muted">
+                                Khách hàng: <span th:text="${r.customer.fullName}">Tên khách</span>
+                            </small>
+
+                        </div>
+
+                        <!-- Load more button shown only if more than 3 reviews exist -->
+                        <button id="loadMoreReviews"
+                                class="btn-load-more"
+                                th:if="${reviewCount > 3}">
+                            Xem đánh giá cũ hơn
+                        </button>
+
+                    </div>
+
+                </div>
             </div>
         </div>
-    </div> <!-- end row form + log -->
 
-<!--    </div> &lt;!&ndash; end book-detail &ndash;&gt;-->
+    </div>
+    <!--    </div> &lt;!&ndash; end book-detail &ndash;&gt;-->
 
 </main>
 
@@ -356,21 +325,38 @@
     });
 
     document.addEventListener('DOMContentLoaded', function () {
-        const btn = document.getElementById('toggleReviewLog');
-        const log = document.getElementById('reviewLog');
 
-        if (btn && log) {
-            btn.addEventListener('click', function () {
-                if (log.style.display === 'none' || log.style.display === '') {
-                    log.style.display = 'block';
-                    btn.textContent = 'Ẩn log đánh giá';
-                } else {
-                    log.style.display = 'none';
-                    btn.textContent = 'Xem/Ẩn log đánh giá';
-                }
-            });
-        }
+        const loadMoreBtn = document.getElementById('loadMoreReviews');
+        let expanded = false;
+        const maxDefault = 3;
+
+        if (!loadMoreBtn) return;
+
+        loadMoreBtn.addEventListener('click', function () {
+            const reviewItems = document.querySelectorAll('.review-item');
+
+            if (!expanded) {
+                // 👉 Hiện TẤT CẢ
+                reviewItems.forEach(item => item.classList.remove('review-hidden'));
+
+                loadMoreBtn.textContent = "Ẩn bớt";
+                expanded = true;
+
+            } else {
+                // 👉 Ẩn trở lại (chỉ giữ 3 cái đầu)
+                reviewItems.forEach((item, index) => {
+                    if (index >= maxDefault) {
+                        item.classList.add('review-hidden');
+                    }
+                });
+
+                loadMoreBtn.textContent = "Xem các bình luận cũ hơn";
+                expanded = false;
+            }
+        });
+
     });
+
 </script>
 
 
@@ -378,62 +364,31 @@
 <footer id="footer">
     <div class="container">
         <div class="footer-content">
-            <!-- Column 1 -->
+
             <div class="footer-column footer-about">
                 <h4>UTE BookStore</h4>
-                <p class="footer-about-text">
-                    Chào mừng bạn đến với UTE BookStore, cửa hàng sách trực tuyến uy tín, nơi bạn có thể khám phá bộ sưu tập sách phong phú dành cho mọi đối tượng đọc giả. Từ các loại sách phổ biên đến các tác phẩm kinh điển, chúng tôi luôn có những lựa chọn tuyệt vời cho bạn. Khám phá ngay bộ sưu tập của chúng tôi và nếu cần trợ giúp, chatbox của chúng tôi luôn sẵn sàng hỗ trợ bạn!
-                </p>
+                <p>Chào mừng bạn đến với UTE BookStore, cửa hàng sách trực tuyến uy tín, nơi bạn có thể khám phá bộ sưu tập sách phong phú dành cho mọi đối tượng đọc giả. Từ các loại sách phổ biên đến các tác phẩm kinh điển, chúng tôi luôn có những lựa chọn tuyệt vời cho bạn. Khám phá ngay bộ sưu tập của chúng tôi và nếu cần trợ giúp, chatbox của chúng tôi luôn sẵn sàng hỗ trợ bạn!</p>
             </div>
 
-            <!-- Column 2 -->
-            <div class="footer-column footer-contact">
+            <div class="footer-column">
                 <h4>Thông tin và chính sách</h4>
-
-                <!-- Địa chỉ với icon Map -->
-                <div class="contact-info">
-                    <a href="http://google.com/maps?rlz=1C1VDKB_enVN1145VN1145&gs_lcrp=EgZjaHJvbWUqBwgBEC4YgAQyBggAEEUYOTIHCAEQLhiABDIHCAIQABiABDIHCAMQABiABDIHCAQQABiABDIHCAUQLhiABDIHCAYQABiABDIGCAcQRRhB0gEINDg1OGowajeoAgCwAgA&um=1&ie=UTF-8&fb=1&gl=vn&sa=X&geocode=KasWOPJjJ3UxMW-RtkEUcS8o&daddr=01+%C4%90.+V%C3%B5+V%C4%83n+Ng%C3%A2n,+Linh+Chi%E1%BB%83u,+Th%E1%BB%A7+%C4%90%E1%BB%A9c,+Th%C3%A0nh+ph%E1%BB%91+H%E1%BB%93+Ch%C3%AD+Minh" target="_blank" class="info-link">
-                        <img src="/images/map.png" alt="map icon" class="contact-icon">
-                        <span>Địa chỉ: Số 1 VVN, phường Thủ Đức, TPHCM</span>
-                    </a>
-                </div>
-
-                <!-- Đồng sáng lập Web với icon member -->
-                <div class="contact-info">
-                    <img src="/images/member.png" alt="member icon" class="contact-icon">
-                    <span>H.Bang, D.Ngọc, M.Quỳnh, T.Trà, V.Triết</span>
-                </div>
+                <ul>
+                    <li><a href="/home">Home</a></li>
+                    <li><a href="#">Books</a></li>
+                    <li><a href="#">About</a></li>
+                    <li><a href="#">Contact</a></li>
+                </ul>
             </div>
 
-            <!-- Column 3 -->
-            <div class="footer-column footer-contact">
+            <div class="footer-column">
                 <h4>Liên hệ</h4>
-
-                <!-- Giờ hoạt động -->
-                <p class="contact-hours">(Hoạt động từ 8h - 17h, thứ 2 - thứ 7)</p>
-
-                <!-- Số điện thoại với hình ảnh icon -->
-                <div class="contact-info">
-                    <img src="/images/telephone.png" alt="phone icon" class="contact-icon">
-                    <span>Gọi đặt hàng: 0328327303</span>
-                </div>
-
-                <!-- Email với hình ảnh icon -->
-                <div class="contact-info">
-                    <img src="/images/email.png" alt="email icon" class="contact-icon">
-                    <span>Email: banghohoang16102005@gmail.com</span>
-                </div>
-
-                <!-- Facebook -->
-                <div class="contact-info">
-                    <a href="https://www.facebook.com/tola.simon1610/" target="_blank" class="contact-info">
-                        <img src="/images/facebook.png" alt="facebook icon" class="contact-icon">
-                        <span>3.2k người theo dõi</span>
-                    </a>
-                </div>
+                <div class="contact-info">📧 support@example.com</div>
+                <div class="contact-info">📞 +1234567890</div>
             </div>
+
         </div>
     </div>
+
     <div class="footer-bottom">
         <p>&copy; 2025 UTE BookStore. All rights reserved.</p>
     </div>
@@ -441,5 +396,3 @@
 
 </body>
 </html>
-
-

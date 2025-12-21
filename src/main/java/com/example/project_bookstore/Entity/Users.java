@@ -3,7 +3,9 @@ package com.example.project_bookstore.Entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import org.springframework.security.core.GrantedAuthority;
 
+import java.util.Collection;
 import java.util.Date;
 
 @Entity
@@ -38,8 +40,8 @@ public class Users {
     )
     private Customers customer;
 
-
-    public Users() {}
+    public Users() {
+    }
 
     public Users(String userName, String password, String role, String fullName, Date registrationDate) {
         this.userName = userName;

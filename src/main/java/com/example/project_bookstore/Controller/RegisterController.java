@@ -92,8 +92,6 @@ public class RegisterController {
         BCryptPasswordEncoder  passwordEncoder = new BCryptPasswordEncoder();
         password = passwordEncoder.encode(password);
 
-
-
         customersService.save(fullName, email, address, dateOfBirth, phone);
         Customers cus = customersService.getCustomerByEmail(email);
 
@@ -114,4 +112,12 @@ public class RegisterController {
 
         return "redirect:/login";
     }
+
+    @GetMapping("/google")
+    public String registerEmail(@RequestParam("email") String email, Model model){
+        model.addAttribute("email",email);
+        return "register-infor";
+
+    }
+
 }

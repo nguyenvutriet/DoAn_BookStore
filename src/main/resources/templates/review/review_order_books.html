@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đánh giá sản phẩm</title>
+    <link rel="stylesheet" type="text/css" href="/css/review.css">
+</head>
+
+<body>
+<div class="container">
+    <header class="header">
+        <div class="header-content">
+            <h1 class="header-title">📚 Danh sách sách đã mua</h1>
+            <p class="header-subtitle">Chia sẻ cảm nhận của bạn về những cuốn sách yêu thích</p>
+        </div>
+    </header>
+
+    <main class="books-list">
+        <div class="book-card" th:each="item : ${order.orderDetail_Order}">
+            <!-- Added book image container with layout -->
+            <div class="book-content-wrapper">
+                <div class="book-image-container">
+
+                    <img class="book-image"
+                         th:src="@{/images/books/{img}(img=${item.book.picture})}"
+                         th:alt="${item.book.title}">
+
+
+                </div>
+
+                <div class="book-content">
+                    <div class="book-header">
+                        <h2 class="book-title" th:text="${item.book.title}"></h2>
+
+                        <!-- Trạng thái: Đã đánh giá -->
+                        <span th:if="${ratedMap[item.book.bookId]}" class="badge badge-done">
+                            ✓ Đã đánh giá
+                        </span>
+                    </div>
+
+                    <div class="book-actions">
+                        <!-- Nút Đánh giá (khi chưa đánh giá) -->
+                        <a th:if="${!ratedMap[item.book.bookId]}"
+                           class="btn btn-primary"
+                           th:href="@{/review/add/{o}/{b}(o=${order.orderId}, b=${item.book.bookId})}">
+                            ⭐ Đánh giá ngay
+                        </a>
+
+                        <!-- Nút Đánh giá lại (khi đã đánh giá) -->
+                        <a th:if="${ratedMap[item.book.bookId]}"
+                           class="btn btn-secondary"
+                           th:href="@{/review/add/{o}/{b}(o=${order.orderId}, b=${item.book.bookId})}">
+                            🔄 Đánh giá lại
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <a href="/user/myOrder" class="back-link">← Quay lại đơn hàng</a>
+    </footer>
+</div>
+
+</body>
+</html>

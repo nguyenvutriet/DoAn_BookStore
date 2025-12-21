@@ -23,8 +23,7 @@ public class UsersService implements UserDetailsService {
 
     @Autowired
     private IUsersRepository repo;
-    @Autowired
-    private BCryptPasswordEncoder passwordEncoder;
+
 
     public Users getUserByUserName(String username){
         Users us = repo.findById(username).orElse(null);
@@ -52,6 +51,9 @@ public class UsersService implements UserDetailsService {
 
     public boolean checkPassword(String username, String password){
         Users us = repo.findById(username).orElse(null);
+
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
         return passwordEncoder.matches(password, us.getPassword());
     }
 
@@ -65,6 +67,7 @@ public class UsersService implements UserDetailsService {
         return new User(user.getUserName(), user.getPassword(), authorities);
 
     }
+
 
 
 }

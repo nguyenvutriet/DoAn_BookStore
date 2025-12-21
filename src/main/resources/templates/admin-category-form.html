@@ -1,34 +1,49 @@
+
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <link rel="stylesheet" href="/css/admin.css">
     <title>Add Category</title>
+    <link rel="stylesheet" href="/css/admin.css">
 </head>
+
 <body>
 
+<!-- HEADER -->
 <header th:replace="admin-dashboard :: header"></header>
 
 <h1 class="dashboard-title">Add New Category</h1>
 
-<div class="frame-box" style="width:50%; margin:auto;">
+<div class="frame-box" style="width: 50%; margin: auto;">
 
-    <form method="post" action="/admin/categories/save">
+    <!-- Hiện lỗi (nếu có) -->
+    <p th:if="${errorMessage}"
+       style="color:#c0392b; font-weight:bold; text-align:center; margin-bottom:15px;">
+        ⚠️ <span th:text="${errorMessage}"></span>
+    </p>
 
-        <label>ID:</label>
-        <input type="text" name="categoryId"
-               th:value="${category.categoryId}" required>
+    <form method="post" action="/admin/categories/save" class="form-category">
 
-        <label>Name:</label>
-        <input type="text" name="categoryName"
-               th:value="${category.categoryName}" required>
+        <div class="form-group">
+            <label>ID:</label>
+            <input type="text" name="categoryId"
+                   th:value="${category.categoryId}" required>
+        </div>
 
-        <button type="submit" class="btn-submit">Save</button>
+        <div class="form-group">
+            <label>Name:</label>
+            <input type="text" name="categoryName"
+                   th:value="${category.categoryName}" required>
+        </div>
 
-        <a href="/admin/categories" style="margin-left:20px;">Cancel</a>
+        <div style="margin-top:20px; text-align:center;">
+            <button type="submit" class="btn-submit">Save</button>
+            <a href="/admin/categories" class="btn-cancel">Cancel</a>
+        </div>
+
     </form>
-
 </div>
 
+<!-- FOOTER -->
 <footer th:replace="admin-dashboard :: footer"></footer>
 
 </body>
