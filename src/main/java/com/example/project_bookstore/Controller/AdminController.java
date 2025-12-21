@@ -10,6 +10,7 @@ import com.example.project_bookstore.Service.AdminService;
 import com.example.project_bookstore.Service.BooksService;
 import com.example.project_bookstore.Service.PredictService;
 import com.example.project_bookstore.Service.UsersService;
+import com.example.project_bookstore.Service.BooksService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

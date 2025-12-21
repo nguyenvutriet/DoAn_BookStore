@@ -203,8 +203,8 @@
                     </td>
 
                     <!-- Tổng tiền -->
-                    <td class="order-total"
-                        th:text="${#numbers.formatDecimal(order.totalAmount, 0, 'COMMA', 2, 'POINT')} + ' đ'">
+                    <td class="order-total" th:text="${#numbers.formatDecimal(order.getTotalAmount(), 0, 'COMMA', 2, 'POINT')} + ' đ'">
+
                     </td>
 
                     <!-- Trạng thái -->
@@ -259,6 +259,7 @@
                         </a>
 
                     </td>
+
                 </tr>
                 </tbody>
             </table>
