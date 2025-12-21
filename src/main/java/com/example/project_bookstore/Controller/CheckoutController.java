@@ -42,6 +42,9 @@ public class CheckoutController {
     @Autowired
     private IBooksRepository booksRepository;
 
+    @Autowired
+    private OrdersService orService;
+
     private final OrdersService orderService;
     private final VNPayService vnPayService;
     private final EmailService emailService;
@@ -107,25 +110,7 @@ public class CheckoutController {
         return "checkout";  // form mua hàng
     }
     private String generateOrderId() {
-        String lastId = ordersRepo.findLastOrderId();
-
-        if (lastId == null) {
-            return "OD0001"; // Khi chưa có đơn nào
-        }
-
-        // Tách phần chữ
-        String prefix = lastId.replaceAll("[0-9]", "");
-
-        // Tách số
-        String numberPart = lastId.replaceAll("[^0-9]", "");
-
-        int number = Integer.parseInt(numberPart);
-        number++;
-
-        // Padding giữ nguyên số chữ số
-        String newNumber = String.format("%0" + numberPart.length() + "d", number);
-
-        return prefix + newNumber;
+        return orService.generateId();
     }
 
 

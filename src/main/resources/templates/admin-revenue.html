@@ -240,18 +240,17 @@
             <tbody>
             <tr th:each="r, i : ${monthlyRevenue}">
                 <td th:text="${months[i.index]}"></td>
-                <td th:text="${r} + '₫'"></td>
+                <td th:text="${#numbers.formatDecimal(r, 0, 'POINT', 0, 'COMMA')} + ' ₫'"></td>
 
                 <td th:if="${growth[i.index] >= 0}" style="color:#1B8A3D; font-weight:bold;">
-                    ▲ <span th:text="${growth[i.index]}"></span>%
+                    ▲ <span th:text="${#numbers.formatDecimal(growth[i.index], 1, 'POINT', 2, 'COMMA')}"></span>%
                 </td>
                 <td th:if="${growth[i.index] < 0}" style="color:#C0392B; font-weight:bold;">
-                    ▼ <span th:text="${growth[i.index]}"></span>%
+                    ▼ <span th:text="${#numbers.formatDecimal(growth[i.index], 1, 'POINT', 2, 'COMMA')}"></span>%
                 </td>
             </tr>
             </tbody>
         </table>
-
     </div>
 
     <div class="chart-box">
