@@ -68,13 +68,6 @@ public class AdminController {
         model.addAttribute("totalOrders", adminService.getTotalOrders());
         model.addAttribute("totalReviews", adminService.getTotalReviews());
 
-        // Biểu đồ doanh thu 6 tháng gần nhất
-        var monthly = adminService.getMonthlyRevenue("6M");
-        model.addAttribute("months", monthly.get("labels"));
-        model.addAttribute("monthlyRevenue", monthly.get("values"));
-
-        model.addAttribute("recentBooks", adminService.getRecentSoldBooks());
-
         return "admin-dashboard";
     }
 
