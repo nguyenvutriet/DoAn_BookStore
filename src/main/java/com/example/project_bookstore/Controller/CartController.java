@@ -180,7 +180,7 @@ public class CartController {
         cartService.addToCart(username, bookId, quantity);
 
         // Sau khi thêm → chuyển sang trang giỏ hàng
-        return "redirect:/gio_hang";
+        return "redirect:/home/books/"+bookId;
     }
 
 }

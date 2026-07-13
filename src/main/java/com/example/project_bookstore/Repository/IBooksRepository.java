@@ -197,4 +197,6 @@ public interface IBooksRepository extends JpaRepository<Books, String> {
     @Query("SELECT b FROM Books b LEFT JOIN FETCH b.category")
     List<Books> findAllForContext();
 
+    List<Books> findByCategory_CategoryIdIn(List<String> categoryIds);
+
 }

@@ -19,42 +19,22 @@
 
         <a th:href="@{/admin/orders(status='Pending')}"
            th:class="'status-tab ' + (${status}=='Pending' ? 'active' : '')">
-            Pending
+            Chờ xử lý
         </a>
 
         <a th:href="@{/admin/orders(status='Confirmed')}"
            th:class="'status-tab ' + (${status}=='Confirmed' ? 'active' : '')">
-            Confirmed
-        </a>
-
-        <a th:href="@{/admin/orders(status='Processing')}"
-           th:class="'status-tab ' + (${status}=='Processing' ? 'active' : '')">
-            Processing
-        </a>
-
-        <a th:href="@{/admin/orders(status='Shipping')}"
-           th:class="'status-tab ' + (${status}=='Shipping' ? 'active' : '')">
-            Shipping
+            Đã xác nhận
         </a>
 
         <a th:href="@{/admin/orders(status='Delivered')}"
            th:class="'status-tab ' + (${status}=='Delivered' ? 'active' : '')">
-            Delivered
+            Đã giao
         </a>
 
         <a th:href="@{/admin/orders(status='Cancelled')}"
            th:class="'status-tab ' + (${status}=='Cancelled' ? 'active' : '')">
-            Cancelled
-        </a>
-
-        <a th:href="@{/admin/orders(status='Returned')}"
-           th:class="'status-tab ' + (${status}=='Returned' ? 'active' : '')">
-            Returned
-        </a>
-
-        <a th:href="@{/admin/orders(status='Refunded')}"
-           th:class="'status-tab ' + (${status}=='Refunded' ? 'active' : '')">
-            Refunded
+            Đã hủy
         </a>
 
     </div>
@@ -96,18 +76,18 @@
             <!--            </td>-->
 
             <td>
-                <!-- Nếu trạng thái Pending -> hiện nút Confirm -->
-                <a th:if="${o.status == 'Pending'}"
-                   th:href="@{'/admin/orders/confirm/' + ${o.orderId}}"
-                   class="btn-view"
-                   onclick="return confirm('Xác nhận đơn hàng này?')">
-                    Xác nhận
-                </a>
+                <div class="action-inline">
+                    <a th:if="${o.status == 'Pending'}"
+                       th:href="@{'/admin/orders/confirm/' + ${o.orderId}}"
+                       class="btn-view"
+                       onclick="return confirm('Xác nhận đơn hàng này?')">
+                        Xác nhận
+                    </a>
 
-                <!-- Luôn có nút Xem -->
-                <a th:href="@{'/admin/orders/' + ${o.orderId}}" class="btn-view">
-                    Xem
-                </a>
+                    <a th:href="@{'/admin/orders/' + ${o.orderId}}" class="btn-view">
+                        Xem
+                    </a>
+                </div>
             </td>
 
         </tr>

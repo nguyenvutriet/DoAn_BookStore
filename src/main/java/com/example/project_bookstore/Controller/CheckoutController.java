@@ -3,6 +3,7 @@ package com.example.project_bookstore.Controller;
 import com.example.project_bookstore.Entity.*;
 import com.example.project_bookstore.Repository.*;
 import com.example.project_bookstore.Service.EmailService;
+import com.example.project_bookstore.Service.FlashSaleService;
 import com.example.project_bookstore.Service.OrdersService;
 import com.example.project_bookstore.Service.VNPayService;
 import com.example.project_bookstore.dto.PaymentDTO;
@@ -17,6 +18,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.ui.Model;
 import org.thymeleaf.context.Context;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
 
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
@@ -44,6 +50,9 @@ public class CheckoutController {
 
     @Autowired
     private OrdersService orService;
+
+    @Autowired
+    private FlashSaleService flashSaleService;
 
     private final OrdersService orderService;
     private final VNPayService vnPayService;
@@ -86,24 +95,36 @@ public class CheckoutController {
         List<CartDetail> cartDetails = new ArrayList<>();
         BigDecimal subtotal = BigDecimal.ZERO;
 
+        // ==== Map giá thực sự áp dụng cho từng sách (đã tính flash sale) ====
+        Map<String, BigDecimal> effectivePriceMap = new HashMap<>();
+
         for (CartSelectedItem s : items) {
             CartDetailId id = new CartDetailId(s.getCartId(), s.getBookId());
             CartDetail cd = cartDetailRepo.findById(id).orElse(null);
 
-            if (cd != null) {
-                cd.setQuantity(s.getQuantity());
-                cd.getBook().getTitle();
-                cartDetails.add(cd);
+            if (cd == null) {
+                continue;
             }
-            // ====== TÍNH SUBTOTAL ======
-            BigDecimal price = cd.getBook().getPrice();
-            BigDecimal lineTotal = price.multiply(BigDecimal.valueOf(s.getQuantity()));
 
+            cd.setQuantity(s.getQuantity());
+            cartDetails.add(cd);
+
+            // ==== ÁP DỤNG FLASH SALE NẾU ĐANG HIỆU LỰC ====
+            BigDecimal originalPrice = cd.getBook().getPrice();
+            BigDecimal effectivePrice = flashSaleService.getActiveSaleForBook(s.getBookId())
+                    .map(FlashSaleDetail::getSalePrice)
+                    .orElse(originalPrice);
+
+            effectivePriceMap.put(s.getBookId(), effectivePrice);
+
+            // ====== TÍNH SUBTOTAL (theo giá đã áp sale) ======
+            BigDecimal lineTotal = effectivePrice.multiply(BigDecimal.valueOf(s.getQuantity()));
             subtotal = subtotal.add(lineTotal);
 
         }
 
         model.addAttribute("items", cartDetails);
+        model.addAttribute("effectivePriceMap", effectivePriceMap);
         model.addAttribute("subtotal", subtotal);
         model.addAttribute("total", subtotal);
 
@@ -130,31 +151,56 @@ public class CheckoutController {
         Orders order = new Orders();
         order.setOrderId(generateOrderId());
         order.setStatus("Pending");
-        order.setOrderDate(new Date());
+        // 1. Lấy thời gian hiện tại chính xác ở múi giờ Việt Nam
+        ZonedDateTime vietnamTime = ZonedDateTime.now(ZoneId.of("Asia/Ho_Chi_Minh"));
+
+        // 2. Chuyển đổi ZonedDateTime sang Instant (UTC) rồi tạo Date
+        Date vietnamDate = Date.from(vietnamTime.toInstant());
+
+        // THÊM NGÀY GIỜ VÀO BẢNG ORDER
+        order.setOrderDate(vietnamDate);
         order.setPaymentMethod(form.getPaymentMethod());
         order.setAddress(form.getAddress());
         order.setCustomer(customer);
 
-        BigDecimal total = form.getTotalAmount();  // ✔ lấy từ input hidden
-
-        order.setTotalAmount(total);               // ✔ lưu thẳng vào DB
-
         List<OrderDetail> details = new ArrayList<>();
 
-        // ===== Tính subtotal + tạo detail =====
+        // ===== TÍNH LẠI GIÁ THẬT Ở SERVER (KHÔNG TIN unitPrice TỪ CLIENT) =====
+        BigDecimal recalculatedSubtotal = BigDecimal.ZERO;
+
         for (CartSelectedItem item : form.getItems()) {
+
+            Books book = booksRepository.findById(item.getBookId()).orElse(null);
+            if (book == null) continue;
+
+            // Giá thực sự áp dụng: ưu tiên flash sale nếu đang hiệu lực, nếu không lấy giá gốc
+            BigDecimal realPrice = flashSaleService.getActiveSaleForBook(item.getBookId())
+                    .map(FlashSaleDetail::getSalePrice)
+                    .orElse(book.getPrice());
 
             OrderdetailId id = new OrderdetailId(order.getOrderId(), item.getBookId());
 
             OrderDetail detail = new OrderDetail();
             detail.setOrderDetailId(id);
             detail.setOrder(order);
-            detail.setBook(booksRepository.findById(item.getBookId()).orElse(null));
+            detail.setBook(book);
             detail.setQuantity(item.getQuantity());
-            detail.setUnitPrice(item.getUnitPrice());
+            detail.setUnitPrice(realPrice); // ✔ giá tính lại ở server
 
             details.add(detail);
+
+            recalculatedSubtotal = recalculatedSubtotal.add(
+                    realPrice.multiply(BigDecimal.valueOf(item.getQuantity()))
+            );
         }
+
+        // ===== PHÍ SHIP: lấy từ input riêng do JS tính theo khoảng cách =====
+        BigDecimal shippingFee = form.getShippingFee() != null ? form.getShippingFee() : BigDecimal.ZERO;
+
+        // ===== TỔNG CUỐI CÙNG: TÍNH Ở SERVER, KHÔNG DÙNG form.getTotalAmount() =====
+        BigDecimal finalTotal = recalculatedSubtotal.add(shippingFee);
+
+        order.setTotalAmount(finalTotal);
 
         // Set đầy đủ thông tin
         order.setOrderDetail_Order(details);
@@ -180,20 +226,30 @@ public class CheckoutController {
         try {
             Context context = new Context();
 
-            // Truyền dữ liệu vào template
+            // Tổng tiền sản phẩm (sum(quantity * unitPrice))
+            BigDecimal totalProductAmount = order.getOrderDetail_Order()
+                    .stream()
+                    .map(d -> d.getUnitPrice()
+                            .multiply(BigDecimal.valueOf(d.getQuantity())))
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+            // Phí ship = totalAmount - tổng tiền sản phẩm
+            BigDecimal emailShippingFee = order.getTotalAmount()
+                    .subtract(totalProductAmount);
+
             context.setVariable("order", order);
             context.setVariable("details", order.getOrderDetail_Order());
             context.setVariable("customer", customer);
 
+            context.setVariable("totalProductAmount", totalProductAmount);
+            context.setVariable("shippingFee", emailShippingFee);
+
             emailService.sendHtmlEmail(
                     customer.getEmail(),
                     "Xác nhận đơn hàng #" + order.getOrderId(),
-                    "order-email",   // file order-email.html
+                    "order-email",          // file order-email.html
                     context
             );
-
-            System.out.println("[EMAIL] Đã gửi email xác nhận đơn hàng → " + customer.getEmail());
-
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println("[EMAIL] Gửi email thất bại!");
@@ -219,7 +275,7 @@ public class CheckoutController {
 
         // Nếu là VNPay → tạo URL và redirect
         PaymentDTO pay = new PaymentDTO();
-        pay.setAmount(total.longValue());
+        pay.setAmount(finalTotal.longValue());
         pay.setOrderId(order.getOrderId());
         pay.setOrderInfo("Thanh toan don hang #" + order.getOrderId());
 
@@ -243,9 +299,31 @@ public class CheckoutController {
         Orders order = ordersRepo.findById(orderId).orElse(null);
         List<OrderDetail> details = orderDetailRepo.findByOrder_OrderId(orderId);
 
+        if (order == null || details == null) {
+            return "error";
+        }
+
+        // 2. TÍNH TOÁN
+
+        // a. Tính Tổng tiền sách (Subtotal)
+        BigDecimal subtotalBD = BigDecimal.ZERO;
+
+        for (OrderDetail d : details) {
+            BigDecimal quantityBD = BigDecimal.valueOf(d.getQuantity());
+            BigDecimal lineTotal = d.getUnitPrice().multiply(quantityBD);
+            subtotalBD = subtotalBD.add(lineTotal);
+        }
+
+        // b. Tính Phí Ship bằng BigDecimal
+        BigDecimal shippingFeeBD = order.getTotalAmount().subtract(subtotalBD);
+
+        // 3. Đưa dữ liệu đã tính toán vào Model
         model.addAttribute("order", order);
         model.addAttribute("details", details);
 
+        model.addAttribute("subtotal", subtotalBD.longValue());
+        model.addAttribute("shippingFee", shippingFeeBD.longValue());
+        model.addAttribute("totalAmount", order.getTotalAmount().longValue());
 
         return "success";
     }
@@ -256,16 +334,34 @@ public class CheckoutController {
         Orders order = ordersRepo.findById(orderId).orElse(null);
         List<OrderDetail> details = orderDetailRepo.findByOrder_OrderId(orderId);
 
+        if (order == null || details == null) {
+            return "error";
+        }
+
+        // 2. TÍNH TOÁN
+
+        // a. Tính Tổng tiền sách (Subtotal)
+        BigDecimal subtotalBD = BigDecimal.ZERO;
+
+        for (OrderDetail d : details) {
+            BigDecimal quantityBD = BigDecimal.valueOf(d.getQuantity());
+            BigDecimal lineTotal = d.getUnitPrice().multiply(quantityBD);
+            subtotalBD = subtotalBD.add(lineTotal);
+        }
+
+        // b. Tính Phí Ship bằng BigDecimal
+        BigDecimal shippingFeeBD = order.getTotalAmount().subtract(subtotalBD);
+
+        // 3. Đưa dữ liệu đã tính toán vào Model
         model.addAttribute("order", order);
         model.addAttribute("details", details);
+
+        model.addAttribute("subtotal", subtotalBD.longValue());
+        model.addAttribute("shippingFee", shippingFeeBD.longValue());
+        model.addAttribute("totalAmount", order.getTotalAmount().longValue());
 
 
         return "fallure";
     }
 
 }
-
-
-
-
-

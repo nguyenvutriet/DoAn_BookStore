@@ -137,7 +137,8 @@
         <!-- 1. DOANH THU THÁNG NÀY -->
         <div class="kpi-card">
             <div class="kpi-title">Doanh thu tháng này</div>
-            <div class="kpi-value" th:text="${currentMonthRevenue} + '₫'"></div>
+            <div class="kpi-value"
+                 th:text="${#numbers.formatDecimal(currentMonthRevenue,0,'POINT',0,'COMMA')} + '₫'"></div>
         </div>
 
         <!-- 2. TỔNG ĐƠN THÁNG NÀY -->
@@ -163,11 +164,13 @@
             </div>
         </div>
 
+
         <!-- 4. LỢI NHUẬN RÒNG + TỶ SUẤT -->
         <div class="kpi-card">
             <div class="kpi-title">Giá trị đơn hàng trung bình</div>
             <div class="kpi-value" th:text="${#numbers.formatDecimal(aov,0,'POINT',0,'COMMA')} + '₫'"></div>
         </div>
+
 
 
     </div>
@@ -240,7 +243,7 @@
             <tbody>
             <tr th:each="r, i : ${monthlyRevenue}">
                 <td th:text="${months[i.index]}"></td>
-                <td th:text="${#numbers.formatDecimal(r, 0, 'POINT', 0, 'COMMA')} + ' ₫'"></td>
+                <td th:text="${#numbers.formatDecimal(r,0,'POINT',0,'COMMA')} + '₫'"></td>
 
                 <td th:if="${growth[i.index] >= 0}" style="color:#1B8A3D; font-weight:bold;">
                     ▲ <span th:text="${#numbers.formatDecimal(growth[i.index], 1, 'POINT', 2, 'COMMA')}"></span>%
@@ -251,6 +254,7 @@
             </tr>
             </tbody>
         </table>
+
     </div>
 
     <div class="chart-box">

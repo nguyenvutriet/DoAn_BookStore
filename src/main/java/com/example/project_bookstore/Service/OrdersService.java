@@ -19,6 +19,9 @@ public class OrdersService {
     @Autowired
     private IOrderDetailRepository orderDetailRepo;
 
+    @Autowired
+    private com.example.project_bookstore.Service.FlashSaleService flashSaleService;
+
     public String generateId(){
         List<Orders> orders = repo.findAll();
         List<Integer> dsSo = new java.util.ArrayList();
@@ -67,14 +70,22 @@ public class OrdersService {
         // 1. Lưu Order
         repo.save(order);
 
-        // 2. Lưu OrderDetail (trigger sẽ chạy ở đây)
+        // 2. Trừ kho flash sale nếu cần, rồi lưu OrderDetail
         for (OrderDetail detail : details) {
+            String bookId = detail.getBook().getBookId();
+            java.util.Optional<com.example.project_bookstore.Entity.FlashSaleDetail> optFs = flashSaleService.getActiveSaleForBook(bookId);
+            if (optFs.isPresent()) {
+                String flashSaleId = optFs.get().getFlashSale().getFlashSaleId();
+                // reserveStock sẽ throw nếu không đủ — khiến toàn bộ transaction rollback
+                flashSaleService.reserveStock(flashSaleId, bookId, detail.getQuantity());
+            }
             orderDetailRepo.save(detail);
         }
 
-        // ❌ KHÔNG trừ kho ở đây
-        // ❌ KHÔNG check tồn kho ở đây
-        // → Trigger MySQL xử lý
+        // Ghi chú: nếu reserveStock ném ngoại lệ, transaction sẽ rollback toàn bộ đặt hàng
     }
 
+    public List<Orders> getOrdersByStatus(String customerId, String status){
+        return repo.findByCustomerIdAndStatus(customerId, status);
+    }
 }

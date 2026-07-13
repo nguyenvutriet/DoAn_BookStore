@@ -236,7 +236,7 @@ body {
     width: 100%;
     max-width: 400px; /* Chiều rộng tối đa chuẩn */
     /*margin-top: 100px; !* Đẩy xuống khỏi header *!*/
-    margin-bottom: 50px;
+    margin-bottom: -40px;
 }
 
 /* Tiêu đề */
@@ -294,8 +294,8 @@ body {
 
 .login-box input[type="text"]:focus,
 .login-box input[type="password"]:focus {
-    border-color: #007bff; /* Màu xanh dương khi focus */
-    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    border-color: #388e3c; /* Màu xanh dương khi focus */
+    box-shadow: 0 0 0 0.2rem rgba(26,122,94,0.25);
     outline: none; /* Bỏ border mặc định của trình duyệt */
 }
 
@@ -303,7 +303,7 @@ body {
 .submit-btn {
     width: 100%;
     padding: 12px;
-    background-color: #007bff; /* Màu chính */
+    background-color: #388e3c; /* Màu chính */
     color: white;
     border: none;
     border-radius: 8px;
@@ -315,7 +315,7 @@ body {
 }
 
 .submit-btn:hover {
-    background-color: #0056b3; /* Màu tối hơn khi hover */
+    background-color: #2c6f3b; /* Màu tối hơn khi hover */
     transform: translateY(-1px); /* Hiệu ứng nhấc nhẹ */
 }
 
@@ -324,7 +324,7 @@ body {
     display: block;
     text-align: right;
     font-size: 14px;
-    color: #007bff;
+    color: #388e3c;
     margin-top: -10px;
     margin-bottom: 25px;
     text-decoration: none;
@@ -377,7 +377,7 @@ body {
 
 .google-login-btn:hover {
     background-color: #f8f9fa;
-    border-color: #007bff;
+    border-color: #2c6f3b;
 }
 
 .google-icon {
@@ -410,7 +410,7 @@ body {
 }
 
 .register-link {
-    color: #007bff;
+    color: #388e3c;
     font-weight: 600;
     text-decoration: none;
 }
@@ -483,7 +483,7 @@ body {
 }
 
 .change-password-form input:focus {
-    border-color: #1a7a5e;
+    border-color: #388e3c;
     box-shadow: 0 0 0 3px rgba(26, 122, 94, 0.2);
     outline: none;
     background-color: #ffffff;
@@ -500,7 +500,7 @@ body {
 .btn-submit {
     width: 100%;
     padding: 12px;
-    background: linear-gradient(135deg, #0b3d2e 0%, #145f47 100%);
+    background: linear-gradient(135deg, #0b3d2e 0%, #2c6f3b 100%);
     color: white;
     border: none;
     border-radius: 8px;
@@ -513,7 +513,7 @@ body {
 }
 
 .btn-submit:hover {
-    background: linear-gradient(135deg, #145f47 0%, #1a7a5e 100%);
+    background: linear-gradient(135deg, #145f47 0%, #388e3c 100%);
     transform: translateY(-2px);
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
 }

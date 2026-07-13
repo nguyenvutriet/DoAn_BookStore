@@ -48,16 +48,17 @@ public interface IOrdersRepository extends JpaRepository<Orders, String> {
 
     // Doanh thu theo tháng (từ ngày bất kỳ)
     @Query("""
-           SELECT FUNCTION('MONTH', o.orderDate),
-                  FUNCTION('YEAR', o.orderDate),
-                  SUM(o.totalAmount)
-           FROM Orders o
-           WHERE o.status = 'Delivered'
-             AND o.orderDate >= :fromDate
-           GROUP BY FUNCTION('MONTH', o.orderDate), FUNCTION('YEAR', o.orderDate)
-           ORDER BY FUNCTION('YEAR', o.orderDate), FUNCTION('MONTH', o.orderDate)
-           """)
-    List<Object[]> getMonthlyRevenue(Date fromDate);
+       SELECT MONTH(o.orderDate), YEAR(o.orderDate), SUM(o.totalAmount)
+       FROM Orders o
+       WHERE o.orderDate BETWEEN :start AND :end
+       GROUP BY YEAR(o.orderDate), MONTH(o.orderDate)
+       ORDER BY YEAR(o.orderDate), MONTH(o.orderDate)
+    """)
+    List<Object[]> getMonthlyRevenue(
+            @Param("start") Date start,
+            @Param("end") Date end
+    );
+
 
     @Query("""
        SELECT COALESCE(SUM(o.totalAmount), 0)
@@ -99,5 +100,16 @@ public interface IOrdersRepository extends JpaRepository<Orders, String> {
     """)
     public List<Object[]> findDailyRevenue();
 
+    List<Orders> findByStatusOrderByOrderDateAsc(String status);
+
+    List<Orders> findByStatusOrderByOrderDateDesc(String status);
+
+    @Query("""
+        SELECT o
+        FROM Orders o
+        WHERE o.customer.customerId = :customerId
+          AND o.status = :status
+    """)
+    public List<Orders> findByCustomerIdAndStatus(String customerId, String status);
 }
 

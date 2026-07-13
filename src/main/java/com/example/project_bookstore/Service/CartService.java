@@ -27,6 +27,9 @@ public class CartService {
 
     @Autowired
     private IBooksRepository booksRepository;
+
+    @Autowired
+    private com.example.project_bookstore.Service.FlashSaleService flashSaleService;
     /**
      * HÀM MỚI: Thêm sách vào giỏ của user đang đăng nhập
      */
@@ -91,7 +94,13 @@ public class CartService {
             detail.setCart(cart);
             detail.setBook(book);
             detail.setQuantity(quantity);
-            detail.setUnitPrice(book.getPrice()); // đơn giá = price trong Books
+            // Nếu sách đang trong flash sale thì lưu giá sale, ngược lại lưu giá gốc
+            java.util.Optional<com.example.project_bookstore.Entity.FlashSaleDetail> optFs = flashSaleService.getActiveSaleForBook(bookId);
+            if (optFs.isPresent()) {
+                detail.setUnitPrice(optFs.get().getSalePrice());
+            } else {
+                detail.setUnitPrice(book.getPrice()); // đơn giá = price trong Books
+            }
         }
 
         cartDetailRepository.save(detail);

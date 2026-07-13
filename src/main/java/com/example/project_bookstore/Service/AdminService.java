@@ -134,8 +134,6 @@ public class AdminService {
         }
     }
 
-
-
     //customer
     public List<Customers> getAllCustomers() {
         return customersRepository.findAll();
@@ -167,7 +165,12 @@ public class AdminService {
     }
 
     public List<Orders> getOrdersByStatus(String status) {
-        return ordersRepository.findByStatus(status);
+
+        if(status.equals("Pending")) {
+            return ordersRepository.findByStatusOrderByOrderDateAsc(status);
+        }
+
+        return ordersRepository.findByStatusOrderByOrderDateDesc(status);
     }
 
     public void saveOrder(Orders order) {
@@ -181,7 +184,7 @@ public class AdminService {
     //review
 
     public List<Review> getAllReviews() {
-        return reviewRepository.findAll();
+        return reviewRepository.getAllReviewByDESC();
     }
 
     public Review getReview(String id) {
@@ -192,46 +195,127 @@ public class AdminService {
         reviewRepository.deleteById(id);
     }
 
-    public Date getFilterDate(String filter) {
+//    public Date getFilterDate(String filter) {
+//
+//        Calendar cal = Calendar.getInstance();
+//        int year = cal.get(Calendar.YEAR);
+//
+//        switch (filter) {
+//            case "YEAR":
+//                cal.set(year, Calendar.JANUARY, 1);
+//                return cal.getTime();
+//
+//            case "6M":
+//                cal.add(Calendar.MONTH, -5);
+//                return cal.getTime();
+//
+//            case "Q1":
+//                cal.set(year, Calendar.JANUARY, 1);
+//                return cal.getTime();
+//
+//            case "Q2":
+//                cal.set(year, Calendar.APRIL, 1);
+//                return cal.getTime();
+//
+//            case "Q3":
+//                cal.set(year, Calendar.JULY, 1);
+//                return cal.getTime();
+//
+//            case "Q4":
+//                cal.set(year, Calendar.OCTOBER, 1);
+//                return cal.getTime();
+//
+//            default:
+//                cal.add(Calendar.MONTH, -5);
+//                return cal.getTime();
+//        }
+//    }
+//
+//    public Map<String, Object> getMonthlyRevenue(String filter) {
+//        Date fromDate = getFilterDate(filter);
+//
+//        List<Object[]> rows = ordersRepository.getMonthlyRevenue(fromDate);
+//
+//        List<String> labels = new ArrayList<>();
+//        List<Double> values = new ArrayList<>();
+//        List<Integer> growth = new ArrayList<>();
+//
+//        for (Object[] row : rows) {
+//            int month = (int) row[0];
+//            int year = (int) row[1];
+//            double revenue = ((Number) row[2]).doubleValue();
+//
+//            labels.add(month + "/" + year);
+//            values.add(revenue);
+//        }
+//
+//        for (int i = 0; i < values.size(); i++) {
+//            if (i == 0) growth.add(0);
+//            else {
+//                double g = ((values.get(i) - values.get(i - 1)) / values.get(i - 1)) * 100;
+//                growth.add((int) g);
+//            }
+//        }
+//
+//        Map<String, Object> map = new HashMap<>();
+//        map.put("labels", labels);
+//        map.put("values", values);
+//        map.put("growth", growth);
+//
+//        return map;
+//    }
 
+    public Date[] getFilterDates(String filter) {
         Calendar cal = Calendar.getInstance();
         int year = cal.get(Calendar.YEAR);
 
+        Date start;
+        Date end;
+
         switch (filter) {
             case "YEAR":
-                cal.set(year, Calendar.JANUARY, 1);
-                return cal.getTime();
-
-            case "6M":
-                cal.add(Calendar.MONTH, -5);
-                return cal.getTime();
+                start = new GregorianCalendar(year, Calendar.JANUARY, 1).getTime();
+                end   = new GregorianCalendar(year, Calendar.DECEMBER, 31, 23, 59, 59).getTime();
+                break;
 
             case "Q1":
-                cal.set(year, Calendar.JANUARY, 1);
-                return cal.getTime();
+                start = new GregorianCalendar(year, Calendar.JANUARY, 1).getTime();
+                end   = new GregorianCalendar(year, Calendar.MARCH, 31, 23, 59, 59).getTime();
+                break;
 
             case "Q2":
-                cal.set(year, Calendar.APRIL, 1);
-                return cal.getTime();
+                start = new GregorianCalendar(year, Calendar.APRIL, 1).getTime();
+                end   = new GregorianCalendar(year, Calendar.JUNE, 30, 23, 59, 59).getTime();
+                break;
 
             case "Q3":
-                cal.set(year, Calendar.JULY, 1);
-                return cal.getTime();
+                start = new GregorianCalendar(year, Calendar.JULY, 1).getTime();
+                end   = new GregorianCalendar(year, Calendar.SEPTEMBER, 30, 23, 59, 59).getTime();
+                break;
 
             case "Q4":
-                cal.set(year, Calendar.OCTOBER, 1);
-                return cal.getTime();
+                start = new GregorianCalendar(year, Calendar.OCTOBER, 1).getTime();
+                end   = new GregorianCalendar(year, Calendar.DECEMBER, 31, 23, 59, 59).getTime();
+                break;
 
+            case "6M":
             default:
-                cal.add(Calendar.MONTH, -5);
-                return cal.getTime();
+                end = cal.getTime();
+                cal.add(Calendar.MONTH, -6);
+                start = cal.getTime();
+                break;
         }
+
+        return new Date[]{ start, end };
     }
 
     public Map<String, Object> getMonthlyRevenue(String filter) {
-        Date fromDate = getFilterDate(filter);
 
-        List<Object[]> rows = ordersRepository.getMonthlyRevenue(fromDate);
+        Date[] range = getFilterDates(filter);
+        Date startDate = range[0];
+        Date endDate   = range[1];
+
+        List<Object[]> rows = ordersRepository.getMonthlyRevenue(startDate, endDate);
 
         List<String> labels = new ArrayList<>();
         List<Double> values = new ArrayList<>();
@@ -239,7 +323,7 @@ public class AdminService {
 
         for (Object[] row : rows) {
             int month = (int) row[0];
-            int year = (int) row[1];
+            int year  = (int) row[1];
             double revenue = ((Number) row[2]).doubleValue();
 
             labels.add(month + "/" + year);

@@ -38,6 +38,8 @@
     <!-- Responsive CSS -->
     <link rel="stylesheet" type="text/css" href="/css/responsive.css">
 
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
 </head>
 
@@ -169,7 +171,31 @@
 <main>
     <!-- Thêm bảng hiển thị đơn hàng -->
     <div class="orders-container">
-        <h1 class="orders-title">Đơn hàng của tôi</h1>
+        <div class="orders-header">
+            <h1 class="orders-title">Đơn hàng của tôi</h1>
+
+            <form method="get"
+                  th:action="@{/user/filter}"
+                  class="order-filter">
+
+                <i class="fas fa-filter filter-icon"></i>
+
+                <select name="status"
+                        class="filter-select"
+                        onchange="this.form.submit()">
+
+                    <option value="All" th:selected="${selectedStatus == 'All'}">Tất cả</option>
+                    <option value="Pending" th:selected="${selectedStatus == 'Pending'}">Đang xử lý</option>
+                    <option value="Confirmed" th:selected="${selectedStatus == 'Confirmed'}">Đã xác nhận</option>
+                    <option value="Delivered" th:selected="${selectedStatus == 'Delivered'}">Đã nhận hàng</option>
+                    <option value="Cancelled" th:selected="${selectedStatus == 'Cancelled'}">Đã hủy</option>
+
+                </select>
+            </form>
+        </div>
+
+
+        <div class="orders-divider"></div>
 
         <!-- Bảng đơn hàng -->
         <div th:if="${orders != null && orders.size() > 0}">
@@ -203,7 +229,7 @@
                     </td>
 
                     <!-- Tổng tiền -->
-                    <td class="order-total" th:text="${#numbers.formatDecimal(order.getTotalAmount(), 0, 'COMMA', 2, 'POINT')} + ' đ'">
+                    <td class="order-total" th:text="${#numbers.formatDecimal(order.getTotalAmount(), 0, 'COMMA', 0, 'POINT')} + ' đ'">
 
                     </td>
 
@@ -255,6 +281,7 @@
                            class="btn-review">
                             👁️ Xem
                         </a>
+
                     </td>
 
                 </tr>

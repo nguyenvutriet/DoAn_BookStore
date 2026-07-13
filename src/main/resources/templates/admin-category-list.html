@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <link rel="stylesheet" href="/css/admin.css">
-    <title>Category Management</title>
+    <title>Quản lý thể loại</title>
 </head>
 <body>
 
@@ -16,9 +16,9 @@
 </p>
 
 <!-- ACTION BAR -->
-<div class="actions-bar">
-    <a href="/admin/categories/new" class="btn-create">+ Thể loại mới</a>
-</div>
+<!--<div class="actions-bar">-->
+<!--    <a href="/admin/categories/new" class="btn-create">+ Thể loại mới</a>-->
+<!--</div>-->
 
 <!-- CATEGORY TABLE -->
 <div class="frame-box table-container">
@@ -44,9 +44,9 @@
             <td class="action-cell">
                 <a th:href="@{'/admin/categories/' + ${c.categoryId}}" class="btn-view">Xem</a>
 
-                <a th:href="@{'/admin/categories/delete/' + ${c.categoryId}}"
-                   onclick="return confirm('Xóa thể loại này?')"
-                   class="btn-delete">Xóa</a>
+                <!--                <a th:href="@{'/admin/categories/delete/' + ${c.categoryId}}"-->
+                <!--                   onclick="return confirm('Xóa thể loại này?')"-->
+                <!--                   class="btn-delete">Xóa</a>-->
             </td>
         </tr>
         </tbody>

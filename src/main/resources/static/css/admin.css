@@ -1189,3 +1189,100 @@ body {
     border: none;
     text-align: center;
 }
+
+
+#dragNotifBtn {
+    position: fixed;
+    bottom: 25px;
+    right: 25px;
+    width: 60px;
+    height: 60px;
+    background: #0b0909;
+    border-radius:50%;
+    color:white;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    font-size:30px;
+    cursor:grab;
+    z-index:99999;
+    box-shadow:0 8px 22px rgba(0,0,0,0.35);
+    user-select:none;
+}
+
+.notif-count{
+    position:absolute;
+    top:-6px;
+    right:-6px;
+    background:crimson;
+    padding:3px 8px;
+    font-size:13px;
+    border-radius:12px;
+    color:white;
+}
+
+
+/* ===== SHAKE BELL ===== */
+@keyframes bell-shake {
+    0%   { transform: rotate(0); }
+    15%  { transform: rotate(15deg); }
+    30%  { transform: rotate(-15deg); }
+    45%  { transform: rotate(12deg); }
+    60%  { transform: rotate(-12deg); }
+    75%  { transform: rotate(6deg); }
+    100% { transform: rotate(0); }
+}
+
+/* khi có tin mới */
+#dragNotifBtn.shake .bell {
+    animation: bell-shake 0.8s ease-in-out infinite;
+    transform-origin: top center;
+}
+
+/* badge nổi bật hơn */
+.notif-count {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    background: crimson;
+    min-width: 22px;
+    height: 22px;
+    padding: 0 6px;
+    font-size: 12px;
+    border-radius: 50%;
+    color: white;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+}
+
+.action-inline {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    white-space: nowrap;
+}
+
+/* Hiệu ứng lắc liên tục khi có class .shake */
+#dragNotifBtn.shake .bell {
+    display: inline-block;
+    animation: bell-shake-continuous 0.6s ease-in-out infinite !important;
+    transform-origin: top center;
+}
+
+@keyframes bell-shake-continuous {
+    0%   { transform: rotate(0); }
+    20%  { transform: rotate(20deg); }
+    40%  { transform: rotate(-20deg); }
+    60%  { transform: rotate(15deg); }
+    80%  { transform: rotate(-15deg); }
+    100% { transform: rotate(0); }
+}
+
+/* Badge số lượng tin nhắn */
+.notif-count {
+    box-shadow: 0 0 10px rgba(220, 20, 60, 0.5);
+    font-weight: bold;
+}

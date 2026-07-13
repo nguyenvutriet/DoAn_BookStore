@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="/css/admin.css">
+    <title>Flash Sale</title>
+    <style>
+        .flash-sale-table { width: 92%; margin: 20px auto; border-collapse: collapse; background: #fff; }
+        .flash-sale-table th, .flash-sale-table td { border: 1px solid #ddd; padding: 10px; vertical-align: top; }
+        .flash-sale-table th { background: #0B3D2E; color: #fff; }
+        .actions { display: flex; gap: 8px; flex-wrap: wrap; }
+        .btn-link, .btn-delete { padding: 6px 10px; border-radius: 6px; text-decoration: none; }
+        .btn-link { background: #0B3D2E; color: #fff; }
+        .btn-delete { background: #d9534f; color: #fff; border: 0; }
+        .topbar { width: 92%; margin: 20px auto; display: flex; justify-content: space-between; align-items: center; }
+        .badge-active { background: #28a745; color: #fff; padding: 3px 8px; border-radius: 999px; font-size: 12px; }
+        .badge-inactive { background: #6c757d; color: #fff; padding: 3px 8px; border-radius: 999px; font-size: 12px; }
+    </style>
+</head>
+<body>
+
+<header th:replace="admin-dashboard :: header"></header>
+
+<div class="topbar">
+    <h1 class="dashboard-title">Flash Sale</h1>
+    <a class="btn-link" href="/admin/flash-sale/new">+ Tạo Flash Sale</a>
+</div>
+
+<div class="topbar" th:if="${currentFlashSale != null}">
+    <div>
+        <strong>Đang active:</strong>
+        <span th:text="${currentFlashSale.name}">Tên flash sale</span>
+        <span class="badge-active">ACTIVE</span>
+    </div>
+</div>
+
+<table class="flash-sale-table">
+    <thead>
+    <tr>
+        <th>Mã</th>
+        <th>Tên</th>
+        <th>Thời gian</th>
+        <th>Trạng thái</th>
+        <th>Số sách</th>
+        <th>Thao tác</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="item : ${flashSaleItems}">
+        <td th:text="${item.flashSale.flashSaleId}">FS0001</td>
+        <td>
+            <div th:text="${item.flashSale.name}">Tên</div>
+            <small th:text="${item.flashSale.description}">Mô tả</small>
+        </td>
+        <td>
+            <div th:text="${#temporals.format(item.flashSale.startTime, 'dd/MM/yyyy HH:mm')}"></div>
+            <div th:text="${#temporals.format(item.flashSale.endTime, 'dd/MM/yyyy HH:mm')}"></div>
+        </td>
+        <td>
+            <span th:if="${item.flashSale.status == 'ACTIVE'}" class="badge-active">ACTIVE</span>
+            <span th:unless="${item.flashSale.status == 'ACTIVE'}" class="badge-inactive" th:text="${item.flashSale.status}">INACTIVE</span>
+        </td>
+        <td th:text="${item.bookCount}">0</td>
+        <td>
+            <div class="actions">
+                <a class="btn-link" th:href="@{'/admin/flash-sale/' + ${item.flashSale.flashSaleId}}">Sửa</a>
+                <form th:action="@{'/admin/flash-sale/' + ${item.flashSale.flashSaleId} + '/delete'}" method="post" onsubmit="return confirm('Xoá flash sale này?');">
+                    <button type="submit" class="btn-delete">Xoá</button>
+                </form>
+            </div>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<footer class="admin-footer">© 2025 UTE BookStore Admin</footer>
+
+</body>
+</html>

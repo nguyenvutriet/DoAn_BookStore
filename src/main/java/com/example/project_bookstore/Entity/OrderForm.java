@@ -24,8 +24,12 @@ public class OrderForm {
     public void setPaymentMethod(String paymentMethod) { this.paymentMethod = paymentMethod; }
     public BigDecimal getTotalAmount() { return totalAmount; }    // ⭐ GETTER
     public void setTotalAmount(BigDecimal totalAmount) { this.totalAmount = totalAmount; } // ⭐ SETTER
+    private BigDecimal shippingFee;
 
 
     public List<CartSelectedItem> getItems() { return items; }
     public void setItems(List<CartSelectedItem> items) { this.items = items; }
+
+    public BigDecimal getShippingFee() { return shippingFee; }   // ⭐ GETTER
+    public void setShippingFee(BigDecimal shippingFee) { this.shippingFee = shippingFee; } // ⭐ SETTER
 }

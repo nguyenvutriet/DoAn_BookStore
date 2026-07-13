@@ -17,6 +17,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
@@ -45,7 +46,31 @@ public class UserController {
     }
 
     @PostMapping("/profile/update")
-    public String updateCustomer(@RequestParam("customerId") String customerId, @RequestParam("fullName") String fullName, @RequestParam("phone") String phone, @RequestParam("email") String email, @RequestParam("address") String address, @RequestParam("birthDate") String birthDate){
+    public String updateCustomer(@RequestParam("customerId") String customerId, @RequestParam("fullName") String fullName, @RequestParam("phone") String phone, @RequestParam("email") String email, @RequestParam("address") String address, @RequestParam("birthDate") String birthDate, RedirectAttributes redirect){
+
+        if(fullName.isEmpty() || phone.isEmpty() || email.isEmpty() || address.isEmpty() || birthDate.isEmpty()){
+            redirect.addFlashAttribute("error", "Vui lòng điền đầy đủ thông tin");
+            return "redirect:/user/profile";
+        }
+
+        if(!phone.matches("^(0|\\+84)(3[2-9]|5[6|8|9]|7[0|6-9]|8[1-5]|9[0-4|6-9])[0-9]{7}$")){
+            redirect.addFlashAttribute("error", "Số điện thoại không hợp lệ");
+            return "redirect:/user/profile";
+        }
+
+        if(phone.length() < 10 || phone.length() > 11){
+            redirect.addFlashAttribute("error", "Số điện thoại không hợp lệ");
+            return "redirect:/user/profile";
+        }
+
+        LocalDate birth = LocalDate.parse(birthDate);
+        LocalDate today = LocalDate.now();
+
+        if (birth.isAfter(today)) {
+            redirect.addFlashAttribute("error",
+                    "Ngày sinh không được vượt quá ngày hiện tại");
+            return "redirect:/user/profile";
+        }
 
         Customers cus = customersService.getCustomerById(customerId);
 
@@ -131,6 +156,22 @@ public class UserController {
         return "redirect:/user/myOrder";
     }
 
+    @GetMapping("/filter")
+    public String filterOrder(@AuthenticationPrincipal UserDetails userDetails, Model model, @RequestParam("status") String status){
+        String username =   userDetails.getUsername();
+        Users user = usersService.getUserByUserName(username);
+        Customers cus = customersService.getCustomerById(user.getCustomer().getCustomerId());
 
+        List<Orders> listOrderByCustomerId;
+        if(status.equals("All")){
+            listOrderByCustomerId = ordersService.getOrders(cus.getCustomerId());
+        } else {
+            listOrderByCustomerId = ordersService.getOrdersByStatus(cus.getCustomerId(), status);
+        }
+
+        model.addAttribute("orders",listOrderByCustomerId);
+        model.addAttribute("selectedStatus", status);
+        return "myOrder";
+    }
 
 }

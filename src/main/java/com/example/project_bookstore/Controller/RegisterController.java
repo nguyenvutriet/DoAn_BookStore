@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 @Controller
@@ -51,6 +52,11 @@ public class RegisterController {
     @PostMapping("/infor")
     public String registerUser(@RequestParam("fullName") String fullName, @RequestParam("email") String email, @RequestParam("phone") String phone, @RequestParam("address") String address, @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Date dateOfBirth, Model model){
 
+        if(fullName.isEmpty() || email.isEmpty() || phone.isEmpty() || address.isEmpty() || dateOfBirth==null){
+            model.addAttribute("error", "Vui lòng điền đầy đủ thông tin");
+            return "register-infor";
+        }
+
         if (!email.matches("^[A-Za-z0-9._%+-]+@gmail\\.com$")){
             model.addAttribute("error", "Email không hợp lệ");
             return "register-infor";
@@ -62,6 +68,16 @@ public class RegisterController {
             return "register-infor";
         }
 
+        if(!phone.matches("^(0|\\+84)(3[2-9]|5[6|8|9]|7[0|6-9]|8[1-5]|9[0-4|6-9])[0-9]{7}$")){
+            model.addAttribute("error", "Số điện thoại không hợp lệ");
+            return "register-infor";
+        }
+
+        if(phone.length() < 10 || phone.length() > 11){
+            model.addAttribute("error", "Số điện thoại không hợp lệ");
+            return "register-infor";
+        }
+
         cu = customersService.getCustomerByPhone(phone);
         if(cu!=null){
             model.addAttribute("error","Số điện thoại đã tồn tại");
@@ -70,6 +86,16 @@ public class RegisterController {
 
         if(phone.length()!=10){
             model.addAttribute("error", "Số điện thoại không hợp lệ");
+            return "register-infor";
+        }
+
+        String birthDate = new java.text.SimpleDateFormat("yyyy-MM-dd").format(dateOfBirth);
+        LocalDate birth = LocalDate.parse(birthDate);
+        LocalDate today = LocalDate.now();
+
+        if (birth.isAfter(today)) {
+            model.addAttribute("error",
+                    "Ngày sinh không được vượt quá ngày hiện tại");
             return "register-infor";
         }
 

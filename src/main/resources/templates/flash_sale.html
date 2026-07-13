@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/style1.css">
+    <title>Flash Sale</title>
+    <style>
+        .sale-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 18px; }
+        .sale-card { background: #fff; border: 1px solid #eee; border-radius: 10px; padding: 12px; }
+        .sale-card img { width: 100%; height: 260px; object-fit: cover; border-radius: 8px; }
+    </style>
+</head>
+<body>
+<header class="container mt-3">
+    <h1>⚡ Flash Sale</h1>
+    <div th:if="${flashSale != null}">
+        <p th:text="${flashSale.name}">Tên chương trình</p>
+        <p th:text="${flashSale.description}">Mô tả</p>
+        <p>Áp dụng: <span th:text="${#temporals.format(flashSale.startTime, 'dd/MM HH:mm')}"></span> - <span th:text="${#temporals.format(flashSale.endTime, 'dd/MM HH:mm')}"></span></p>
+    </div>
+    <p th:unless="${flashSale != null}" class="text-muted">Hiện không có chương trình flash sale nào.</p>
+</header>
+
+<main class="container mt-4">
+    <div class="sale-grid" th:if="${flashSale != null}">
+        <div class="sale-card" th:each="d : ${details}">
+            <img th:src="@{'/images/books/' + ${d.book.picture}}" alt="Book image">
+            <h5 class="mt-2" th:text="${d.book.title}">Tên sách</h5>
+            <p class="text-muted mb-1" th:text="${d.book.author}">Tác giả</p>
+            <p class="mb-1"><s th:text="${#numbers.formatInteger(d.originalPrice, 3, 'COMMA')} + ' ₫'">0 ₫</s></p>
+            <p class="text-danger font-weight-bold mb-1" th:text="${#numbers.formatInteger(d.salePrice, 3, 'COMMA')} + ' ₫'">0 ₫</p>
+            <p class="small text-secondary mb-2">Đã bán <span th:text="${d.quantitySold}">0</span> / <span th:text="${d.quantityLimit}">0</span></p>
+            <a class="btn btn-primary btn-sm" th:href="@{/home/books/{id}(id=${d.book.bookId})}">Xem chi tiết</a>
+        </div>
+    </div>
+</main>
+</body>
+</html>

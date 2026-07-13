@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <link rel="stylesheet" href="/css/admin.css">
-    <title>Category Detail</title>
+    <title>Chi tiết thể loại</title>
 </head>
 <body>
 
@@ -42,11 +42,11 @@
     <div class="action-buttons">
         <a href="/admin/categories" class="btn-back">Quay lại</a>
 
-        <a th:href="@{'/admin/categories/delete/' + ${category.categoryId}}"
-           class="btn-delete"
-           onclick="return confirm('Xóa thể loại này?')">
-            Xóa thể loại
-        </a>
+        <!--    <a th:href="@{'/admin/categories/delete/' + ${category.categoryId}}"-->
+        <!--       class="btn-delete"-->
+        <!--       onclick="return confirm('Xóa thể loại này?')">-->
+        <!--      Xóa thể loại-->
+        <!--    </a>-->
     </div>
 </div>
 

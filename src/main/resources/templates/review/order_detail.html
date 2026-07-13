@@ -177,7 +177,7 @@
     <div class="order-row">
       <span class="label">Tổng tiền:</span>
       <span class="value price" id="orderTotal"
-            th:text="|${#numbers.formatDecimal(order.totalAmount,0,'COMMA',2,'POINT')} đ|"></span>
+            th:text="|${#numbers.formatDecimal(order.totalAmount,0,'COMMA',0,'POINT')} đ|"></span>
     </div>
 
   </div>
@@ -200,13 +200,13 @@
 
 
       <p class="price item-unit-price"
-         th:text="|${#numbers.formatDecimal(item.unitPrice,0,'COMMA',2,'POINT')} đ|"></p>
+         th:text="|${#numbers.formatDecimal(item.unitPrice,0,'COMMA',0,'POINT')} đ|"></p>
 
 
       <p style="margin-top:6px; font-size:0.9rem; color:#555;">
         Thành tiền:
         <b style="color:#c62828;"
-           th:text="|${#numbers.formatDecimal(item.unitPrice * item.quantity,0,'COMMA',2,'POINT')} đ|">
+           th:text="|${#numbers.formatDecimal(item.unitPrice * item.quantity,0,'COMMA',0,'POINT')} đ|">
         </b>
       </p>
     </div>
@@ -250,8 +250,8 @@
   // Đồng bộ kiểu: 181,200.00 đ
   function formatMoney(n) {
     return Number(n).toLocaleString('en-US', {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0
     }) + ' đ';
   }
 

@@ -5,14 +5,14 @@
     padding: 0 20px;
 }
 
-.orders-title {
-    font-size: 1.8rem;
-    font-weight: 600;
-    color: #0B3D2E;
-    margin-bottom: 30px;
-    border-bottom: 3px solid #0B3D2E;
-    padding-bottom: 10px;
-}
+/*.orders-title {*/
+/*    font-size: 1.8rem;*/
+/*    font-weight: 600;*/
+/*    color: #0B3D2E;*/
+/*    !*margin-bottom: 30px;*!*/
+/*    !*border-bottom: 3px solid #0B3D2E;*!*/
+/*    padding-bottom: 10px;*/
+/*}*/
 
 .orders-table {
     width: 100%;
@@ -204,4 +204,55 @@ main {
 
 #footer {
     margin-top: auto;
+}
+.orders-header {
+    display: flex;
+    justify-content: space-between; /* tiêu đề trái – filter phải */
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.order-filter {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+
+
+/* Title */
+.orders-title {
+    font-size: 1.8rem;
+    font-weight: 600;
+    color: #0B3D2E;
+    margin: 0;
+}
+
+/* Divider nằm dưới */
+.orders-divider {
+    margin-top: 10px;
+    margin-bottom: 20px;
+    border-bottom: 3px solid #0B3D2E;
+}
+
+/*.order-filter {*/
+/*    display: inline-flex;*/
+/*    align-items: center;*/
+/*    gap: 8px;*/
+/*    margin-left: auto;*/
+/*    width: fit-content;*/
+/*}*/
+
+
+.filter-icon {
+    font-size: 1.1rem;
+    color: #0B3D2E;
+}
+
+.filter-select {
+    padding: 6px 12px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 0.9rem;
+    cursor: pointer;
 }

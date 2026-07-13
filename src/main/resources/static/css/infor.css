@@ -15,9 +15,10 @@ body {
 
 .profile-container {
     max-width: 900px;
-    margin: 100px auto;
+    margin: 40px auto 30px;  /* ↑ trên | ↓ dưới */
     padding: 0 20px;
 }
+
 
 /* Tiêu đề thanh lịch */
 .profile-header-section {
@@ -43,10 +44,12 @@ body {
 /* Card thiết kế phẳng và thoáng */
 .profile-card {
     background: var(--white);
-    padding: 50px;
+    padding: 40px;
     border-radius: 12px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
     border: 1px solid var(--border-soft);
+    margin-bottom: -30px;
+    margin-top: -30px;  /* kéo ô trắng lên */
 }
 
 /* Bố cục Grid 2 cột */
@@ -101,7 +104,7 @@ body {
 
 /* Khu vực nút bấm tối giản */
 .profile-actions {
-    margin-top: 60px;
+    margin-top: 40px;
     display: flex;
     justify-content: center;   /* <-- CHỈNH Ở ĐÂY */
     align-items: center;
@@ -162,4 +165,26 @@ body {
     .profile-card { padding: 30px; }
     .profile-actions { flex-direction: column-reverse; width: 100%; }
     .btn-main { width: 100%; text-align: center; }
+}
+
+/* ===== FORM ERROR TEXT ===== */
+.form-error-text {
+    margin: 10px 0 14px;
+    font-size: 13px;
+    color: #e74c3c;
+    font-weight: 500;
+    text-align: center;
+    animation: slideFade 0.3s ease;
+}
+
+/* Animation nhẹ */
+@keyframes slideFade {
+    from {
+        opacity: 0;
+        transform: translateY(-4px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }

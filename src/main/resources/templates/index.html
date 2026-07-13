@@ -20,6 +20,17 @@
     <link rel="stylesheet" type="text/css" href="/css/style1.css">
     <link rel="stylesheet" type="text/css" href="/css/responsive.css">
     <link rel="stylesheet" type="text/css" href="/css/chatbot.css">
+    <link rel="stylesheet" type="text/css" href="/css/searchIndex.css">
+<style>
+    /* Tối ưu hiển thị thẻ sách khi có flash sale: gọn hơn, giá cùng 1 hàng */
+    .book-card .card-body { padding: 0.6rem; }
+    .book-card .card-title { font-size: 0.95rem; }
+    .book-card .book-image img { width: 130px; height: 190px; }
+    .price-row .original-price { margin-right: 0.4rem; font-size: 0.85rem; color: #6c757d; }
+    .price-row .sale-price { font-weight: 700; }
+    .sale-remaining { margin-top: 0.25rem; font-size: 0.85rem; color: #6c757d; }
+    .sale-corner-badge { position: absolute; top: 8px; right: 8px; }
+</style>
 </head>
 
 <body>
@@ -93,9 +104,10 @@
                     </ul>
                 </div>
 
+                <!-- Search Bar -->
                 <div class="search-bar">
-                    <input id="searchInput" type="text" placeholder="Tìm kiếm sản phẩm..." class="form-control">
-                    <button id="searchBtn" type="button" class="btn btn-primary">Tìm</button>
+                    <input id="searchInputHead" type="text" placeholder="Tìm kiếm sản phẩm..." class="form-control">
+                    <button id="searchBtnHead" type="button" class="btn btn-primary">Tìm</button>
                 </div>
 
 
@@ -143,15 +155,110 @@
     </div>
 </header>
 
+<div class="search-bar-wrapper">
+    <div class="search-container">
+        <form class="search-bar" onsubmit="return false;">
+
+            <!-- Input + dropdown -->
+            <div class="search-input-wrap">
+                <input
+                        type="text"
+                        id="searchInput"
+                        class="search-input-big"
+                        placeholder="Tìm kiếm sách..."
+                        autocomplete="off">
+
+                <div id="searchSuggestions" class="dropdown-search"></div>
+            </div>
+
+            <!-- Button nằm ngoài -->
+            <button
+                    id="searchBtn"
+                    type="button"
+                    class="search-btn-big"
+                    title="Tìm kiếm">
+                Tìm
+            </button>
+
+        </form>
+    </div>
+</div>
+
+<div class="flash-banner" th:if="${flashSaleTicker != null and !#lists.isEmpty(flashSaleTicker)}">
+    <button class="fb-arrow fb-prev" type="button">‹</button>
+
+    <div class="fb-track" id="fbTrack">
+        <a class="fb-slide"
+           th:each="item, iter : ${flashSaleTicker}"
+           th:href="@{/home/books/{id}(id=${item.bookId})}">
+
+            <div class="fb-badge">
+                <span class="fb-badge-top">SALE</span>
+                <span class="fb-badge-bottom" th:text="'Còn ' + ${item.remaining}"></span>
+            </div>
+
+            <div class="fb-info">
+                <p class="fb-tag">🔥 FLASH SALE</p>
+
+                <!-- TÊN ĐỢT SALE (nếu có) -->
+                <p class="fb-sale-name"
+                   th:if="${currentFlashSale != null and !#strings.isEmpty(currentFlashSale.name)}"
+                   th:text="${currentFlashSale.name}">
+                </p>
+
+                <h3 class="fb-title" th:text="${item.title}"></h3>
+
+                <!-- MÔ TẢ ĐỢT SALE (nếu có) -->
+                <p class="fb-description"
+                   th:if="${currentFlashSale != null and !#strings.isEmpty(currentFlashSale.description)}"
+                   th:text="${currentFlashSale.description}">
+                </p>
+
+                <div class="fb-price-row">
+                    <span class="fb-old" th:text="${#numbers.formatInteger(item.oldPrice, 3, 'COMMA')} + ' ₫'"></span>
+                    <span class="fb-new" th:text="${#numbers.formatInteger(item.salePrice, 3, 'COMMA')} + ' ₫'"></span>
+                </div>
+
+                <div class="fb-time" th:if="${currentFlashSale != null}">
+        <span class="fb-time-range"
+              th:text="'Áp dụng: ' + ${#temporals.format(currentFlashSale.startTime,'dd/MM HH:mm')} + ' - ' + ${#temporals.format(currentFlashSale.endTime,'dd/MM HH:mm')}">
+        </span>
+                    <span class="fb-countdown" th:attr="data-end-time=${currentFlashSale.endTime}">--:--:--</span>
+                </div>
+
+                <span class="fb-cta">Mua ngay</span>
+            </div>
+
+            <div class="fb-image">
+                <img th:src="@{'/images/books/' + ${item.picture}}" alt="Book sale">
+            </div>
+        </a>
+    </div>
+
+    <button class="fb-arrow fb-next" type="button">›</button>
+
+    <div class="fb-dots" id="fbDots">
+        <span class="fb-dot" th:each="item, iter : ${flashSaleTicker}"
+              th:classappend="${iter.index == 0} ? ' active'"></span>
+    </div>
+</div>
+
 <main id="main-content" class="container mt-4" th:fragment="mainContent">
 
     <section id="sec-new" class="books-section mb-5">
-        <h2 class="section-title mb-3">New Books</h2>
+        <h2 class="section-title mb-3">Sách mới</h2>
 
         <div class="books-grid">
             <div class="book-item" th:each="book : ${newBooks}">
                 <a th:href="@{/home/books/{id}(id=${book.bookId})}"
-                   class="card h-100 text-center book-card text-decoration-none text-dark">
+                   class="card h-100 text-center book-card text-decoration-none text-dark"
+                   th:classappend="${flashSaleMap[book.bookId] != null} ? ' book-card-sale'">
+
+                    <!-- BADGE GÓC -->
+                    <div class="sale-corner-badge" th:if="${flashSaleMap[book.bookId] != null}">
+                        <span>SALE</span>
+                    </div>
+
                     <div class="card-body d-flex flex-column align-items-center">
                         <div class="book-image mb-3">
                             <img th:src="@{'/images/books/' + ${book.picture}}"
@@ -169,8 +276,23 @@
                             <span class="rating-count" th:text="'(' + ${c} + ')'">(0)</span>
                         </div>
                         <p class="card-text mb-1 text-muted" th:text="${book.author}">Tác giả</p>
-                        <p class="card-text text-danger font-weight-bold mt-auto"
-                           th:text="${#numbers.formatInteger(book.price, 3, 'COMMA')} + ' ₫'">0 ₫</p>
+
+                        <div th:with="fs=${flashSaleMap[book.bookId]}" class="w-100 mt-auto">
+                            <!-- ĐANG FLASH SALE -->
+                            <div th:if="${fs != null}">
+                                <div class="price-row" style="display:flex;align-items:center;justify-content:center;gap:0.5rem;margin-bottom:4px;">
+                                    <span class="original-price" style="font-size:0.85rem;color:#6c757d;"><s th:text="${#numbers.formatInteger(book.price, 3, 'COMMA')} + ' ₫'">0 ₫</s></span>
+                                    <span class="sale-price text-danger" style="font-weight:700;" th:text="${#numbers.formatInteger(fs.salePrice, 3, 'COMMA')} + ' ₫'">0 ₫</span>
+                                    <span class="discount-percent small text-secondary" th:text="'-' + ${#numbers.formatDecimal((1 - fs.salePrice / book.price) * 100, 0, 0)} + '%'">-0%</span>
+                                </div>
+                                <div class="sale-remaining small text-secondary">
+                                    <span>🔥 Còn <span th:text="${fs.remaining}">0</span></span>
+                                    <span th:if="${currentFlashSale != null}" class="countdown ml-1" style="background:#ff4757; color:#fff; padding:1px 6px; border-radius:4px; font-weight:700; font-size:11px;" th:attr="data-end-time=${currentFlashSale.endTime}">--:--:--</span>
+                                </div>
+                            </div>
+                            <!-- KHÔNG SALE -->
+                            <p th:unless="${fs != null}" class="card-text text-danger font-weight-bold mb-0" th:text="${#numbers.formatInteger(book.price, 3, 'COMMA')} + ' ₫'">0 ₫</p>
+                        </div>
                     </div>
                 </a>
             </div>
@@ -179,52 +301,25 @@
         <div class="book-empty" th:if="${#lists.isEmpty(newBooks)}">
             <p class="text-muted text-center">Hiện chưa có sách mới trong danh mục này.</p>
         </div>
-
-        <nav class="mt-3" th:if="${newBooksPage != null and newBooksPage.totalPages > 1}">
-            <ul class="pagination justify-content-center">
-
-                <!-- PREV -->
-                <li class="page-item" th:classappend="${newBooksPage.first} ? 'disabled'">
-                    <a class="page-link"
-                       th:if="${!newBooksPage.first}"
-                       th:href="@{/home(categoryId=${selectedCategoryId}, pageNew=${pageNew-1}, pageBest=${pageBest}, pageFav=${pageFav}, size=${size})} + '#sec-new'">«</a>
-
-                    <span class="page-link" th:unless="${!newBooksPage.first}">«</span>
-                </li>
-
-                <!-- NUMBERS -->
-                <li class="page-item"
-                    th:each="i : ${#numbers.sequence(0, newBooksPage.totalPages-1)}"
-                    th:classappend="${i == pageNew} ? 'active'">
-                    <a class="page-link"
-                       th:text="${i+1}"
-                       th:href="@{/home(categoryId=${selectedCategoryId}, pageNew=${i}, pageBest=${pageBest}, pageFav=${pageFav}, size=${size})} + '#sec-new'"></a>
-                </li>
-
-                <!-- NEXT -->
-                <li class="page-item" th:classappend="${newBooksPage.last} ? 'disabled'">
-                    <a class="page-link"
-                       th:if="${!newBooksPage.last}"
-                       th:href="@{/home(categoryId=${selectedCategoryId}, pageNew=${pageNew+1}, pageBest=${pageBest}, pageFav=${pageFav}, size=${size})} + '#sec-new'">»</a>
-
-                    <span class="page-link" th:unless="${!newBooksPage.last}">»</span>
-                </li>
-
-            </ul>
-
-        </nav>
     </section>
 
 
 
     <!-- ================= BEST-SELLING BOOKS ================= -->
     <section id="sec-best" class="books-section mb-5">
-        <h2 class="section-title mb-3">Best-Selling Books</h2>
+        <h2 class="section-title mb-3">Sách bán chạy</h2>
 
         <div class="books-grid">
             <div class="book-item" th:each="book : ${bestSellingBooks}">
                 <a th:href="@{/home/books/{id}(id=${book.bookId})}"
-                   class="card h-100 text-center book-card text-decoration-none text-dark">
+                   class="card h-100 text-center book-card text-decoration-none text-dark"
+                   th:classappend="${flashSaleMap[book.bookId] != null} ? ' book-card-sale'">
+
+                    <!-- BADGE GÓC -->
+                    <div class="sale-corner-badge" th:if="${flashSaleMap[book.bookId] != null}">
+                        <span>SALE</span>
+                    </div>
+
                     <div class="card-body d-flex flex-column align-items-center">
                         <div class="book-image mb-3">
                             <img th:src="@{'/images/books/' + ${book.picture}}"
@@ -242,8 +337,23 @@
                             <span class="rating-count" th:text="'(' + ${c} + ')'">(0)</span>
                         </div>
                         <p class="card-text mb-1 text-muted" th:text="${book.author}">Tác giả</p>
-                        <p class="card-text text-danger font-weight-bold mt-auto"
-                           th:text="${#numbers.formatInteger(book.price, 3, 'COMMA')} + ' ₫'">0 ₫</p>
+
+                        <div th:with="fs=${flashSaleMap[book.bookId]}" class="w-100 mt-auto">
+                            <!-- ĐANG FLASH SALE -->
+                            <div th:if="${fs != null}">
+                                <div class="price-row" style="display:flex;align-items:center;justify-content:center;gap:0.5rem;margin-bottom:4px;">
+                                    <span class="original-price" style="font-size:0.85rem;color:#6c757d;"><s th:text="${#numbers.formatInteger(book.price, 3, 'COMMA')} + ' ₫'">0 ₫</s></span>
+                                    <span class="sale-price text-danger" style="font-weight:700;" th:text="${#numbers.formatInteger(fs.salePrice, 3, 'COMMA')} + ' ₫'">0 ₫</span>
+                                    <span class="discount-percent small text-secondary" th:text="'-' + ${#numbers.formatDecimal((1 - fs.salePrice / book.price) * 100, 0, 0)} + '%'">-0%</span>
+                                </div>
+                                <div class="sale-remaining small text-secondary">
+                                    <span>🔥 Còn <span th:text="${fs.remaining}">0</span></span>
+                                    <span th:if="${currentFlashSale != null}" class="countdown ml-1" style="background:#ff4757; color:#fff; padding:1px 6px; border-radius:4px; font-weight:700; font-size:11px;" th:attr="data-end-time=${currentFlashSale.endTime}">--:--:--</span>
+                                </div>
+                            </div>
+                            <!-- KHÔNG SALE -->
+                            <p th:unless="${fs != null}" class="card-text text-danger font-weight-bold mb-0" th:text="${#numbers.formatInteger(book.price, 3, 'COMMA')} + ' ₫'">0 ₫</p>
+                        </div>
                     </div>
                 </a>
             </div>
@@ -252,49 +362,23 @@
         <div class="book-empty" th:if="${#lists.isEmpty(bestSellingBooks)}">
             <p class="text-muted text-center">Chưa có sách bán chạy nào trong danh mục này.</p>
         </div>
-
-        <nav class="mt-3" th:if="${bestSellingBooksPage != null and bestSellingBooksPage.totalPages > 1}">
-            <ul class="pagination justify-content-center">
-
-                <!-- PREV -->
-                <li class="page-item" th:classappend="${newBooksPage.first} ? 'disabled'">
-                    <a class="page-link"
-                       th:if="${!newBooksPage.first}"
-                       th:href="@{/home(categoryId=${selectedCategoryId}, pageNew=${pageNew-1}, pageBest=${pageBest}, pageFav=${pageFav}, size=${size})} + '#sec-new'">«</a>
-
-                    <span class="page-link" th:unless="${!newBooksPage.first}">«</span>
-                </li>
-
-                <!-- NUMBERS -->
-                <li class="page-item"
-                    th:each="i : ${#numbers.sequence(0, newBooksPage.totalPages-1)}"
-                    th:classappend="${i == pageNew} ? 'active'">
-                    <a class="page-link"
-                       th:text="${i+1}"
-                       th:href="@{/home(categoryId=${selectedCategoryId}, pageNew=${i}, pageBest=${pageBest}, pageFav=${pageFav}, size=${size})} + '#sec-new'"></a>
-                </li>
-
-                <!-- NEXT -->
-                <li class="page-item" th:classappend="${newBooksPage.last} ? 'disabled'">
-                    <a class="page-link"
-                       th:if="${!newBooksPage.last}"
-                       th:href="@{/home(categoryId=${selectedCategoryId}, pageNew=${pageNew+1}, pageBest=${pageBest}, pageFav=${pageFav}, size=${size})} + '#sec-new'">»</a>
-
-                    <span class="page-link" th:unless="${!newBooksPage.last}">»</span>
-                </li>
-
-            </ul>
-        </nav>
     </section>
 
     <!-- ================= MOST-FAVORED BOOKS ================= -->
     <section id="sec-fav" class="books-section mb-5">
-        <h2 class="section-title mb-3">Most-favored Books</h2>
+        <h2 class="section-title mb-3">Sách được yêu thích</h2>
 
         <div class="books-grid">
             <div class="book-item" th:each="book : ${favoriteBooks}">
                 <a th:href="@{/home/books/{id}(id=${book.bookId})}"
-                   class="card h-100 text-center book-card text-decoration-none text-dark">
+                   class="card h-100 text-center book-card text-decoration-none text-dark"
+                   th:classappend="${flashSaleMap[book.bookId] != null} ? ' book-card-sale'">
+
+                    <!-- BADGE GÓC -->
+                    <div class="sale-corner-badge" th:if="${flashSaleMap[book.bookId] != null}">
+                        <span>SALE</span>
+                    </div>
+
                     <div class="card-body d-flex flex-column align-items-center">
                         <div class="book-image mb-3">
                             <img th:src="@{'/images/books/' + ${book.picture}}"
@@ -311,12 +395,24 @@
                             </span>
                             <span class="rating-count" th:text="'(' + ${c} + ')'">(0)</span>
                         </div>
-
                         <p class="card-text mb-1 text-muted" th:text="${book.author}">Tác giả</p>
-                        <p class="card-text text-danger font-weight-bold mt-auto"
-                           th:text="${#numbers.formatInteger(book.price, 3, 'COMMA')} + ' ₫'">
-                            0 ₫
-                        </p>
+
+                        <div th:with="fs=${flashSaleMap[book.bookId]}" class="w-100 mt-auto">
+                            <!-- ĐANG FLASH SALE -->
+                            <div th:if="${fs != null}">
+                                <div class="price-row" style="display:flex;align-items:center;justify-content:center;gap:0.5rem;margin-bottom:4px;">
+                                    <span class="original-price" style="font-size:0.85rem;color:#6c757d;"><s th:text="${#numbers.formatInteger(book.price, 3, 'COMMA')} + ' ₫'">0 ₫</s></span>
+                                    <span class="sale-price text-danger" style="font-weight:700;" th:text="${#numbers.formatInteger(fs.salePrice, 3, 'COMMA')} + ' ₫'">0 ₫</span>
+                                    <span class="discount-percent small text-secondary" th:text="'-' + ${#numbers.formatDecimal((1 - fs.salePrice / book.price) * 100, 0, 0)} + '%'">-0%</span>
+                                </div>
+                                <div class="sale-remaining small text-secondary">
+                                    <span>🔥 Còn <span th:text="${fs.remaining}">0</span></span>
+                                    <span th:if="${currentFlashSale != null}" class="countdown ml-1" style="background:#ff4757; color:#fff; padding:1px 6px; border-radius:4px; font-weight:700; font-size:11px;" th:attr="data-end-time=${currentFlashSale.endTime}">--:--:--</span>
+                                </div>
+                            </div>
+                            <!-- KHÔNG SALE -->
+                            <p th:unless="${fs != null}" class="card-text text-danger font-weight-bold mb-0" th:text="${#numbers.formatInteger(book.price, 3, 'COMMA')} + ' ₫'">0 ₫</p>
+                        </div>
                     </div>
                 </a>
             </div>
@@ -325,39 +421,94 @@
         <div class="book-empty" th:if="${#lists.isEmpty(favoriteBooks)}">
             <p class="text-muted text-center">Chưa có sách yêu thích nào trong danh mục này.</p>
         </div>
+    </section>
 
-        <nav class="mt-3" th:if="${favoriteBooksPage != null and favoriteBooksPage.totalPages > 1}">
+    <section id="sec-all" class="books-section mb-5">
+        <h2 class="section-title mb-3">Tất cả</h2>
+
+        <div class="books-grid">
+            <div class="book-item" th:each="book : ${allBooks}">
+                <a th:href="@{/home/books/{id}(id=${book.bookId})}"
+                   class="card h-100 text-center book-card text-decoration-none text-dark"
+                   th:classappend="${flashSaleMap[book.bookId] != null} ? ' book-card-sale'">
+
+                    <!-- BADGE GÓC -->
+                    <div class="sale-corner-badge" th:if="${flashSaleMap[book.bookId] != null}">
+                        <span>SALE</span>
+                    </div>
+
+                    <div class="card-body d-flex flex-column align-items-center">
+                        <div class="book-image mb-3">
+                            <img th:src="@{'/images/books/' + ${book.picture}}"
+                                 alt="Book Image"
+                                 style="width: 150px; height: 220px; object-fit: cover;">
+                        </div>
+                        <h5 class="card-title mb-2" th:text="${book.title}">Tên sách</h5>
+                        <div class="book-rating"
+                             th:with="r=${avgRatings[book.bookId]}, c=${ratingCounts[book.bookId]}">
+                            <span class="stars">
+                                <span th:each="i : ${#numbers.sequence(1,5)}"
+                                      th:text="${i <= r} ? '★' : '☆'"
+                                      class="star"></span>
+                            </span>
+                            <span class="rating-count" th:text="'(' + ${c} + ')'">(0)</span>
+                        </div>
+                        <p class="card-text mb-1 text-muted" th:text="${book.author}">Tác giả</p>
+
+                        <div th:with="fs=${flashSaleMap[book.bookId]}" class="w-100 mt-auto">
+                            <!-- ĐANG FLASH SALE -->
+                            <div th:if="${fs != null}">
+                                <div class="price-row" style="display:flex;align-items:center;justify-content:center;gap:0.5rem;margin-bottom:4px;">
+                                    <span class="original-price" style="font-size:0.85rem;color:#6c757d;"><s th:text="${#numbers.formatInteger(book.price, 3, 'COMMA')} + ' ₫'">0 ₫</s></span>
+                                    <span class="sale-price text-danger" style="font-weight:700;" th:text="${#numbers.formatInteger(fs.salePrice, 3, 'COMMA')} + ' ₫'">0 ₫</span>
+                                    <span class="discount-percent small text-secondary" th:text="'-' + ${#numbers.formatDecimal((1 - fs.salePrice / book.price) * 100, 0, 0)} + '%'">-0%</span>
+                                </div>
+                                <div class="sale-remaining small text-secondary">
+                                    <span>🔥 Còn <span th:text="${fs.remaining}">0</span></span>
+                                    <span th:if="${currentFlashSale != null}" class="countdown ml-1" style="background:#ff4757; color:#fff; padding:1px 6px; border-radius:4px; font-weight:700; font-size:11px;" th:attr="data-end-time=${currentFlashSale.endTime}">--:--:--</span>
+                                </div>
+                            </div>
+                            <!-- KHÔNG SALE -->
+                            <p th:unless="${fs != null}" class="card-text text-danger font-weight-bold mb-0" th:text="${#numbers.formatInteger(book.price, 3, 'COMMA')} + ' ₫'">0 ₫</p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <div class="book-empty" th:if="${#lists.isEmpty(allBooks)}">
+            <p class="text-muted text-center">Chưa có sách trong danh mục này.</p>
+        </div>
+
+        <nav class="mt-3" th:if="${allBooksPage != null and allBooksPage.totalPages > 1}">
             <ul class="pagination justify-content-center">
 
                 <!-- PREV -->
-                <li class="page-item" th:classappend="${newBooksPage.first} ? 'disabled'">
+                <li class="page-item" th:classappend="${allBooksPage.first} ? 'disabled'">
                     <a class="page-link"
-                       th:if="${!newBooksPage.first}"
-                       th:href="@{/home(categoryId=${selectedCategoryId}, pageNew=${pageNew-1}, pageBest=${pageBest}, pageFav=${pageFav}, size=${size})} + '#sec-new'">«</a>
-
-                    <span class="page-link" th:unless="${!newBooksPage.first}">«</span>
+                       th:href="@{/home(categoryId=${selectedCategoryId}, pageAll=${pageAll-1}, size=${size})} + '#sec-all'"
+                       th:if="${!allBooksPage.first}">«</a>
+                    <span class="page-link" th:unless="${!allBooksPage.first}">«</span>
                 </li>
 
                 <!-- NUMBERS -->
                 <li class="page-item"
-                    th:each="i : ${#numbers.sequence(0, newBooksPage.totalPages-1)}"
-                    th:classappend="${i == pageNew} ? 'active'">
+                    th:each="i : ${#numbers.sequence(0, allBooksPage.totalPages-1)}"
+                    th:classappend="${i == pageAll} ? 'active'">
                     <a class="page-link"
                        th:text="${i+1}"
-                       th:href="@{/home(categoryId=${selectedCategoryId}, pageNew=${i}, pageBest=${pageBest}, pageFav=${pageFav}, size=${size})} + '#sec-new'"></a>
+                       th:href="@{/home(categoryId=${selectedCategoryId}, pageAll=${i}, size=${size})} + '#sec-all'"></a>
                 </li>
 
                 <!-- NEXT -->
-                <li class="page-item" th:classappend="${newBooksPage.last} ? 'disabled'">
+                <li class="page-item" th:classappend="${allBooksPage.last} ? 'disabled'">
                     <a class="page-link"
-                       th:if="${!newBooksPage.last}"
-                       th:href="@{/home(categoryId=${selectedCategoryId}, pageNew=${pageNew+1}, pageBest=${pageBest}, pageFav=${pageFav}, size=${size})} + '#sec-new'">»</a>
-
-                    <span class="page-link" th:unless="${!newBooksPage.last}">»</span>
+                       th:href="@{/home(categoryId=${selectedCategoryId}, pageAll=${pageAll+1}, size=${size})} + '#sec-all'"
+                       th:if="${!allBooksPage.last}">»</a>
+                    <span class="page-link" th:unless="${!allBooksPage.last}">»</span>
                 </li>
 
             </ul>
-
         </nav>
     </section>
 
@@ -370,6 +521,17 @@
 />
 
 <div id="chatBotContainer" style="display:none;">
+</div>
+
+<!-- CHAT ICON -->
+<div id="chatLauncher"
+     th:attr="data-authenticated=${#authorization.expression('isAuthenticated()')}">
+    <img src="/images/chat-icon.png" alt="Chat">
+</div>
+
+
+<div id="chatPopup" style="display:none">
+    <iframe id="chatFrame"></iframe>
 </div>
 
 <button id="scrollTopBtn" title="Lên đầu trang">↑</button>
@@ -436,8 +598,8 @@
     document.addEventListener('DOMContentLoaded', function () {
         // KHAI BÁO TẤT CẢ BIẾN DOM Ở ĐẦU ĐỂ TRÁNH LỖI SCOPE
         const mainContent = document.getElementById('main-content');
-        const searchInput = document.getElementById('searchInput');
-        const searchBtn = document.getElementById('searchBtn');
+        const searchInput = document.getElementById('searchInputHead');
+        const searchBtn = document.getElementById('searchBtnHead');
         const openChatBotBtn = document.getElementById('openChatBotBtn');
         const chatBotContainer = document.getElementById('chatBotContainer');
         const scrollTopBtn = document.getElementById('scrollTopBtn');
@@ -635,5 +797,265 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
     });
+</script>
+<!--tìm kiếm -->
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+        const input = document.getElementById("searchInput");
+        const listbox = document.getElementById("searchSuggestions");
+        let timer = null;
+
+        input.addEventListener("input", function () {
+            const keyword = input.value.trim();
+            clearTimeout(timer);
+
+            if (keyword.length < 2) {
+                listbox.style.display = "none";
+                return;
+            }
+
+            timer = setTimeout(() => {
+
+                fetch(`/api/find-book?title=${encodeURIComponent(keyword)}`)
+                    .then(res => res.json())
+                    .then(data => {
+
+                        listbox.innerHTML = "";
+                        listbox.style.display = "block";
+
+                        if (!Array.isArray(data) || data.length === 0) {
+                            listbox.innerHTML = `
+                                <div class="list-group-item text-muted">
+                                    Không tìm thấy sách
+                                </div>`;
+                            return;
+                        }
+
+                        data.forEach(book => {
+                            const item = document.createElement("div");
+                            item.className = "suggest-item";
+
+                            item.innerHTML = `
+        <span class="suggest-title">
+            ${highlight(book.title, keyword)}
+        </span>
+    `;
+
+                            item.onclick = () => {
+                                window.location.href = `/recommend?bookId=${book.bookId}`;
+                            };
+
+                            listbox.appendChild(item);
+                        });
+
+
+                    })
+                    .catch(err => {
+                        console.error("search error:", err);
+                        listbox.innerHTML = `
+    <div class="suggest-empty">Không tìm thấy sách</div>
+`;
+
+                    });
+
+            }, 300);
+        });
+
+        function highlight(text, keyword) {
+            return text.replace(
+                new RegExp(`(${keyword})`, "gi"),
+                '<span style="background:#fff3cd">$1</span>'
+            );
+        }
+
+        document.addEventListener("click", e => {
+            if (!e.target.closest(".search-bar")) {
+                listbox.style.display = "none";
+            }
+        });
+
+        // CLICK SEARCH BUTTON = chọn kết quả đầu tiên
+        document.getElementById("searchBtn").addEventListener("click", searchRedirect);
+
+        // ENTER cũng giống click search
+        document.getElementById("searchInput").addEventListener("keydown", function (e) {
+            if (e.key === "Enter") {
+                e.preventDefault();
+                searchRedirect();
+            }
+        });
+
+        // FUNCTION SEARCH
+        function searchRedirect() {
+            const keyword = input.value.trim();  // fix đây
+            if (!keyword) return;
+
+            fetch(`/api/find-book?title=${encodeURIComponent(keyword)}`)
+                .then(res => res.json())
+                .then(data => {
+
+                    if (!Array.isArray(data) || data.length === 0) {
+                        alert("Không tìm thấy sách");
+                        return;
+                    }
+
+                    const first = data[0];
+                    window.location.href = `/recommend?bookId=${first.bookId}`;
+                })
+                .catch(err => console.error("Lỗi tìm kiếm:", err));
+        }
+
+        /* ================== CHAT ADMIN ================== */
+        if (chatLauncher && chatPopup && chatFrame) {
+
+            chatLauncher.addEventListener('click', e => {
+                e.stopPropagation();
+
+                const isAuth = chatLauncher.dataset.authenticated === 'true';
+
+                if (!isAuth) {
+                    alert("Vui lòng đăng nhập để chat với admin");
+                    return;
+                }
+
+                if (!chatFrame.src) {
+                    chatFrame.src = '/chat';
+                }
+
+                chatPopup.style.display =
+                    chatPopup.style.display === 'block' ? 'none' : 'block';
+            });
+
+            document.addEventListener('click', e => {
+                if (!chatPopup.contains(e.target) &&
+                    !chatLauncher.contains(e.target)) {
+                    chatPopup.style.display = 'none';
+                }
+            });
+        }
+
+    });
+
+    (function initFlashBanner() {
+        const track = document.getElementById('fbTrack');
+        if (!track) return;
+
+        const slides = track.querySelectorAll('.fb-slide');
+        const dots = document.querySelectorAll('.fb-dot');
+        const prevBtn = document.querySelector('.fb-prev');
+        const nextBtn = document.querySelector('.fb-next');
+        let current = 0;
+        let timer = null;
+
+        function goTo(index) {
+            current = (index + slides.length) % slides.length;
+            track.style.transform = `translateX(-${current * 100}%)`;
+            dots.forEach((d, i) => d.classList.toggle('active', i === current));
+        }
+
+        function startAuto() {
+            stopAuto();
+            timer = setInterval(() => goTo(current + 1), 2000); // 2 giây
+        }
+        function stopAuto() {
+            if (timer) clearInterval(timer);
+        }
+
+        prevBtn?.addEventListener('click', () => { goTo(current - 1); startAuto(); });
+        nextBtn?.addEventListener('click', () => { goTo(current + 1); startAuto(); });
+        dots.forEach((dot, i) => dot.addEventListener('click', () => { goTo(i); startAuto(); }));
+
+        const banner = document.querySelector('.flash-banner');
+        banner?.addEventListener('mouseenter', stopAuto);
+        banner?.addEventListener('mouseleave', startAuto);
+
+        goTo(0);
+        if (slides.length > 1) startAuto();
+
+        // ==== ĐẾM NGƯỢC THỜI GIAN ÁP DỤNG ====
+        function updateCountdowns() {
+            document.querySelectorAll('.fb-countdown').forEach(el => {
+                const endTime = new Date(el.dataset.endTime).getTime();
+                const now = Date.now();
+                let diff = Math.max(0, endTime - now);
+
+                if (diff <= 0) {
+                    el.textContent = 'Đã kết thúc';
+                    return;
+                }
+
+                const h = Math.floor(diff / 3600000);
+                const m = Math.floor((diff % 3600000) / 60000);
+                const s = Math.floor((diff % 60000) / 1000);
+
+                el.textContent =
+                    String(h).padStart(2, '0') + ':' +
+                    String(m).padStart(2, '0') + ':' +
+                    String(s).padStart(2, '0');
+            });
+        }
+
+        if (document.querySelector('.fb-countdown')) {
+            updateCountdowns();
+            setInterval(updateCountdowns, 1000);
+        }
+    })();
+</script>
+
+<script>
+// Countdowns for individual sale badges on book cards
+(function cardCountdowns(){
+    function pad(n){ return String(n).padStart(2,'0'); }
+    function formatRemaining(ms){
+        if (ms <= 0) return '00:00:00';
+        const total = Math.floor(ms/1000);
+        const days = Math.floor(total/86400);
+        const hours = Math.floor((total%86400)/3600);
+        const minutes = Math.floor((total%3600)/60);
+        const seconds = total % 60;
+        if (days > 0) return days + 'd ' + pad(hours) + ':' + pad(minutes) + ':' + pad(seconds);
+        return pad(hours) + ':' + pad(minutes) + ':' + pad(seconds);
+    }
+
+    function parseDateString(s){
+        if (!s) return null;
+        // Try native parse first
+        let d = new Date(s);
+        if (!isNaN(d)) return d;
+        // Replace space with T
+        d = new Date(s.replace(' ', 'T'));
+        if (!isNaN(d)) return d;
+        // Try adding seconds if missing (e.g., '2026-07-12T21:00')
+        const maybe = s.match(/^(\d{4}-\d{2}-\d{2})[ T](\d{2}:\d{2})$/);
+        if (maybe) return new Date(maybe[1] + 'T' + maybe[2] + ':00');
+        return null;
+    }
+
+    function update(){
+        const now = Date.now();
+        document.querySelectorAll('.countdown').forEach(el => {
+            const ds = el.getAttribute('data-end-time') || el.dataset.endTime;
+            const endDate = parseDateString(ds);
+            if (!endDate) return;
+            const diff = Math.max(0, endDate.getTime() - now);
+            if (diff <= 0) {
+                el.textContent = 'Hết giờ';
+                el.classList.add('expired');
+                // Optionally hide sale badge or style card when expired
+                const card = el.closest('.book-card') || el.closest('.card');
+                if (card) card.classList.remove('book-card-sale');
+                return;
+            }
+            el.textContent = formatRemaining(diff);
+        });
+    }
+
+    // Start if there are countdown elements
+    if (document.querySelector('.countdown')){
+        update();
+        setInterval(update, 1000);
+    }
+})();
 </script>
 

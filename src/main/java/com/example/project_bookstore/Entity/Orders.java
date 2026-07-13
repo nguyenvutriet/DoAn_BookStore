@@ -27,9 +27,9 @@ public class Orders {
     @Temporal(TemporalType.TIMESTAMP)
     private Date orderDate;
 
-    @Column(name = "totalAmount", precision = 12, scale = 2)
+    @Column(name = "totalAmount", precision = 12, scale = 0)
     @NotNull
-    @DecimalMin(value = "0.00", inclusive = true)
+    @DecimalMin(value = "0", inclusive = true)
     private BigDecimal totalAmount;
 
     @Column(name = "address", length = 2000)

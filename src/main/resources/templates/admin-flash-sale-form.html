@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="/css/admin.css">
+    <title>Flash Sale Form</title>
+    <style>
+        .form-container { width: 92%; margin: 20px auto; padding: 20px; background: #fff; border-radius: 10px; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .form-group { margin-bottom: 14px; }
+        .form-group label { display: block; font-weight: 700; margin-bottom: 6px; }
+        .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; }
+        .actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 12px; }
+        .btn-primary, .btn-secondary, .btn-danger { padding: 10px 14px; border-radius: 6px; border: 0; text-decoration: none; cursor: pointer; }
+        .btn-primary { background: #0B3D2E; color: #fff; }
+        .btn-primary:disabled { background: #a9b3af; cursor: not-allowed; }
+        .btn-secondary { background: #6c757d; color: #fff; }
+        .btn-danger { background: #d9534f; color: #fff; }
+        .detail-table { width: 100%; border-collapse: collapse; margin-top: 16px; }
+        .detail-table th, .detail-table td { border: 1px solid #ddd; padding: 8px; }
+        .detail-table th { background: #f5f5f5; }
+        .section-title { margin-top: 26px; margin-bottom: 10px; }
+
+        .alert-error {
+            margin: 16px 0;
+            padding: 14px 18px;
+            background: #fdecea;
+            color: #b71c1c;
+            border: 1px solid #f5c6cb;
+            border-radius: 8px;
+            font-weight: 600;
+        }
+        .alert-success {
+            margin: 16px 0;
+            padding: 14px 18px;
+            background: #e6f4ea;
+            color: #1e6f47;
+            border: 1px solid #c3e6cb;
+            border-radius: 8px;
+            font-weight: 600;
+        }
+        .alert-warning {
+            margin-top: 26px;
+            padding: 16px 18px;
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffe08a;
+            border-radius: 8px;
+            font-weight: 600;
+        }
+
+        /* Trạng thái bị khoá khi chưa lưu Flash Sale */
+        .locked-section {
+            opacity: 0.5;
+            pointer-events: none;
+            position: relative;
+        }
+    </style>
+</head>
+<body>
+
+<header th:replace="admin-dashboard :: header"></header>
+
+<h1 class="dashboard-title">Flash Sale</h1>
+
+<div class="form-container">
+
+    <!-- THÔNG BÁO LỖI / THÀNH CÔNG TỪ CONTROLLER -->
+    <div th:if="${errorMessage}" class="alert-error" th:text="${errorMessage}"></div>
+    <div th:if="${successMessage}" class="alert-success" th:text="${successMessage}"></div>
+
+    <form th:action="@{/admin/flash-sale/save}" method="post">
+        <input type="hidden" name="flashSaleId" th:value="${flashSale.flashSaleId}">
+
+        <div class="grid">
+            <div>
+                <div class="form-group">
+                    <label>Tên chương trình</label>
+                    <input type="text" name="name" th:value="${flashSale.name}" required>
+                </div>
+                <div class="form-group">
+                    <label>Mô tả</label>
+                    <textarea name="description" rows="4" th:text="${flashSale.description}"></textarea>
+                </div>
+            </div>
+
+            <div>
+                <div class="form-group">
+                    <label>Thời gian bắt đầu</label>
+                    <input type="datetime-local" name="startTime"
+                           th:value="${flashSale.startTime == null ? '' : #temporals.format(flashSale.startTime, 'yyyy-MM-dd''T''HH:mm')}" required>
+                </div>
+                <div class="form-group">
+                    <label>Thời gian kết thúc</label>
+                    <input type="datetime-local" name="endTime"
+                           th:value="${flashSale.endTime == null ? '' : #temporals.format(flashSale.endTime, 'yyyy-MM-dd''T''HH:mm')}" required>
+                </div>
+                <div class="form-group">
+                    <label>Trạng thái</label>
+                    <select name="status">
+                        <option value="ACTIVE" th:selected="${flashSale.status == 'ACTIVE'}">ACTIVE</option>
+                        <option value="INACTIVE" th:selected="${flashSale.status == 'INACTIVE'}">INACTIVE</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="actions">
+            <button type="submit" class="btn-primary">Lưu Flash Sale</button>
+            <a href="/admin/flash-sale" class="btn-secondary">Quay lại</a>
+        </div>
+    </form>
+
+    <!-- ===== CẢNH BÁO KHI CHƯA LƯU (được JS bật/tắt theo URL) ===== -->
+    <div id="unsavedWarning" class="alert-warning" style="display:none;">
+        ⚠️ Đây là Flash Sale <strong>chưa được lưu</strong>. Vui lòng bấm <strong>"Lưu Flash Sale"</strong> ở trên trước.
+        Sau khi lưu, bạn mới có thể áp dụng theo danh mục hoặc thêm sách cụ thể.
+    </div>
+
+    <!-- ===== KHỐI ÁP DỤNG THEO DANH MỤC + THÊM SÁCH (JS sẽ khoá nếu là trang /new) ===== -->
+    <div id="bookManagementSection">
+
+        <h2 class="section-title">Áp dụng theo danh mục</h2>
+        <form id="addCategoryForm"
+              th:action="@{'/admin/flash-sale/' + ${flashSale.flashSaleId} + '/add-category'}" method="post">
+            <div class="grid">
+                <div class="form-group">
+                    <label>Danh mục</label>
+                    <select name="categoryIds" multiple size="8" required>
+                        <option th:each="c : ${categories}" th:value="${c.categoryId}" th:text="${c.categoryName}"></option>
+                    </select>
+                </div>
+                <div>
+                    <div class="form-group">
+                        <label>Phần trăm giảm giá</label>
+                        <input type="number" name="discountPercent" min="1" max="99" step="0.01" value="10" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Số lượng giới hạn</label>
+                        <input type="number" name="quantityLimit" min="1" value="50" required>
+                    </div>
+                </div>
+            </div>
+            <div class="actions">
+                <button type="submit" class="btn-primary">Áp dụng cho danh mục</button>
+            </div>
+        </form>
+
+        <h2 class="section-title">Thêm sách cụ thể</h2>
+        <form id="addBookForm"
+              th:action="@{'/admin/flash-sale/' + ${flashSale.flashSaleId} + '/add-book'}" method="post">
+            <div class="grid">
+                <div class="form-group">
+                    <label>Sách</label>
+                    <select name="bookId" required>
+                        <option th:each="b : ${books}" th:value="${b.bookId}" th:text="${b.bookId + ' - ' + b.title}"></option>
+                    </select>
+                </div>
+                <div>
+                    <div class="form-group">
+                        <label>Giá sale</label>
+                        <input type="number" name="salePrice" min="0" step="1000" value="99000" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Số lượng giới hạn</label>
+                        <input type="number" name="quantityLimit" min="1" value="10" required>
+                    </div>
+                </div>
+            </div>
+            <div class="actions">
+                <button type="submit" class="btn-primary">Thêm sách</button>
+            </div>
+        </form>
+
+        <h2 class="section-title">Danh sách sách trong Flash Sale</h2>
+        <table class="detail-table">
+            <thead>
+            <tr>
+                <th>Mã sách</th>
+                <th>Tên sách</th>
+                <th>Giá gốc</th>
+                <th>Giá sale</th>
+                <th>Đã bán</th>
+                <th>Giới hạn</th>
+                <th>Thao tác</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="d : ${details}">
+                <td th:text="${d.book.bookId}">BK0001</td>
+                <td th:text="${d.book.title}">Tên sách</td>
+                <td th:text="${#numbers.formatInteger(d.originalPrice, 3, 'COMMA')} + ' ₫'">0 ₫</td>
+                <td th:text="${#numbers.formatInteger(d.salePrice, 3, 'COMMA')} + ' ₫'">0 ₫</td>
+                <td th:text="${d.quantitySold}">0</td>
+                <td th:text="${d.quantityLimit}">0</td>
+                <td>
+                    <form th:action="@{'/admin/flash-sale/' + ${flashSale.flashSaleId} + '/delete-detail'}" method="post">
+                        <input type="hidden" name="bookId" th:value="${d.book.bookId}">
+                        <button type="submit" class="btn-danger">Xoá</button>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+        <div th:if="${details == null or #lists.isEmpty(details)}" style="text-align:center; padding:16px; color:#999;">
+            Chưa có sách nào trong đợt Flash Sale này.
+        </div>
+
+    </div>
+
+</div>
+
+<footer class="admin-footer">© 2025 UTE BookStore Admin</footer>
+
+<!-- ===== JS: phát hiện trang /new dựa trên URL, khoá form nếu chưa lưu ===== -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const path = window.location.pathname;
+
+        // Trang tạo mới luôn có dạng /admin/flash-sale/new
+        const isNewPage = path.endsWith('/flash-sale/new');
+
+        if (isNewPage) {
+            document.getElementById('unsavedWarning').style.display = 'block';
+
+            const section = document.getElementById('bookManagementSection');
+            section.classList.add('locked-section');
+
+            // Chặn submit thật sự (phòng trường hợp người dùng cố bấm qua pointer-events)
+            const catForm = document.getElementById('addCategoryForm');
+            const bookForm = document.getElementById('addBookForm');
+
+            [catForm, bookForm].forEach(function (form) {
+                if (!form) return;
+                form.addEventListener('submit', function (e) {
+                    e.preventDefault();
+                    alert('⚠️ Vui lòng lưu thông tin cơ bản của Flash Sale trước khi thực hiện thao tác này.');
+                });
+            });
+        }
+    });
+</script>
+
+</body>
+</html>

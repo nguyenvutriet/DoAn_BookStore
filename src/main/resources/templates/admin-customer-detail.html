@@ -57,7 +57,10 @@
 
     <div class="detail-item">
       <label>Ngày sinh</label>
-      <input type="text" th:value="${customer.dateOfBirth}" disabled>
+      <!--      <input type="text" th:value="${customer.dateOfBirth}" disabled>-->
+      <input type="text"
+             th:value="${#dates.format(customer.dateOfBirth, 'dd/MM/yyyy')}"
+             disabled>
     </div>
 
   </div>
@@ -88,7 +91,8 @@
       <tr th:each="o : ${orders}">
         <td th:text="${o.orderId}"></td>
         <td th:text="${o.orderDate}"></td>
-        <td th:text="${o.totalAmount + ' ₫'}"></td>
+        <!--        <td th:text="${o.totalAmount + ' ₫'}"></td>-->
+        <td th:text="${#numbers.formatDecimal(o.totalAmount,0,'POINT',0,'COMMA')} + ' ₫'"></td>
         <td th:text="${o.status}"></td>
 
         <td class="action-cell">

@@ -62,9 +62,23 @@ public class VNPayService {
         params.put("vnp_ReturnUrl", returnUrl);
         params.put("vnp_IpAddr", vnp_IpAddr);
 
-        Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("Etc/GMT+7"));
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
+//        Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("Etc/GMT+7"));
+//        SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
+//
+//        params.put("vnp_CreateDate", formatter.format(cal.getTime()));
+//
+//        cal.add(Calendar.MINUTE, 15);
+//        params.put("vnp_ExpireDate", formatter.format(cal.getTime()));
 
+        // Khắc phục: Sử dụng múi giờ IANA chuẩn cho Việt Nam (GMT+7)
+        TimeZone vietnamTimeZone = TimeZone.getTimeZone("Asia/Ho_Chi_Minh");
+        Calendar cal = Calendar.getInstance(vietnamTimeZone);
+
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
+// Đảm bảo SimpleDateFormat cũng sử dụng múi giờ chính xác
+        formatter.setTimeZone(vietnamTimeZone);
+
+// ... Phần còn lại của code ...
         params.put("vnp_CreateDate", formatter.format(cal.getTime()));
 
         cal.add(Calendar.MINUTE, 15);

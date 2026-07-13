@@ -4,6 +4,7 @@ import com.example.project_bookstore.Entity.Books;
 import com.example.project_bookstore.Entity.Review;
 import com.example.project_bookstore.Service.BooksService;
 import com.example.project_bookstore.Service.ReviewService;
+import com.example.project_bookstore.Service.FlashSaleService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -28,6 +29,8 @@ public class HomeController {
     private BooksService booksService;
     @Autowired
     private ReviewService reviewService;
+    @Autowired
+    private FlashSaleService flashSaleService;
 
 //    @GetMapping
 //    public String home(
@@ -67,10 +70,14 @@ public class HomeController {
 //    }
 
 
-    @GetMapping()
+    @GetMapping
     public String home(
             @RequestParam(value = "categoryId", required = false) String categoryId,
 
+            // chỉ dùng cho "Tất cả"
+            @RequestParam(value = "pageAll", defaultValue = "0") int pageAll,
+
+            // giữ lại để không lỗi link cũ, nhưng sẽ không dùng
             @RequestParam(value = "pageNew",  defaultValue = "0") int pageNew,
             @RequestParam(value = "pageBest", defaultValue = "0") int pageBest,
             @RequestParam(value = "pageFav",  defaultValue = "0") int pageFav,
@@ -78,15 +85,18 @@ public class HomeController {
             @RequestParam(value = "size", defaultValue = "8") int size,
             Model model
     ) {
-        Pageable pNew  = PageRequest.of(pageNew,  size);
-        Pageable pBest = PageRequest.of(pageBest, size);
-        Pageable pFav  = PageRequest.of(pageFav,  size);
+        // 3 section trên: luôn lấy trang 0 (không phân trang)
+        Pageable pTop = PageRequest.of(0, size);
 
-        Page<Books> newBooksPage = booksService.getNewBooksPage(categoryId, pNew);
-        Page<Books> bestSellingBooksPage = booksService.getBestSellingBooksPage(categoryId, pBest);
-        Page<Books> favoriteBooksPage = booksService.getFavoriteBooksPage(categoryId, pFav);
+        Page<Books> newBooksPage = booksService.getNewBooksPage(categoryId, pTop);
+        Page<Books> bestSellingBooksPage = booksService.getBestSellingBooksPage(categoryId, pTop);
+        Page<Books> favoriteBooksPage = booksService.getFavoriteBooksPage(categoryId, pTop);
 
-        // Rating chỉ tính cho sách đang hiển thị
+        // "Tất cả": có phân trang riêng (xếp theo ngày xuất bản)
+        Pageable pAll = PageRequest.of(pageAll, size);
+        Page<Books> allBooksPage = booksService.getNewBooksPage(categoryId, pAll);
+
+        // Rating cho sách đang hiển thị (4 list)
         Map<String, Double> avgRatings = new HashMap<>();
         Map<String, Long> ratingCounts = new HashMap<>();
 
@@ -94,6 +104,7 @@ public class HomeController {
         visible.addAll(newBooksPage.getContent());
         visible.addAll(bestSellingBooksPage.getContent());
         visible.addAll(favoriteBooksPage.getContent());
+        visible.addAll(allBooksPage.getContent());
 
         for (Books b : visible) {
             int rounded = reviewService.getAverageRatingRounded(b.getBookId());
@@ -103,21 +114,48 @@ public class HomeController {
 
         model.addAttribute("selectedCategoryId", categoryId);
 
-        model.addAttribute("newBooksPage", newBooksPage);
-        model.addAttribute("bestSellingBooksPage", bestSellingBooksPage);
-        model.addAttribute("favoriteBooksPage", favoriteBooksPage);
-
+        // 3 section trên: chỉ dùng content, không cần nav
         model.addAttribute("newBooks", newBooksPage.getContent());
         model.addAttribute("bestSellingBooks", bestSellingBooksPage.getContent());
         model.addAttribute("favoriteBooks", favoriteBooksPage.getContent());
 
+        // "Tất cả"
+        model.addAttribute("allBooksPage", allBooksPage);
+        model.addAttribute("allBooks", allBooksPage.getContent());
+        model.addAttribute("pageAll", pageAll);
+
         model.addAttribute("avgRatings", avgRatings);
         model.addAttribute("ratingCounts", ratingCounts);
 
-        model.addAttribute("pageNew", pageNew);
-        model.addAttribute("pageBest", pageBest);
-        model.addAttribute("pageFav", pageFav);
+        // Flash sale map for visible books
+        java.util.List<String> bookIds = visible.stream().map(Books::getBookId).toList();
+        java.util.Map<String, com.example.project_bookstore.Entity.FlashSaleDetail> flashSaleMap = flashSaleService.getActiveSaleMapForBooks(bookIds);
+        model.addAttribute("flashSaleMap", flashSaleMap);
+        model.addAttribute("currentFlashSale", flashSaleService.getCurrentActive().orElse(null));
+
+        // giữ size để link phân trang "Tất cả" dùng
         model.addAttribute("size", size);
+
+        // ==== Dữ liệu cho bảng tin chạy (flash sale ticker) ====
+        List<Map<String, Object>> flashSaleTicker = new ArrayList<>();
+        Map<String, Boolean> seenTicker = new HashMap<>();
+
+        for (Books b : visible) {
+            com.example.project_bookstore.Entity.FlashSaleDetail fs = flashSaleMap.get(b.getBookId());
+            if (fs == null) continue;
+            if (seenTicker.containsKey(b.getBookId())) continue; // tránh trùng khi 1 sách nằm ở nhiều section
+            seenTicker.put(b.getBookId(), true);
+
+            Map<String, Object> item = new HashMap<>();
+            item.put("bookId", b.getBookId());
+            item.put("title", b.getTitle());
+            item.put("picture", b.getPicture());
+            item.put("oldPrice", b.getPrice());
+            item.put("salePrice", fs.getSalePrice());
+            item.put("remaining", fs.getRemaining());
+            flashSaleTicker.add(item);
+        }
+        model.addAttribute("flashSaleTicker", flashSaleTicker);
 
         return "index";
     }
@@ -136,6 +174,9 @@ public class HomeController {
         model.addAttribute("avgRatingRounded", avgRatingRounded);
         model.addAttribute("reviewCount", reviewCount);
         model.addAttribute("reviews", reviews);
+
+        model.addAttribute("flashSaleDetail", flashSaleService.getActiveSaleForBook(bookId).orElse(null));
+        model.addAttribute("currentFlashSale", flashSaleService.getCurrentActive().orElse(null));
 
         return "book_detail";
     }

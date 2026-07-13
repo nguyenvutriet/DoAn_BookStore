@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <base href="/" />
+    <title>Chat với Admin</title>
+
+    <style>
+        /* ===== RESET ĐỂ CHẠY TRONG IFRAME ===== */
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            font-family: Arial, sans-serif;
+            background: transparent;
+        }
+
+        /* ===== CHAT CONTAINER ===== */
+        .chat-container {
+            width: 100%;
+            height: 100%;
+            background: #fff;
+            display: flex;
+            flex-direction: column;
+            box-sizing: border-box;
+        }
+
+        .chat-header {
+            padding: 10px 12px;
+            border-bottom: 1px solid #ddd;
+            font-weight: bold;
+            font-size: 14px;
+            background: #f5f6f7;
+        }
+
+        .chat-body {
+            flex: 1;
+            padding: 10px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .bubble {
+            padding: 8px 12px;
+            border-radius: 16px;
+            margin: 4px 0;
+            max-width: 75%;
+            word-wrap: break-word;
+            font-size: 14px;
+        }
+
+        .bubble.user {
+            background: #37aa37;
+            color: #fff;
+            align-self: flex-end;
+        }
+
+        .bubble.admin {
+            background: #e4e6eb;
+            color: #000;
+            align-self: flex-start;
+        }
+
+        .bubble img {
+            max-width: 200px;
+            border-radius: 10px;
+            display: block;
+        }
+
+        #typingStatus {
+            font-size: 12px;
+            color: gray;
+            margin: 4px 12px;
+        }
+
+        .chat-footer {
+            display: flex;
+            padding: 8px;
+            border-top: 1px solid #ddd;
+            align-items: center;
+            background: #f5f6f7;
+        }
+
+        .chat-footer input[type="text"] {
+            flex: 1;
+            padding: 8px 12px;
+            border-radius: 18px;
+            border: 1px solid #ccc;
+            outline: none;
+            font-size: 14px;
+        }
+
+        .chat-footer button {
+            margin-left: 6px;
+            padding: 8px 14px;
+            border-radius: 18px;
+            border: none;
+            background: #37aa37;
+            color: #fff;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .img-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: none;
+            background: #e4e6eb;
+            cursor: pointer;
+            margin-right: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="chat-container">
+
+    <div class="chat-header">
+        Chat với Admin
+        <span id="presenceText"
+              style="font-size:12px;color:gray;margin-left:6px"></span>
+    </div>
+
+    <div class="chat-body" id="chatBody"></div>
+    <div id="typingStatus"></div>
+
+    <div class="chat-footer">
+        <input type="file" id="imgInput" hidden accept="image/*">
+        <button class="img-btn" onclick="imgInput.click()">📷</button>
+        <input id="msgInput" type="text" placeholder="Nhập tin nhắn...">
+        <button onclick="sendMsg()">Gửi</button>
+    </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/sockjs-client/dist/sockjs.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/stompjs/lib/stomp.min.js"></script>
+
+<script th:inline="javascript">
+    const USERNAME = /*[[${#authentication.name}]]*/ "";
+
+    const stomp = Stomp.over(new SockJS("/ws"));
+
+    stomp.connect({}, () => {
+
+        stomp.subscribe("/topic/messages." + USERNAME, msg => {
+            displayMessage(JSON.parse(msg.body));
+        });
+
+        stomp.subscribe("/topic/typing.admin." + USERNAME, () => {
+            showTyping("Admin đang soạn tin nhắn...");
+        });
+
+        stomp.subscribe("/topic/presence", msg => {
+            const p = JSON.parse(msg.body);
+            if (p.username === "admin01") {
+                document.getElementById("presenceText").innerText =
+                    formatPresence(p);
+            }
+        });
+
+        fetch("/presence/admin01")
+            .then(r => r.json())
+            .then(p => {
+                document.getElementById("presenceText").innerText =
+                    formatPresence(p);
+            });
+
+        loadHistory();
+    });
+
+    function sendMsg() {
+        const input = document.getElementById("msgInput");
+        if (!input.value.trim()) return;
+
+        stomp.send("/app/chat.send", {}, JSON.stringify({
+            content: input.value
+        }));
+        input.value = "";
+    }
+
+    document.getElementById("imgInput").addEventListener("change", async () => {
+        const file = imgInput.files[0];
+        if (!file) return;
+
+        const fd = new FormData();
+        fd.append("file", file);
+        fd.append("userName", USERNAME);
+        fd.append("sender", "USER");
+
+        await fetch("/chat/upload-image", {
+            method: "POST",
+            body: fd
+        });
+
+        imgInput.value = "";
+    });
+
+    let typingTimer;
+    document.getElementById("msgInput").addEventListener("input", () => {
+        stomp.send("/app/chat.typing.user", {}, {});
+        clearTimeout(typingTimer);
+        typingTimer = setTimeout(clearTyping, 1500);
+    });
+
+    document.getElementById("msgInput").addEventListener("keydown", e => {
+        if (e.key === "Enter") {
+            e.preventDefault();
+            sendMsg();
+        }
+    });
+
+    function displayMessage(msg) {
+        const chatBody = document.getElementById("chatBody");
+        const bubble = document.createElement("div");
+        bubble.className = "bubble " + (msg.sender === "ADMIN" ? "admin" : "user");
+
+        if (msg.type === "IMAGE") {
+            const img = document.createElement("img");
+
+            // 🔥 cache-bypass để tránh 404 cache
+            img.src = msg.imageUrl + "?t=" + Date.now();
+
+            bubble.appendChild(img);
+        }
+        else {
+            bubble.textContent = msg.content;
+        }
+
+        chatBody.appendChild(bubble);
+        chatBody.scrollTop = chatBody.scrollHeight;
+    }
+
+    function loadHistory() {
+        fetch("/chat/history/" + USERNAME)
+            .then(r => r.json())
+            .then(data => data.forEach(displayMessage));
+    }
+
+    function showTyping(t) {
+        document.getElementById("typingStatus").innerText = t;
+        clearTimeout(window._t);
+        window._t = setTimeout(clearTyping, 1500);
+    }
+
+    function clearTyping() {
+        document.getElementById("typingStatus").innerText = "";
+    }
+
+    /* ===== GIỮ NGUYÊN TÊN TRẠNG THÁI GỐC ===== */
+    function formatPresence(p) {
+        if (!p || !p.lastSeen) return "";
+
+        if (p.online) return "🟢 Đang hoạt động";
+
+        const iso = p.lastSeen.replace(" ", "T");
+        const last = new Date(iso);
+        if (isNaN(last.getTime())) return "";
+
+        const diffMs = Date.now() - last.getTime();
+        const minutes = Math.floor(diffMs / 60000);
+
+        if (minutes < 2) return "🟢 Đang hoạt động";
+        if (minutes < 60) return `⚪ Hoạt động ${minutes} phút trước`;
+
+        const hours = Math.floor(minutes / 60);
+        if (hours < 24) return `⚪ Hoạt động ${hours} giờ trước`;
+
+        const days = Math.floor(hours / 24);
+        return `⚪ Hoạt động ${days} ngày trước`;
+    }
+</script>
+
+</body>
+</html>

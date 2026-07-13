@@ -3,7 +3,9 @@ package com.example.project_bookstore.Controller;
 
 import com.example.project_bookstore.Entity.Books;
 import com.example.project_bookstore.Entity.Customers;
+import com.example.project_bookstore.Entity.FlashSaleDetail;
 import com.example.project_bookstore.Entity.Users;
+import com.example.project_bookstore.Service.FlashSaleService;
 import com.example.project_bookstore.Service.ReviewService;
 import com.example.project_bookstore.Service.UsersService;
 import com.example.project_bookstore.Service.BooksService;
@@ -35,6 +37,9 @@ public class BookDetailController {
 
     @Autowired
     private BooksService booksService;
+
+    @Autowired
+    private FlashSaleService flashSaleService;
 
     // ====== POST: Nhận form đánh giá ngay trên trang chi tiết ======
     @PostMapping("/home/books/{id}/review")
@@ -97,15 +102,20 @@ public class BookDetailController {
 
         Books book = booksService.getBookById(bookId);
 
-        // BigDecimal price = book.getPrice();
-        BigDecimal subtotal = book.getPrice().multiply(BigDecimal.valueOf(quantity));
+        // ==== ÁP DỤNG FLASH SALE NẾU ĐANG HIỆU LỰC ====
+        BigDecimal originalPrice = book.getPrice();
+        BigDecimal effectivePrice = flashSaleService.getActiveSaleForBook(bookId)
+                .map(FlashSaleDetail::getSalePrice)
+                .orElse(originalPrice);
+
+        BigDecimal subtotal = effectivePrice.multiply(BigDecimal.valueOf(quantity));
         BigDecimal total = subtotal;
 
         // Không dùng DTO → dùng Map
         Map<String, Object> item = new HashMap<>();
         item.put("book", book);
         item.put("quantity", quantity);
-        item.put("unitPrice", book.getPrice());
+        item.put("unitPrice", effectivePrice); // ✔ giá đã áp sale
         item.put("total", subtotal);
 
         model.addAttribute("fullname", customer.getFullName());
@@ -115,6 +125,11 @@ public class BookDetailController {
 
         // Truyền list items nhưng không cần class
         model.addAttribute("items", List.of(item));
+
+        // ==== effectivePriceMap để checkout.html không bị null ====
+        Map<String, BigDecimal> effectivePriceMap = new HashMap<>();
+        effectivePriceMap.put(bookId, effectivePrice);
+        model.addAttribute("effectivePriceMap", effectivePriceMap);
 
         model.addAttribute("subtotal", subtotal);
         model.addAttribute("total", total);

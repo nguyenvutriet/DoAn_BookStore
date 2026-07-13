@@ -9,6 +9,7 @@ html {
     font-family: "Poppins", sans-serif;
     padding: 20px 100px;
     overflow: hidden; /* Ngăn chặn lỗi tràn cục bộ bên trong chi tiết sách */
+    margin-top: 0;
 }
 
 /* ==== Row chính (Chứa 3 cột) ==== */
@@ -54,12 +55,15 @@ html {
 /* ==== CỘT 2: THÔNG TIN ==== */
 .col-md-5 {
     flex-grow: 1;
+    margin-top: 0;
 }
 .book-title {
     font-size: 26px;
+    text-align: justify;
     font-weight: 600;
     margin-bottom: 10px;
 }
+
 
 .author {
     font-size: 16px;
@@ -117,6 +121,14 @@ html {
     word-wrap: break-word;
     overflow-wrap: break-word;
 }
+
+.book-description {
+    text-align: justify;        /* CĂN ĐỀU 2 BÊN */
+    text-justify: inter-word;   /* CĂN ĐẸP THEO TỪ */
+    line-height: 1.6;           /* DỄ ĐỌC */
+    word-spacing: 0.5px;
+}
+
 
 /* ==== SỬA CHỮA: NÚT SỐ LƯỢNG LIỀN MẠCH VÀ ĐẸP HƠN ==== */
 .quantity-box {
@@ -622,6 +634,7 @@ html {
     object-fit: contain;
 }
 
+
 /* Footer */
 .preview-footer {
     background: linear-gradient(135deg, #ffffff 0%, #f0f9f4 100%);
@@ -747,6 +760,73 @@ html {
 }
 
 
+/* ===== TOAST SUCCESS ===== */
+.toast-success {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 320px;
+    background: #ffffff;
+    border-left: 6px solid #2ecc71;
+    border-radius: 10px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+    display: flex;
+    align-items: center;
+    padding: 16px;
+    opacity: 0;
+    transform: translateX(120%);
+    transition: all 0.4s ease;
+    z-index: 10000;
+}
+
+.toast-success.show {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.toast-icon {
+    font-size: 28px;
+    color: #2ecc71;
+    margin-right: 12px;
+}
+
+.toast-content {
+    flex: 1;
+    position: relative;
+}
+
+.toast-content strong {
+    display: block;
+    font-size: 16px;
+    margin-bottom: 4px;
+}
+
+.toast-content p {
+    font-size: 14px;
+    margin: 0;
+    color: #555;
+}
+
+/* Thanh chạy */
+.toast-progress {
+    position: absolute;
+    left: 0;
+    bottom: -8px;
+    height: 4px;
+    width: 100%;
+    background: #2ecc71;
+    border-radius: 0 0 6px 6px;
+    animation: toastProgress 3s linear forwards;
+}
+
+@keyframes toastProgress {
+    from {
+        width: 100%;
+    }
+    to {
+        width: 0%;
+    }
+}
 
 
 

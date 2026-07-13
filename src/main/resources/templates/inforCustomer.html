@@ -165,6 +165,8 @@
             </div>
         </div>
 
+        <p class="form-error-text" th:if="${error}" th:text="${error}"></p>
+
         <div class="profile-actions" id="actionButtons">
             <a href="/home" class="btn-link">← Quay lại trang chủ</a>
             <button type="button" id="editBtn" class="btn-main btn-edit">Thay đổi thông tin</button>

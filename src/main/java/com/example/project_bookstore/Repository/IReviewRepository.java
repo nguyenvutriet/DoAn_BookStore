@@ -28,4 +28,7 @@ public interface IReviewRepository extends JpaRepository<Review, String> {
     // Lấy review theo customer + book (để kiểm tra đã đánh giá hay chưa)
     Review findByCustomer_CustomerIdAndBook_BookId(String customerId, String bookId);
 
+    @Query("SELECT r FROM Review r ORDER BY r.creationDate DESC")
+    public List<Review> getAllReviewByDESC();
+
 }

@@ -20,6 +20,7 @@
             <a href="/admin/customers">Khách hàng</a>
             <a href="/admin/categories">Thể loại</a>
             <a href="/admin/books">Sách</a>
+            <a href="/admin/flash-sale">Flash Sale</a>
             <a href="/admin/orders">Đơn hàng</a>
             <a href="/admin/reviews">Đánh giá</a>
             <a href="/admin/revenue">Doanh thu</a>
@@ -40,37 +41,48 @@
 
 <div class="stats-container">
 
-    <div class="stat-card">
-        <div class="stat-icon user"></div>
-        <div class="stat-value" th:text="${totalUsers}">0</div>
-        <div class="stat-label">Tài khoản</div>
-    </div>
+    <a href="/admin/users" class="stat-link">
+        <div class="stat-card">
+            <div class="stat-icon user"></div>
+            <div class="stat-value" th:text="${totalUsers}">0</div>
+            <div class="stat-label">Tài khoản</div>
+        </div>
+    </a>
 
-    <div class="stat-card">
-        <div class="stat-icon customer"></div>
-        <div class="stat-value" th:text="${totalCustomers}">0</div>
-        <div class="stat-label">Khách hàng</div>
-    </div>
+    <a href="/admin/customers" class="stat-link">
+        <div class="stat-card">
+            <div class="stat-icon customer"></div>
+            <div class="stat-value" th:text="${totalCustomers}">0</div>
+            <div class="stat-label">Khách hàng</div>
+        </div>
+    </a>
 
-    <div class="stat-card">
-        <div class="stat-icon book"></div>
-        <div class="stat-value" th:text="${totalBooks}">0</div>
-        <div class="stat-label">Sách</div>
-    </div>
+    <a href="/admin/books" class="stat-link">
+        <div class="stat-card">
+            <div class="stat-icon book"></div>
+            <div class="stat-value" th:text="${totalBooks}">0</div>
+            <div class="stat-label">Sách</div>
+        </div>
+    </a>
 
-    <div class="stat-card">
-        <div class="stat-icon order"></div>
-        <div class="stat-value" th:text="${totalOrders}">0</div>
-        <div class="stat-label">Đơn hàng</div>
-    </div>
+    <a href="/admin/orders" class="stat-link">
+        <div class="stat-card">
+            <div class="stat-icon order"></div>
+            <div class="stat-value" th:text="${totalOrders}">0</div>
+            <div class="stat-label">Đơn hàng</div>
+        </div>
+    </a>
 
-    <div class="stat-card">
-        <div class="stat-icon review"></div>
-        <div class="stat-value" th:text="${totalReviews}">0</div>
-        <div class="stat-label">Đánh giá</div>
-    </div>
+    <a href="/admin/reviews" class="stat-link">
+        <div class="stat-card">
+            <div class="stat-icon review"></div>
+            <div class="stat-value" th:text="${totalReviews}">0</div>
+            <div class="stat-label">Đánh giá</div>
+        </div>
+    </a>
 
 </div>
+
 
 <a href="/admin/revenue" style="text-decoration:none; color:inherit;">
     <div class="revenue-chart-highlight">
@@ -93,28 +105,29 @@
 
     <div class="recent-sold-grid">
 
-        <div class="recent-sold-card" th:each="b : ${recentBooks}">
+        <a th:href="@{'/admin/books/' + ${b.bookId}}" class="sold-card-link"
+           th:each="b : ${recentBooks}">
 
-            <div class="sold-img-wrapper">
-                <img class="sold-book-img"
-                     th:src="@{'/images/books/' + ${b.picture}}"
-                     alt="Book Image">
-                <span class="sold-badge">Đã bán</span>
+            <div class="recent-sold-card">
+
+                <div class="sold-img-wrapper">
+                    <img class="sold-book-img"
+                         th:src="@{'/images/books/' + ${b.picture}}"
+                         alt="Book Image">
+                    <span class="sold-badge">Đã bán</span>
+                </div>
+
+                <div class="sold-info">
+                    <div class="sold-title" th:text="${b.title}"></div>
+                    <div class="sold-author" th:text="${b.author}"></div>
+
+                    <div class="sold-price"
+                         th:text="${#numbers.formatDecimal(b.price,0,'POINT',0,'COMMA')} + '₫'"></div>
+                </div>
+
             </div>
+        </a>
 
-            <div class="sold-info">
-                <div class="sold-title" th:text="${b.title}"></div>
-                <div class="sold-author" th:text="${b.author}"></div>
-
-                <div class="sold-price"
-                     th:text="${#numbers.formatDecimal(b.price,0,'POINT',0,'COMMA')} + '₫'"></div>
-            </div>
-
-            <a th:href="@{'/admin/books/' + ${b.bookId}}" class="sold-view-btn">
-                Xem chi tiết
-            </a>
-
-        </div>
 
     </div>
 </div>
@@ -173,4 +186,98 @@
     });
 </script>
 
+
+
+<!-- NÚT CHUÔNG THÔNG BÁO KÉO THẢ -->
+<div id="dragNotifBtn">
+    <span class="bell">🔔</span>
+    <span class="notif-count" id="notifCount"
+          th:text="${unreadMessages}">5</span>
+</div>
+
+<script>
+    const btn = document.getElementById("dragNotifBtn");
+    let isDragging = false;
+    let offsetX = 0;
+    let offsetY = 0;
+
+    btn.addEventListener("mousedown", function(e){
+        isDragging = true;
+        offsetX = e.clientX - btn.offsetLeft;
+        offsetY = e.clientY - btn.offsetTop;
+    });
+
+    document.addEventListener("mousemove", function(e){
+        if(isDragging){
+            let x = e.clientX - offsetX;
+            let y = e.clientY - offsetY;
+
+            // giữ nút trong màn hình
+            const maxX = window.innerWidth - btn.offsetWidth;
+            const maxY = window.innerHeight - btn.offsetHeight;
+
+            if(x < 0) x = 0;
+            if(y < 0) y = 0;
+            if(x > maxX) x = maxX;
+            if(y > maxY) y = maxY;
+
+            btn.style.left = x+"px";
+            btn.style.top = y+"px";
+            btn.style.bottom ="unset";
+            btn.style.right ="unset";
+        }
+    });
+
+    document.addEventListener("mouseup", function(){
+        isDragging = false;
+    });
+
+    btn.addEventListener("click", function(){
+        if(!isDragging)
+            window.location.href = "/admin/chat";
+    });
+</script>
+<script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+<script>
+    const notifBtn = document.getElementById("dragNotifBtn");
+    const notifCountEl = document.getElementById("notifCount");
+    let unread = parseInt(notifCountEl.innerText || "0");
+
+    // Hàm kiểm tra trạng thái lắc
+    function updateBell() {
+        if (unread > 0) {
+            notifBtn.classList.add("shake");
+        } else {
+            notifBtn.classList.remove("shake");
+        }
+    }
+
+    // Chạy ngay khi load trang
+    updateBell();
+
+    const socket = new SockJS('/ws', null, {
+        transports: ['websocket', 'xhr-streaming', 'xhr-polling']
+    });
+    const stompClient = Stomp.over(socket);
+    stompClient.debug = null; // Tắt log để chạy nhanh hơn
+
+    stompClient.connect({}, function (frame) {
+        stompClient.subscribe("/topic/admin", function (message) {
+            const data = JSON.parse(message.body);
+            if (data.sender === "USER") {
+                unread++;
+                notifCountEl.innerText = unread;
+                updateBell(); // Lắc liên tục
+            }
+        });
+    });
+
+    notifBtn.addEventListener("click", function () {
+        if (!isDragging) {
+            // KHÔNG reset unread về 0 ở đây, để trang chat xử lý khi đã đọc
+            window.location.href = "/admin/chat";
+        }
+    });
+</script>
 </body>

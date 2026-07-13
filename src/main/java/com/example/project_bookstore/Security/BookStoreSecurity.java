@@ -54,8 +54,22 @@ public class BookStoreSecurity {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
         http.csrf(csrf -> csrf.disable())
+                .headers(headers -> headers
+                        .frameOptions(frame -> frame.sameOrigin())
+                )
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/home","/api/books/*/preview", "/home/**", "/books/**", "/home/books/**", "/register/**", "/login", "/css/**", "/js/**", "/images/**").permitAll()
+                        .requestMatchers("/home","/api/books/*/preview", "/home/**", "/books/**", "/home/books/**", "/register/**", "/login", "/css/**", "/js/**", "/images/**", "/images/chat-upload/**", "/api/**", "/recommend/**", "/").permitAll()
+                        // ===== 🔥 WEBSOCKET & STOMP (BẮT BUỘC) =====
+                        .requestMatchers(
+                                "/ws/**",
+                                "/app/**",
+                                "/topic/**",
+                                "/queue/**"
+                        ).permitAll()
+
+                        // ===== CHAT (BẮT BUỘC LOGIN) =====
+                        .requestMatchers("/chat", "/chat/**").authenticated()
+
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/home/order").hasRole("USER")
                         .requestMatchers("/gio_hang/**").hasRole("USER")

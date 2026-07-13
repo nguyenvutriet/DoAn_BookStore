@@ -5,7 +5,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Đăng nhập</title>
+    <title>UTEBookStore</title>
 
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap" rel="stylesheet">
 
@@ -203,9 +203,16 @@
                 <!-- Added book description section -->
                 <p class="book-description text-secondary small" th:text="${book.description}">Mô tả sách</p>
 
-                <div class="price-box">
-        <span class="current-price"
-              th:text="${#numbers.formatDecimal(book.price,0,'COMMA',0,'POINT')} + ' đ'"></span>
+                <div class="price-box" th:with="fs=${flashSaleDetail}">
+                    <div th:if="${fs != null}">
+                        <p class="original-price text-muted"><s th:text="${#numbers.formatDecimal(book.price,0,'COMMA',0,'POINT')} + ' đ'">0 đ</s></p>
+                        <p class="current-price text-danger" th:text="${#numbers.formatDecimal(fs.salePrice,0,'COMMA',0,'POINT')} + ' đ'">0 đ</p>
+                        <p class="small text-secondary">Còn <span th:text="${fs.remaining}">0</span>
+                            <span class="countdown" th:if="${currentFlashSale != null}" th:attr="data-end-time=${currentFlashSale.endTime}">--:--:--</span></p>
+                    </div>
+                    <div th:unless="${fs != null}">
+                        <span class="current-price" th:text="${#numbers.formatDecimal(book.price,0,'COMMA',0,'POINT')} + ' đ'">0 đ</span>
+                    </div>
                 </div>
 
                 <div class="quantity-box">
@@ -268,7 +275,6 @@
     </div> <!-- Kết thúc book-detail -->
 
     <!-- ===== KHU ĐÁNH GIÁ SÁCH ===== -->
-
     <div class="container mt-5 rating-container">
         <div id="book-details" th:attr="data-book-id=${book.bookId}">
             <button type="button" class="btn-preview" onclick="openPreview()">📖 ĐỌC THỬ </button>
@@ -497,42 +503,202 @@
         iframe.src = '';  // Reset khi đóng modal
     }
 </script>
+<script>
+    (function () {
+        const qtyInput = document.querySelector(".qty-input");
+        const minusBtn = document.querySelectorAll(".qty-btn")[0];
+        const plusBtn  = document.querySelectorAll(".qty-btn")[1];
+        const hiddenQtyInputs = document.querySelectorAll(".hidden-qty");
+
+        function clampQty(v) {
+            v = parseInt(v, 10);
+            if (isNaN(v) || v < 1) v = 1;
+            return v;
+        }
+
+        function syncHidden() {
+            const v = clampQty(qtyInput.value);
+            qtyInput.value = v;
+            hiddenQtyInputs.forEach(h => h.value = v);
+        }
+
+        minusBtn.addEventListener("click", function () {
+            qtyInput.value = clampQty(qtyInput.value) - 1;
+            if (parseInt(qtyInput.value, 10) < 1) qtyInput.value = 1;
+            syncHidden();
+        });
+
+        plusBtn.addEventListener("click", function () {
+            qtyInput.value = clampQty(qtyInput.value) + 1;
+            syncHidden();
+        });
+
+        qtyInput.addEventListener("input", syncHidden);
+        qtyInput.addEventListener("blur", syncHidden);
+
+        // Đảm bảo khi submit cũng lấy đúng số lượng
+        document.querySelectorAll(".button-group form").forEach(form => {
+            form.addEventListener("submit", function () {
+                syncHidden();
+            });
+        });
+
+        // init
+        syncHidden();
+    })();
+</script>
 
 
 
-<!-- ===== FOOTER GIỮ NGUYÊN ===== -->
 <footer id="footer">
     <div class="container">
         <div class="footer-content">
 
             <div class="footer-column footer-about">
                 <h4>UTE BookStore</h4>
-                <p>Chào mừng bạn đến với UTE BookStore, cửa hàng sách trực tuyến uy tín, nơi bạn có thể khám phá bộ sưu tập sách phong phú dành cho mọi đối tượng đọc giả. Từ các loại sách phổ biên đến các tác phẩm kinh điển, chúng tôi luôn có những lựa chọn tuyệt vời cho bạn. Khám phá ngay bộ sưu tập của chúng tôi và nếu cần trợ giúp, chatbox của chúng tôi luôn sẵn sàng hỗ trợ bạn!</p>
+                <p class="footer-about-text">
+                    Chào mừng bạn đến với UTE BookStore, cửa hàng sách trực tuyến uy tín, nơi bạn có thể khám phá bộ sưu tập sách phong phú dành cho mọi đối tượng đọc giả. Từ các loại sách phổ biên đến các tác phẩm kinh điển, chúng tôi luôn có những lựa chọn tuyệt vời cho bạn. Khám phá ngay bộ sưu tập của chúng tôi và nếu cần trợ giúp, chatbox của chúng tôi luôn sẵn sàng hỗ trợ bạn!
+                </p>
             </div>
 
-            <div class="footer-column">
+            <div class="footer-column footer-contact">
                 <h4>Thông tin và chính sách</h4>
-                <ul>
-                    <li><a href="/home">Home</a></li>
-                    <li><a href="#">Books</a></li>
-                    <li><a href="#">About</a></li>
-                    <li><a href="#">Contact</a></li>
-                </ul>
+
+                <div class="contact-info">
+                    <a href="http://google.com/maps?rlz=1C1VDKB_enVN1145VN1145&gs_lcrp=EgZjaHJvbWUqBwgBEC4YgAQyBggAEEUYOTIHCAEQLhiABDIHCAIQABiABDIHCAMQABiABDIHCAQQABiABDIHCAUQLhiABDIHCAYQABiABDIGCAcQRRhB0gEINDg1OGowajeoAgCwAgA&um=1&ie=UTF-8&fb=1&gl=vn&sa=X&geocode=KasWOPJjJ3UxMW-RtkEUcS8o&daddr=01+%C4%90.+V%C3%B5+V%C4%83n+Ng%C3%A2n,+Linh+Chi%E1%BB%83u,+Th%E1%BB%A7+%C4%90%E1%BB%A9c,+Th%C3%A0nh+ph%E1%BB%91+H%E1%BB%93+Ch%C3%AD+Minh" target="_blank" class="info-link">
+                        <img src="/images/map.png" alt="map icon" class="contact-icon">
+                        <span>Địa chỉ: Số 1 VVN, phường Thủ Đức, TPHCM</span>
+                    </a>
+                </div>
+
+                <div class="contact-info">
+                    <img src="/images/member.png" alt="member icon" class="contact-icon">
+                    <span>H.Bang, D.Ngọc, M.Quỳnh, T.Trà, V.Triết</span>
+                </div>
             </div>
 
-            <div class="footer-column">
+            <div class="footer-column footer-contact">
                 <h4>Liên hệ</h4>
-                <div class="contact-info">📧 support@example.com</div>
-                <div class="contact-info">📞 +1234567890</div>
+
+                <p class="contact-hours">(Hoạt động từ 8h - 17h, thứ 2 - thứ 7)</p>
+
+                <div class="contact-info">
+                    <img src="/images/telephone.png" alt="phone icon" class="contact-icon">
+                    <span>Gọi đặt hàng: 0328327303</span>
+                </div>
+
+                <div class="contact-info">
+                    <img src="/images/email.png" alt="email icon" class="contact-icon">
+                    <span>Email: banghohoang16102005@gmail.com</span>
+                </div>
+
+                <div class="contact-info">
+                    <a href="https://www.facebook.com/tola.simon1610/" target="_blank" class="contact-info">
+                        <img src="/images/facebook.png" alt="facebook icon" class="contact-icon">
+                        <span>3.2k người theo dõi</span>
+                    </a>
+                </div>
             </div>
 
         </div>
     </div>
 
     <div class="footer-bottom">
-        <p>&copy; 2025 UTE BookStore. All rights reserved.</p>
+        <p>© 2025 UTE BookStore. All rights reserved.</p>
     </div>
 </footer>
+<!-- ===== TOAST SUCCESS ===== -->
+<div id="toast-success" class="toast-success">
+    <div class="toast-icon">✔</div>
+    <div class="toast-content">
+        <strong>Thành công</strong>
+        <p>Đã thêm sách vào giỏ hàng</p>
+        <div class="toast-progress"></div>
+    </div>
+</div>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const addCartForm = document.querySelector('form[action="/gio_hang/add"]');
+        const qtyInput = document.querySelector(".qty-input");
+        const hiddenQtyInputs = document.querySelectorAll(".hidden-qty");
+        if (!addCartForm) return;
+
+        addCartForm.addEventListener("submit", function (e) {
+            e.preventDefault();
+
+            const targetUrl = addCartForm.getAttribute("action");
+            const formData = new FormData(addCartForm);
+
+            fetch(targetUrl, {
+                method: "POST",
+                body: formData,
+                credentials: "same-origin" // quan trọng để gửi cookie phiên đăng nhập
+            })
+                .then(async (res) => {
+                    // Nếu server redirect sang /login thì KHÔNG hiện toast thành công
+                    if (res.redirected && res.url.includes("/login")) {
+                        window.location.href = res.url;
+                        return;
+                    }
+
+                    if (!res.ok) {
+                        alert("Có lỗi xảy ra, vui lòng thử lại!");
+                        return;
+                    }
+
+                    // Thành công thật sự
+                    createSuccessToast("Đã thêm sách vào giỏ hàng thành công!");
+
+                    if (qtyInput) qtyInput.value = "1";
+                    if (hiddenQtyInputs) hiddenQtyInputs.forEach(h => h.value = "1");
+                })
+                .catch(err => {
+                    console.error("Lỗi kết nối:", err);
+                    alert("Không thể kết nối tới máy chủ (Network Error)");
+                });
+        });
+
+        function createSuccessToast(message) {
+            let container = document.getElementById("dynamic-toast-container");
+            if (!container) {
+                container = document.createElement("div");
+                container.id = "dynamic-toast-container";
+                Object.assign(container.style, {
+                    position: "fixed",
+                    bottom: "30px",
+                    right: "30px",
+                    zIndex: "10000"
+                });
+                document.body.appendChild(container);
+            }
+
+            const toast = document.createElement("div");
+            toast.innerHTML = `
+      <div style="
+        display:flex;align-items:center;background:white;padding:16px;border-radius:10px;
+        box-shadow:0 10px 25px rgba(0,0,0,0.2);border-left:6px solid #2ecc71;
+        min-width:300px;margin-top:10px;transition:all 0.4s ease;transform:translateX(120%);
+      ">
+        <div style="font-size:24px;color:#2ecc71;margin-right:12px;">✔</div>
+        <div>
+          <strong style="display:block;color:#333;">Thành công</strong>
+          <p style="margin:0;color:#666;font-size:14px;">${message}</p>
+        </div>
+      </div>
+    `;
+            container.appendChild(toast);
+
+            const inner = toast.querySelector("div");
+            setTimeout(() => inner.style.transform = "translateX(0)", 50);
+            setTimeout(() => {
+                inner.style.transform = "translateX(120%)";
+                inner.style.opacity = "0";
+                setTimeout(() => toast.remove(), 400);
+            }, 3000);
+        }
+    });
+</script>
+
 
 </body>
 </html>

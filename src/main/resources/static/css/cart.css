@@ -391,3 +391,12 @@ main {
 .cart-table td:first-child {
     text-align: center;
 }
+
+.cart-table th:nth-child(5),
+.cart-table td:nth-child(5),
+.cart-table td.subtotal {
+    white-space: nowrap;
+    min-width: 120px;
+    text-align: right;
+    font-weight: 600;
+}

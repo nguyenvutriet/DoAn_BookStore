@@ -317,3 +317,76 @@ label {
 .payment-option span:hover {
     background: #eef6f3;
 }
+/* --- Toast Container (Vị trí) --- */
+#toastContainer {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1000;
+    display: flex; /* Dùng flex để xếp toast mới lên trên */
+    flex-direction: column-reverse; /* Toast mới sẽ nằm ở dưới cùng của container (gần bottom: 20px) */
+    align-items: flex-end;
+}
+
+/* --- Toast Box (Kiểu dáng chính) --- */
+.toast {
+    min-width: 300px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    margin-bottom: 15px;
+    overflow: hidden; /* Cần thiết để chứa Progress Bar */
+    opacity: 0;
+    transform: translateX(100%);
+    transition: opacity 0.4s ease-out, transform 0.4s ease-out;
+}
+
+/* --- Nội dung Toast (Icon + Message + Close Button) --- */
+.toast-content {
+    display: flex;
+    align-items: center;
+    padding: 15px 15px 15px 20px;
+    position: relative;
+}
+
+/* --- Icon --- */
+.toast-icon {
+    color: #4CAF50; /* Màu xanh lá cây cho thành công */
+    font-size: 24px;
+    margin-right: 15px;
+}
+
+/* --- Close Button --- */
+.toast-close {
+    position: absolute;
+    top: 5px;
+    right: 10px;
+    color: #aaa;
+    cursor: pointer;
+    font-size: 18px;
+    padding: 5px;
+    line-height: 1;
+}
+.toast-close:hover {
+    color: #333;
+}
+
+/* --- Thanh Progress Bar --- */
+.toast-progress {
+    height: 4px;
+    width: 100%;
+    background-color: #e0e0e0;
+}
+
+.toast-progress-bar {
+    height: 100%;
+    width: 100%; /* Ban đầu 100%, sẽ giảm dần */
+    background-color: #4CAF50;
+    transition: width linear; /* Quan trọng: transition phải là linear */
+}
+
+/* --- Trạng thái hiển thị --- */
+.toast.show {
+    opacity: 1;
+    transform: translateX(0);
+}

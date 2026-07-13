@@ -198,9 +198,395 @@ main {
     display: block;
 }
 
+.flash-sale-ticker{
+    display:flex;
+    align-items:center;
+    background:linear-gradient(90deg, #003f0c, #82625c);
+    color:#fff;
+    overflow:hidden;
+    height:42px;
+}
+.ticker-label{
+    flex:0 0 auto;
+    padding:0 16px;
+    font-weight:700;
+    background:rgba(0,0,0,.15);
+    height:100%;
+    display:flex;
+    align-items:center;
+    white-space:nowrap;
+}
+.ticker-track-wrap{
+    flex:1 1 auto;
+    overflow:hidden;
+    height:100%;
+}
+.ticker-track{
+    display:flex;
+    align-items:center;
+    height:100%;
+    width:max-content;
+    animation:ticker-scroll 30s linear infinite;
+}
+.flash-sale-ticker:hover .ticker-track{
+    animation-play-state:paused;
+}
+.ticker-item{
+    display:flex;
+    align-items:center;
+    gap:6px;
+    white-space:nowrap;
+    padding:0 28px;
+    color:#fff;
+    text-decoration:none;
+    font-size:14px;
+}
+.ticker-item:hover{
+    color:#fff8dc;
+    text-decoration:underline;
+}
+.ticker-item .old-price{
+    text-decoration:line-through;
+    opacity:.75;
+    font-size:12px;
+}
+.ticker-item .new-price{
+    font-weight:700;
+}
+.ticker-item .remaining{
+    font-size:12px;
+    background:rgba(0,0,0,.2);
+    padding:2px 6px;
+    border-radius:10px;
+}
+@keyframes ticker-scroll{
+    from{ transform:translateX(0); }
+    to{ transform:translateX(-50%); }
+}
+
+.flash-banner{
+    position:relative;
+    max-width:1140px;
+    margin:16px auto;
+    border-radius:12px;
+    overflow:hidden;
+    background:linear-gradient(120deg, #a5eaba, rgb(86 229 101 / 0.46));
+}
+.fb-track{
+    display:flex;
+    transition:transform .5s ease;
+}
+.fb-slide{
+    flex:0 0 100%;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:24px;
+    min-height:220px;
+    padding:24px 80px 24px 60px; /* chừa chỗ cho nút mũi tên phải */
+    text-decoration:none;
+    color:#fff;
+    position:relative;
+    box-sizing:border-box;
+}
+
+
+.fb-badge{
+    position:absolute;
+    top:16px;
+    left:16px;
+    background: rgb(2 97 13 / 0.46);
+    color:#fff;
+    border-radius:8px;
+    padding:6px 10px;
+    text-align:center;
+    line-height:1.1;
+    box-shadow:0 4px 10px rgb(2 125 39);
+}
+.fb-badge-top{ display:block; font-weight:800; font-size:14px; }
+.fb-badge-bottom{ display:block; font-size:11px; opacity:.9; }
+
+.fb-info{ flex:1 1 auto; max-width:58%; min-width:0; }
+.fb-tag{
+    color: #b88401;
+    font-weight:900;
+    font-size:13px;
+    letter-spacing:2px;
+    margin-bottom:6px;
+    margin-left: 15px;
+}
+.fb-title{
+    font-size:26px;
+    font-weight:800;
+    margin:0 0 12px;
+    line-height:1.25;
+}
+.fb-price-row{ margin-bottom:14px; }
+.fb-old{
+    text-decoration:line-through;
+    opacity:.65;
+    margin-right:10px;
+    font-size:14px;
+}
+.fb-new{
+    color: #f82300;
+    font-weight:800;
+    font-size:22px;
+}
+.fb-cta{
+    display:inline-block;
+    background: #02831d;
+    color:#fff;
+    font-weight:700;
+    padding:8px 20px;
+    border-radius:24px;
+}
+.fb-image {
+    flex: 0 0 200px;
+    width: 200px;
+    height: 190px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    border-radius: 8px; /* Thêm bo góc nhẹ cho ảnh trông hiện đại hơn nếu muốn */
+}
+
+.fb-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Cắt và lấp đầy khung hình, không để lại khoảng trống */
+    object-position: center; /* Giữ tâm bức ảnh luôn ở giữa khung hình */
+    filter: drop-shadow(0 10px 20px rgba(0, 0, 0, .35));
+}
+
+.fb-arrow{
+    position:absolute;
+    top:50%;
+    transform:translateY(-50%);
+    z-index:5;
+    background:rgba(255,255,255,.85);
+    border:none;
+    width:36px;
+    height:36px;
+    border-radius:50%;
+    font-size:20px;
+    cursor:pointer;
+    line-height:1;
+}
+.fb-prev{ left:12px; }
+.fb-next{ right:12px; }
+.fb-arrow:hover{ background:#fff; }
+
+.fb-dots{
+    position:absolute;
+    bottom:12px;
+    left:50%;
+    transform:translateX(-50%);
+    display:flex;
+    gap:6px;
+}
+.fb-dot{
+    width:8px;
+    height:8px;
+    border-radius:50%;
+    background:rgba(255,255,255,.4);
+    cursor:pointer;
+}
+.fb-dot.active{ background:#fff; }
+.fb-sale-name {
+    font-size: 15px;
+    font-weight: 700;
+    color: #002d0a;
+    margin: 0 0 4px;
+    letter-spacing: .3px;
+}
+
+.fb-description {
+    font-size: 13px;
+    color: rgba(255,255,255,.85);
+    margin: 0 0 10px;
+    line-height: 1.4;
+    max-width: 90%;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+@media (max-width:768px){
+    .fb-slide{ flex-direction:column; text-align:center; padding:20px; gap:12px; }
+    .fb-info{ max-width:100%; }
+    .fb-image img{ height:130px; }
+}
+
+.fb-time{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-bottom:14px;
+    font-size:13px;
+    flex-wrap:wrap;
+}
+.fb-time-range{
+    background:rgba(255,255,255,.12);
+    padding:4px 10px;
+    border-radius:6px;
+}
+.fb-countdown{
+    background:#ff4757;
+    padding:4px 10px;
+    border-radius:6px;
+    font-weight:700;
+    font-variant-numeric:tabular-nums;
+}
 /* =========================================================
    BOOK SECTION
    ========================================================= */
+
+.books-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 20px;
+    align-items: stretch;
+}
+
+.book-card {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    position: relative;
+    transition: transform .25s ease, box-shadow .25s ease;
+}
+
+.card-body {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    height: 100%;
+    gap: 6px;              /* khoảng cách đều giữa các phần tử con */
+}
+
+.card-body > div:last-child {
+    margin-top: 0;          /* bỏ hẳn margin-top:auto */
+    width: 100%;
+}
+
+.card-title {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    min-height: 44px;
+}
+
+.card-text.text-muted {
+    min-height: 20px;
+}
+
+.card-body > div:last-child {
+    margin-top: auto;
+    width: 100%;
+}
+
+/* ===== SALE CARD STYLING ===== */
+.book-card-sale {
+    border: 2px solid #ff4757 !important;
+    box-shadow: 0 4px 16px rgba(255, 71, 87, .25);
+    background: linear-gradient(180deg, #fff5f5 0%, #ffffff 40%);
+}
+
+.book-card-sale:hover {
+    transform: translateY(-6px) scale(1.02);
+    box-shadow: 0 12px 28px rgba(255, 71, 87, .35);
+}
+
+.sale-corner-badge {
+    position: absolute;
+    top: -1px;
+    left: -1px;
+    background: linear-gradient(135deg, #ff4757, #ff6348);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: .5px;
+    padding: 5px 14px 5px 10px;
+    border-radius: 0 0 10px 0;
+    z-index: 2;
+    box-shadow: 0 2px 6px rgba(255, 71, 87, .4);
+}
+.sale-corner-badge::after {
+    content: "🔥";
+    margin-left: 4px;
+}
+
+.sale-price-block {
+    background: rgba(255, 71, 87, .06);
+    border-radius: 10px;
+    padding: 6px 10px;
+    margin-top: 4px;
+}
+
+.no-sale-price-block {
+    padding: 6px 10px;
+}
+
+/* Giá cũ + giá mới cùng 1 hàng */
+.sale-price-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: 0 0 4px 0;
+}
+
+.sale-price-new {
+    color: #ff4757;
+    font-weight: 700;
+    font-size: 16px;
+}
+
+.sale-price-old {
+    color: #999;
+    font-size: 12px;
+    text-decoration: line-through;
+}
+
+.discount-percent {
+    display: inline-block;
+    background: #ff4757;
+    color: #fff;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 1px 6px;
+    border-radius: 6px;
+    vertical-align: middle;
+}
+
+.sale-remaining {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    font-size: 12px;
+    margin: 0;
+    font-weight: 600;
+    color: #d9534f !important;
+}
+
+.sale-remaining .countdown {
+    background: #ff4757;
+    color: #fff;
+    padding: 0px 6px;
+    border-radius: 6px;
+    font-size: 10px;
+    font-weight: 700;
+}
+
+.sale-price {
+    font-size: 16px !important;
+    margin: 6px 0 !important;
+}
 .books-section {
     padding: 20px 0;
 }
@@ -655,3 +1041,85 @@ main {
 .pagination .page-link {
     letter-spacing: 0.2px;
 }
+
+/* ===== CHAT ICON ===== */
+#chatLauncher {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    width: 60px;
+    height: 60px;
+    background: #37aa37;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+    z-index: 9999;
+}
+
+#chatLauncher img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+
+/* ===== CHAT POPUP ===== */
+#chatPopup {
+    position: fixed;
+    bottom: 90px;
+    left: 20px;
+    width: 360px;
+    height: 500px;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.35);
+    display: none;
+    overflow: hidden;
+    z-index: 9999;
+}
+
+#chatPopup iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+
+/* ===== CHAT ADMIN ANIMATION ===== */
+#chatLauncher {
+    animation: chat-bounce 2s infinite ease-in-out,
+    chat-glow 3s infinite ease-in-out;
+}
+
+/* Nhún nhẹ */
+@keyframes chat-bounce {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-8px);
+    }
+}
+
+/* Viền sáng lan tỏa */
+@keyframes chat-glow {
+    0% {
+        box-shadow: 0 0 0 0 rgba(55, 170, 55, 0.6);
+    }
+    70% {
+        box-shadow: 0 0 0 18px rgba(55, 170, 55, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(55, 170, 55, 0);
+    }
+}
+
+body, * {
+    font-family: Arial, sans-serif !important;
+}
+
+
+

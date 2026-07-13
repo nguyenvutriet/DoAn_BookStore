@@ -18,7 +18,7 @@ public class OrderDetail {
     @Min(0)
     private int quantity;
 
-    @Column(name = "unitPrice")
+    @Column(name = "unitPrice", precision = 12, scale = 0)
     @NotNull
     @Min(0)
     private BigDecimal unitPrice;

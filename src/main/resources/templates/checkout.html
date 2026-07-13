@@ -170,9 +170,6 @@
     <!-- 🔥 FORM BẮT BUỘC -->
     <form id="checkoutForm" method="post" action="/checkout/submit">
 
-
-
-
         <div class="checkout-container">
 
             <!-- LEFT -->
@@ -255,26 +252,16 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr th:each="item, i : ${items}">
+                    <tr th:each="item, i : ${items}"
+                        th:with="price=${effectivePriceMap[item.book.bookId]}">
                         <td th:text="${item.book.title}"></td>
                         <td th:text="${item.quantity}"></td>
-                        <td th:text="${item.book.price}"></td>
-                        <td th:text="${item.quantity * item.book.price}"></td>
+                        <td th:text="${#numbers.formatInteger(price, 3, 'COMMA')} + ' ₫'"></td>
+                        <td th:text="${#numbers.formatInteger(price * item.quantity, 3, 'COMMA')} + ' ₫'"></td>
 
-                        <!-- Hidden input để gửi về backend -->
-                        <input type="hidden"
-                               th:name="'items[' + ${i.index} + '].bookId'"
-                               th:value="${item.book.bookId}" />
-
-                        <input type="hidden"
-                               th:name="'items[' + ${i.index} + '].quantity'"
-                               th:value="${item.quantity}" />
-
-                        <input type="hidden"
-                               th:name="'items[' + ${i.index} + '].unitPrice'"
-                               th:value="${item.book.price}" />
-
-
+                        <input type="hidden" th:name="'items[' + ${i.index} + '].bookId'" th:value="${item.book.bookId}" />
+                        <input type="hidden" th:name="'items[' + ${i.index} + '].quantity'" th:value="${item.quantity}" />
+                        <input type="hidden" th:name="'items[' + ${i.index} + '].unitPrice'" th:value="${price}" />
                     </tr>
                     </tbody>
                 </table>
@@ -306,6 +293,8 @@
                     <button type="submit" class="checkout-btn" id="orderBtn" disabled>
                         Xác nhận đặt hàng
                     </button>
+                    <div id="toastContainer">
+                    </div>
 
                 </div>
             </div>
@@ -628,6 +617,70 @@
     //         });
     //     });
 
+</script>
+<script>
+    const showToastBtn = document.getElementById('orderBtn');
+    const toastContainer = document.getElementById('toastContainer');
+    const TOAST_DURATION = 7000; // 3 giây
+
+    function createToast(message) {
+        // 1. Cấu trúc HTML của Toast
+        const toast = document.createElement('div');
+        toast.className = 'toast';
+        toast.innerHTML = `
+                <div class="toast-content">
+                    <i class="fas fa-check-circle toast-icon"></i>
+                    <span class="toast-message">${message}</span>
+                    <span class="toast-close">&times;</span>
+                </div>
+                <div class="toast-progress">
+                    <div class="toast-progress-bar"></div>
+                </div>
+            `;
+
+        // 2. Thêm vào container
+        toastContainer.appendChild(toast);
+
+        // 3. Hiển thị Toast (sau một độ trễ nhỏ để kích hoạt transition)
+        setTimeout(() => {
+            toast.classList.add('show');
+        }, 50);
+
+        // 4. Kích hoạt Progress Bar
+        const progressBar = toast.querySelector('.toast-progress-bar');
+        // Thiết lập duration của CSS transition cho progress bar
+        progressBar.style.transitionDuration = `${TOAST_DURATION}ms`;
+        // Kích hoạt animation bằng cách đặt width về 0%
+        setTimeout(() => {
+            progressBar.style.width = '0%';
+        }, 100);
+
+        // 5. Xử lý đóng tự động
+        const autoCloseTimeout = setTimeout(() => {
+            closeToast(toast);
+        }, TOAST_DURATION);
+
+        // 6. Xử lý đóng thủ công (click nút X)
+        const closeButton = toast.querySelector('.toast-close');
+        closeButton.addEventListener('click', () => {
+            clearTimeout(autoCloseTimeout); // Ngăn không cho toast đóng lần nữa
+            closeToast(toast);
+        });
+    }
+
+    // Hàm đóng toast
+    function closeToast(toastElement) {
+        toastElement.classList.remove('show');
+        // Xóa phần tử khỏi DOM sau khi animation biến mất (400ms) kết thúc
+        setTimeout(() => {
+            toastElement.remove();
+        }, 400);
+    }
+
+    // Lắng nghe sự kiện click nút
+    showToastBtn.addEventListener('click', () => {
+        createToast('Đang xử lý đơn hàng của bạn...');
+    });
 </script>
 </body>
 </html>

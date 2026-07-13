@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Chat</title>
+
+    <style>
+        /* ====== BODY + NỀN ẢNH MỜ ====== */
+        body {
+            font-family: Arial;
+            margin: 0;
+            min-height: 100vh;
+            background: url("/images/bg-chat.png") center / cover no-repeat fixed;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(0px);
+            z-index: -1;
+        }
+
+        /* ====== CHAT ====== */
+        .chat-container {
+            width: 900px;
+            height: 600px;
+            background: #fff;
+            display: flex;
+            border-radius: 12px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.25);
+            overflow: hidden;
+        }
+
+        .user-list {
+            width: 220px;
+            border-right: 1px solid #ddd;
+            overflow-y: auto;
+        }
+
+        .user-item {
+            padding: 12px;
+            cursor: pointer;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .user-item.active {
+            background: #e4e6eb;
+            font-weight: bold;
+        }
+
+        .badge {
+            color: red;
+            font-size: 12px;
+        }
+
+        .chat-main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ====== HEADER ====== */
+        .chat-header {
+            padding: 10px 14px;
+            border-bottom: 1px solid #ddd;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-left span {
+            margin-right: 8px;
+        }
+
+        .close-btn {
+            text-decoration: none;
+            font-size: 18px;
+            color: #666;
+            cursor: pointer;
+        }
+
+        .close-btn:hover {
+            color: red;
+        }
+
+        #typingStatus {
+            font-size: 12px;
+            color: gray;
+            margin: 6px 12px;
+        }
+
+        /* ====== BODY CHAT ====== */
+        .chat-body {
+            flex: 1;
+            padding: 12px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .bubble {
+            padding: 8px 12px;
+            border-radius: 15px;
+            margin: 4px 0;
+            max-width: 70%;
+            word-wrap: break-word;
+        }
+
+        .bubble.user {
+            background: #e4e6eb;
+            color: #000;
+            align-self: flex-start;
+        }
+
+        .bubble.admin {
+            background: #37aa37;
+            color: #fff;
+            align-self: flex-end;
+        }
+
+        /* === NEW: ảnh trong bubble === */
+        .bubble img {
+            max-width: 220px;
+            border-radius: 10px;
+            display: block;
+        }
+
+        /* ====== FOOTER ====== */
+        .chat-footer {
+            display: flex;
+            padding: 10px;
+            border-top: 1px solid #ddd;
+            align-items: center;
+        }
+
+        .chat-footer input {
+            flex: 1;
+            padding: 8px 14px;
+            border-radius: 20px;
+            border: 1px solid #ccc;
+        }
+
+        .chat-footer button {
+            margin-left: 8px;
+            padding: 8px 18px;
+            border-radius: 20px;
+            border: none;
+            background: #37aa37;
+            color: #fff;
+            cursor: pointer;
+        }
+
+        /* === NEW: nút ảnh nhỏ === */
+        .img-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: none;
+            background: #e4e6eb;
+            cursor: pointer;
+            margin-right: 6px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            font-size: 16px;
+            line-height: 1;
+        }
+
+    </style>
+</head>
+
+<body>
+
+<div class="chat-container">
+
+    <div class="user-list" id="userList"></div>
+
+    <div class="chat-main">
+
+        <!-- HEADER -->
+        <div class="chat-header">
+            <div class="header-left">
+                <span id="chatHeader">Chọn user để chat</span>
+                <span id="presenceText" style="font-size:12px;color:gray"></span>
+            </div>
+
+            <a href="/admin/dashboard" class="close-btn" title="Quay về trang chủ">✕</a>
+        </div>
+
+        <div class="chat-body" id="chatBody"></div>
+
+        <!-- typing -->
+        <span id="typingStatus"></span>
+
+        <!-- footer -->
+        <div class="chat-footer">
+
+            <!-- === NEW: input chọn ảnh === -->
+            <input type="file" id="imgInput" hidden accept="image/*">
+
+            <!-- === NEW: nút gửi ảnh === -->
+            <button class="img-btn" onclick="imgInput.click()">📷</button>
+
+            <!-- === CODE CŨ === -->
+            <input id="msgInput" placeholder="Nhập tin nhắn...">
+            <button id="sendBtn">Gửi</button>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/sockjs-client/dist/sockjs.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/stompjs/lib/stomp.min.js"></script>
+
+<script>
+    // 1. Khai báo các biến toàn cục
+    let stompClient;
+    let currentUser = null;
+    let users = [];
+    let unreadMap = {};
+    let typingSub = null;
+
+    // 2. Định nghĩa các hàm XỬ LÝ GIAO DIỆN TRƯỚC (Để tránh lỗi ReferenceError)
+
+    function renderUserList() {
+        const list = document.getElementById("userList");
+        if (!list) return;
+        list.innerHTML = "";
+        users.forEach(u => {
+            const div = document.createElement("div");
+            div.className = "user-item" + (u === currentUser ? " active" : "");
+            div.onclick = () => selectUser(u);
+            const name = document.createElement("span");
+            name.innerText = u;
+            div.appendChild(name);
+            if (unreadMap[u] && u !== currentUser) {
+                const badge = document.createElement("span");
+                badge.className = "badge";
+                badge.innerText = "(" + unreadMap[u] + ")";
+                div.appendChild(badge);
+            }
+            list.appendChild(div);
+        });
+    }
+
+    function moveUserToTop(username) {
+        const idx = users.indexOf(username);
+        if (idx > -1) users.splice(idx, 1);
+        users.unshift(username);
+    }
+
+    function displayMessage(m) {
+        const chatBody = document.getElementById("chatBody");
+        if (!chatBody) return;
+        const div = document.createElement("div");
+        div.className = "bubble " + (m.sender === "ADMIN" ? "admin" : "user");
+
+        if (m.type === "IMAGE") {
+            const img = document.createElement("img");
+            img.src = m.imageUrl + "?t=" + Date.now();
+            div.appendChild(img);
+        } else {
+            div.innerText = m.content;
+        }
+
+        chatBody.appendChild(div);
+        chatBody.scrollTop = chatBody.scrollHeight;
+    }
+
+    function formatPresence(p) {
+        if (!p) return "";
+        // Ưu tiên hiển thị Đang hoạt động nếu server báo online
+        if (p.online) return "🟢 Đang hoạt động";
+
+        if (!p.lastSeen) return "";
+
+        const now = Date.now();
+        const lastSeen = new Date(p.lastSeen).getTime();
+
+        // Math.max(0, ...) để tránh trường hợp lệch giây giữa server và client hiện số âm
+        const diffMs = Math.max(0, now - lastSeen);
+        const diffMin = Math.floor(diffMs / 60000);
+
+        // Nếu dưới 60 phút, hiện số phút (kể cả 0 phút thì hiện 1 phút để tránh "vừa mới")
+        if (diffMin < 60) {
+            const displayMin = diffMin > 0 ? diffMin : 1;
+            return `⚪ Hoạt động ${displayMin} phút trước`;
+        }
+
+        const hours = Math.floor(diffMin / 60);
+        if (hours < 24) return `⚪ Hoạt động ${hours} giờ trước`;
+
+        return `⚪ Hoạt động ${Math.floor(hours / 24)} ngày trước`;
+    }
+
+    // 3. Các hàm FETCH DỮ LIỆU
+
+    function loadUsers() {
+        fetch("/admin/chat/users")
+            .then(r => r.json())
+            .then(data => {
+                users = data || [];
+                renderUserList();
+                if (users.length && !currentUser) {
+                    selectUser(users[0]);
+                }
+            })
+            .catch(err => console.error("Lỗi load users:", err));
+    }
+
+    function selectUser(u) {
+        if (!stompClient || !stompClient.connected) return;
+
+        currentUser = u;
+
+        // 1. Chỉ khi nhấn vào đây mới xóa số chưa đọc của user này
+        unreadMap[u] = 0;
+        renderUserList();
+
+        // 2. Ép hiển thị đang hoạt động ngay để tránh độ trễ load
+        document.getElementById("presenceText").innerText = "🟢 Đang hoạt động";
+        document.getElementById("chatHeader").innerText = "Chat với: " + u;
+        document.getElementById("chatBody").innerHTML = "";
+        document.getElementById("typingStatus").innerText = "";
+
+        // 3. Hủy và đăng ký lại Typing cho user mới
+        if (typingSub) typingSub.unsubscribe();
+        typingSub = stompClient.subscribe("/topic/typing.user." + u, msg => {
+            document.getElementById("typingStatus").innerText = msg.body + " đang soạn tin nhắn...";
+            clearTimeout(window._t);
+            window._t = setTimeout(() => { document.getElementById("typingStatus").innerText = ""; }, 1500);
+        });
+
+        // 4. Lấy lịch sử chat và trạng thái thực tế
+        fetch("/admin/chat/" + u).then(r => r.json()).then(data => data.forEach(displayMessage));
+
+        // Gọi API lấy presence để cập nhật đúng nhất
+        fetch("/presence/" + u).then(r => r.json()).then(p => {
+            document.getElementById("presenceText").innerText = formatPresence(p);
+        });
+    }
+
+    // 4. Hàm KẾT NỐI WEBSOCKET
+
+    function connect() {
+        const socket = new SockJS("/ws", null, {
+            transports: ['websocket', 'xhr-streaming', 'xhr-polling']
+        });
+        stompClient = Stomp.over(socket);
+        stompClient.debug = null;
+
+        stompClient.connect({}, () => {
+            console.log("ADMIN CHAT CONNECTED SUCCESSFULLY");
+
+            stompClient.subscribe("/topic/admin", msg => {
+                const m = JSON.parse(msg.body);
+                if (m.sender === "ADMIN" && m.type === "IMAGE" && m.userName !== currentUser) return;
+                if (m.userName === currentUser) {
+                    displayMessage(m);
+                } else {
+                    unreadMap[m.userName] = (unreadMap[m.userName] || 0) + 1;
+                }
+                moveUserToTop(m.userName);
+                renderUserList();
+            });
+
+            // Trong hàm connect(), phần stompClient.connect(...)
+            stompClient.subscribe("/topic/presence", msg => {
+                const p = JSON.parse(msg.body);
+                // Nếu tin nhắn presence về đúng người đang chat thì mới cập nhật text
+                if (p.username === currentUser) {
+                    document.getElementById("presenceText").innerText = formatPresence(p);
+                }
+                // (Tùy chọn) Bạn có thể cập nhật icon online/offline trong danh sách user ở đây nếu muốn
+            });
+
+            // CHỈ gọi sau khi kết nối đã sẵn sàng
+            loadUsers();
+
+        }, (error) => {
+            console.error("LỖI KẾT NỐI WS: ", error);
+            setTimeout(connect, 5000);
+        });
+    }
+
+    // 5. Khởi động ứng dụng
+    connect();
+
+    // 6. Sự kiện nút bấm
+    function sendMsg() {
+        const input = document.getElementById("msgInput");
+        if (!input.value.trim() || !currentUser) return;
+        stompClient.send("/app/chat.admin.send", {}, JSON.stringify({
+            userName: currentUser,
+            content: input.value
+        }));
+        input.value = "";
+    }
+
+    document.getElementById("sendBtn").onclick = sendMsg;
+    document.getElementById("msgInput").addEventListener("keydown", e => {
+        if (e.key === "Enter") { e.preventDefault(); sendMsg(); }
+    });
+
+    let lastTypingSent = 0;
+    document.getElementById("msgInput").addEventListener("input", () => {
+        if (!currentUser || !stompClient.connected) return;
+        const now = Date.now();
+        if (now - lastTypingSent > 1000) {
+            stompClient.send("/app/chat.typing.admin", {}, JSON.stringify({ userName: currentUser }));
+            lastTypingSent = now;
+        }
+    });
+
+    document.getElementById("imgInput").addEventListener("change", async () => {
+        const file = imgInput.files[0];
+        if (!file || !currentUser) return;
+        const fd = new FormData();
+        fd.append("file", file);
+        fd.append("userName", currentUser);
+        await fetch("/chat/upload-image", { method: "POST", body: fd });
+        imgInput.value = "";
+    });
+</script>
+</body>
+</html>

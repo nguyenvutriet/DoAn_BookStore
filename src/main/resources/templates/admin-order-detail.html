@@ -125,7 +125,11 @@
         </tr>
         </tbody>
     </table>
-
+    <div class="total-box">
+        <span class="total-label">Phí ship:</span>
+        <span class="total-amount"
+              th:text="${#numbers.formatDecimal(shipFee,0,'POINT',0,'COMMA')} + '₫'"></span>
+    </div>
     <!-- TỔNG TIỀN – đặt dưới bảng -->
     <div class="total-box">
         <span class="total-label">Tổng tiền:</span>

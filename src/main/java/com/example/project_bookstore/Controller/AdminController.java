@@ -6,7 +6,7 @@ import com.example.project_bookstore.Repository.IBooksRepository;
 import com.example.project_bookstore.Repository.ICategoryRepository;
 import com.example.project_bookstore.Repository.ICustomersRepository;
 import com.example.project_bookstore.Repository.IUsersRepository;
-import com.example.project_bookstore.Service.AdminService;
+import com.example.project_bookstore.Service.*;
 import com.example.project_bookstore.Service.BooksService;
 import com.example.project_bookstore.Service.PredictService;
 import com.example.project_bookstore.Service.UsersService;
@@ -20,6 +20,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.File;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -57,7 +58,8 @@ public class AdminController {
     @Autowired
     private PredictService predictService;
 
-
+    @Autowired
+    private PythonService pythonService;
     // DASHBOARD
     @GetMapping("/dashboard")
     public String dashboard(Model model) {
@@ -67,6 +69,13 @@ public class AdminController {
         model.addAttribute("totalCustomers", adminService.getTotalCustomers());
         model.addAttribute("totalOrders", adminService.getTotalOrders());
         model.addAttribute("totalReviews", adminService.getTotalReviews());
+
+        // Biểu đồ doanh thu 6 tháng gần nhất
+        var monthly = adminService.getMonthlyRevenue("6M");
+        model.addAttribute("months", monthly.get("labels"));
+        model.addAttribute("monthlyRevenue", monthly.get("values"));
+
+        model.addAttribute("recentBooks", adminService.getRecentSoldBooks());
 
         return "admin-dashboard";
     }
@@ -372,8 +381,20 @@ public class AdminController {
     @GetMapping("/orders/{id}")
     public String viewOrder(@PathVariable String id, Model model) {
 
-        model.addAttribute("order", adminService.getOrder(id));
-        model.addAttribute("details", adminService.getOrderDetails(id));
+        Orders order = adminService.getOrder(id);
+        List<OrderDetail> details = adminService.getOrderDetails(id);
+
+        // tính tổng tiền sách
+        BigDecimal totalBooks = details.stream()
+                .map(d -> d.getUnitPrice().multiply(BigDecimal.valueOf(d.getQuantity())))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        // phí ship = tổng thanh toán - tiền sách
+        BigDecimal shipFee = order.getTotalAmount().subtract(totalBooks);
+
+        model.addAttribute("order", order);
+        model.addAttribute("details", details);
+        model.addAttribute("shipFee", shipFee);
 
         return "admin-order-detail";
     }
@@ -462,6 +483,37 @@ public class AdminController {
         booksRepository.save(book);
 
         return "redirect:/admin/books";
+    }
+    @Autowired
+    private ChatService chatService;
+
+    // Trang chat admin
+    @GetMapping("/chat")
+    public String adminChatPage(Model model) {
+        model.addAttribute("users", chatService.allChatUsers());
+        return "dashboard-chat";
+    }
+
+    // Lấy lịch sử + MARK SEEN
+    @GetMapping("/chat/{userName}")
+    @ResponseBody
+    public List<ChatMessage> getUserMessages(@PathVariable String userName) {
+        chatService.markSeen(userName); // 🔥 đánh dấu đã đọc
+        return chatService.history(userName);
+    }
+
+    // Danh sách user (đã sort)
+    @GetMapping("/chat/users")
+    @ResponseBody
+    public List<String> getChatUsers() {
+        return chatService.allChatUsers();
+    }
+
+    // 🔴 UNREAD COUNT
+    @GetMapping("/chat/unread/{userName}")
+    @ResponseBody
+    public long unread(@PathVariable String userName) {
+        return chatService.unreadCount(userName);
     }
 
 }

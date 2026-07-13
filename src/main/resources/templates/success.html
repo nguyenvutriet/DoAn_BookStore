@@ -179,7 +179,16 @@
             <p>Ngày đặt: <span th:text="${#dates.format(order.orderDate, 'dd/MM/yyyy HH:mm')}"></span></p>
             <p>Phương thức thanh toán: <span th:text="${order.paymentMethod}"></span></p>
             <p>Địa chỉ giao hàng: <span th:text="${order.address}"></span></p>
-            <p>Tổng tiền: <span class="price" th:text="${order.totalAmount}"></span> ₫</p>
+            <p>Tổng tiền sách:
+                <span class="price" th:text="${#numbers.formatDecimal(subtotal, 0, 'POINT', 0, 'COMMA')}"></span> ₫
+            </p>
+            <p>Phí vận chuyển:
+                <span class="price" th:text="${#numbers.formatDecimal(shippingFee, 0, 'POINT', 0, 'COMMA')}"></span> ₫
+            </p>
+            <hr>
+            <p class="total">Tổng thanh toán:
+                <span class="price" th:text="${#numbers.formatDecimal(order.totalAmount, 0, 'POINT', 0, 'COMMA')}"></span> ₫
+            </p>
         </div>
 
         <!-- Bảng sản phẩm -->
@@ -201,6 +210,7 @@
             </tr>
             </tbody>
         </table>
+
 
         <a href="/home" class="back-btn">Quay lại trang chủ</a>
 

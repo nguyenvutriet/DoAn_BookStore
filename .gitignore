@@ -34,3 +34,12 @@ build/
 
 .env
 *.env
+
+target/
+classes/
+\${project.build.directory}/
+"${project.build.directory}"/
+*.class
+*.zip
+src/main/resources/application.properties
+src/main/resources/drive/service-account.json
