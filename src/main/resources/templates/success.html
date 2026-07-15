@@ -6,6 +6,14 @@
     <meta name="keywords" content="books, book store, online shop, best books">
     <meta name="description" content="Welcome to our online book store, where you can find a wide range of books for all ages and interests.">
     <title>Online Bookstore</title>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-45CLY7KFDQ"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-45CLY7KFDQ');
+    </script>
 
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap" rel="stylesheet">
 
@@ -281,7 +289,41 @@
     </div>
 </footer>
 
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    document.addEventListener('DOMContentLoaded', function () {
 
+        const orderId = /*[[${order.orderId}]]*/ '';
+        const storageKey = 'ga4_purchase_sent_' + orderId;
+
+        // Chống bắn trùng sự kiện khi người dùng F5 lại trang success
+        if (localStorage.getItem(storageKey)) {
+            return;
+        }
+
+        const items = [
+            /*[# th:each="d, iter : ${details}"]*/
+            {
+                item_id: /*[[${d.book.bookId}]]*/ '',
+                item_name: /*[[${d.book.title}]]*/ '',
+                price: /*[[${d.unitPrice}]]*/ 0,
+                quantity: /*[[${d.quantity}]]*/ 0
+            } /*[# th:unless="${iter.last}"]*/, /*[/]*/
+            /*[/]*/
+        ];
+
+        gtag('event', 'purchase', {
+            transaction_id: orderId,
+            currency: 'VND',
+            value: /*[[${order.totalAmount}]]*/ 0,
+            shipping: /*[[${shippingFee}]]*/ 0,
+            items: items
+        });
+
+        localStorage.setItem(storageKey, '1');
+    });
+    /*]]>*/
+</script>
 
 </body>
 

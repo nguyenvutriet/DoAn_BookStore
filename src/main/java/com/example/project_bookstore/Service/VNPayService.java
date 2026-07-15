@@ -54,8 +54,6 @@ public class VNPayService {
         if (orderInfo == null || orderInfo.isEmpty()) {
             orderInfo = "Thanh toan don hang #" + dto.getOrderId();
         }
-        params.put("vnp_OrderInfo", dto.getOrderInfo());
-        if (orderInfo == null) orderInfo = "Thanh toan don hang";
         params.put("vnp_OrderInfo", orderInfo);
         params.put("vnp_OrderType", orderType);
         params.put("vnp_Locale", "vn");
@@ -113,32 +111,36 @@ public class VNPayService {
     // ... các hàm khác (createPaymentUrl, v.v.)
 
     public boolean validateReturn(Map<String, String> vnpParams) {
-        // Lấy secure hash VNPay gửi về
         String vnp_SecureHash = vnpParams.get("vnp_SecureHash");
 
-        // Bỏ 2 field hash ra khỏi data dùng để ký
         Map<String, String> fields = new TreeMap<>();
         for (Map.Entry<String, String> entry : vnpParams.entrySet()) {
             String key = entry.getKey();
             String value = entry.getValue();
-            if (!"vnp_SecureHash".equals(key) && !"vnp_SecureHashType".equals(key)) {
+            if (!"vnp_SecureHash".equals(key) && !"vnp_SecureHashType".equals(key)
+                    && value != null && !value.isEmpty()) {
                 fields.put(key, value);
             }
         }
 
-        // Ghép data để ký lại
         StringBuilder hashData = new StringBuilder();
-        for (Map.Entry<String, String> entry : fields.entrySet()) {
-            if (hashData.length() > 0) {
-                hashData.append('&');
+        try {
+            for (Map.Entry<String, String> entry : fields.entrySet()) {
+                if (hashData.length() > 0) {
+                    hashData.append('&');
+                }
+                // ✅ FIX: phải encode lại value giống hệt lúc tạo payment URL
+                hashData.append(entry.getKey())
+                        .append('=')
+                        .append(URLEncoder.encode(entry.getValue(), StandardCharsets.US_ASCII.toString()));
             }
-            hashData.append(entry.getKey()).append('=').append(entry.getValue());
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+            return false;
         }
-
-        // Ký lại bằng HMAC-SHA512 với hashSecret
+        
         String signValue = hmacSHA512(vnp_HashSecret, hashData.toString());
 
-        // So sánh với chữ ký VNPay gửi về
         return signValue != null && signValue.equalsIgnoreCase(vnp_SecureHash);
     }
 

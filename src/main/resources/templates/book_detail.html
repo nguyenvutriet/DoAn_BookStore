@@ -6,6 +6,14 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>UTEBookStore</title>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-45CLY7KFDQ"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-45CLY7KFDQ');
+    </script>
 
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap" rel="stylesheet">
 
@@ -616,7 +624,17 @@
         <div class="toast-progress"></div>
     </div>
 </div>
-<script>
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    // Thông tin sách dùng chung cho GA4
+    const gaBookInfo = {
+        id: /*[[${book.bookId}]]*/ '',
+        name: /*[[${book.title}]]*/ '',
+        category: /*[[${book.category != null ? book.category.categoryName : ''}]]*/ '',
+        price: /*[[${book.price}]]*/ 0
+    };
+    /*]]>*/
+
     document.addEventListener("DOMContentLoaded", function () {
         const addCartForm = document.querySelector('form[action="/gio_hang/add"]');
         const qtyInput = document.querySelector(".qty-input");
@@ -628,14 +646,14 @@
 
             const targetUrl = addCartForm.getAttribute("action");
             const formData = new FormData(addCartForm);
+            const quantity = parseInt(formData.get("quantity")) || 1;
 
             fetch(targetUrl, {
                 method: "POST",
                 body: formData,
-                credentials: "same-origin" // quan trọng để gửi cookie phiên đăng nhập
+                credentials: "same-origin"
             })
                 .then(async (res) => {
-                    // Nếu server redirect sang /login thì KHÔNG hiện toast thành công
                     if (res.redirected && res.url.includes("/login")) {
                         window.location.href = res.url;
                         return;
@@ -646,7 +664,19 @@
                         return;
                     }
 
-                    // Thành công thật sự
+                    // ===== BẮN SỰ KIỆN GA4: add_to_cart =====
+                    gtag('event', 'add_to_cart', {
+                        currency: 'VND',
+                        value: gaBookInfo.price * quantity,
+                        items: [{
+                            item_id: gaBookInfo.id,
+                            item_name: gaBookInfo.name,
+                            item_category: gaBookInfo.category,
+                            price: gaBookInfo.price,
+                            quantity: quantity
+                        }]
+                    });
+
                     createSuccessToast("Đã thêm sách vào giỏ hàng thành công!");
 
                     if (qtyInput) qtyInput.value = "1";
@@ -699,6 +729,22 @@
     });
 </script>
 
-
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    document.addEventListener('DOMContentLoaded', function () {
+        gtag('event', 'view_item', {
+            currency: 'VND',
+            value: /*[[${book.price}]]*/ 0,
+            items: [{
+                item_id: /*[[${book.bookId}]]*/ '',
+                item_name: /*[[${book.title}]]*/ '',
+                item_category: /*[[${book.category != null ? book.category.categoryName : ''}]]*/ '',
+                price: /*[[${book.price}]]*/ 0,
+                quantity: 1
+            }]
+        });
+    });
+    /*]]>*/
+</script>
 </body>
 </html>

@@ -2,10 +2,7 @@ package com.example.project_bookstore.Controller;
 
 import com.example.project_bookstore.Entity.*;
 import com.example.project_bookstore.Repository.*;
-import com.example.project_bookstore.Service.EmailService;
-import com.example.project_bookstore.Service.FlashSaleService;
-import com.example.project_bookstore.Service.OrdersService;
-import com.example.project_bookstore.Service.VNPayService;
+import com.example.project_bookstore.Service.*;
 import com.example.project_bookstore.dto.PaymentDTO;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -29,7 +26,6 @@ import java.math.BigDecimal;
 import java.util.*;
 
 @RequiredArgsConstructor
-
 @Controller
 public class CheckoutController {
 
@@ -54,6 +50,9 @@ public class CheckoutController {
     @Autowired
     private FlashSaleService flashSaleService;
 
+    @Autowired
+    private OrderEmailService orderEmailService;
+
     private final OrdersService orderService;
     private final VNPayService vnPayService;
     private final EmailService emailService;
@@ -63,9 +62,7 @@ public class CheckoutController {
     public ResponseEntity<?> saveSelectedItems(@RequestBody List<CartSelectedItem> selectedItems,
                                                HttpSession session) {
 
-        // Lưu danh sách vào session để qua trang checkout dùng
         session.setAttribute("checkout_items", selectedItems);
-
         return ResponseEntity.ok().body("OK");
     }
 
@@ -91,11 +88,9 @@ public class CheckoutController {
             return "redirect:/gio_hang?error=item_null";
         }
 
-        // Lấy thông tin đầy đủ từ CartDetail
         List<CartDetail> cartDetails = new ArrayList<>();
         BigDecimal subtotal = BigDecimal.ZERO;
 
-        // ==== Map giá thực sự áp dụng cho từng sách (đã tính flash sale) ====
         Map<String, BigDecimal> effectivePriceMap = new HashMap<>();
 
         for (CartSelectedItem s : items) {
@@ -109,7 +104,6 @@ public class CheckoutController {
             cd.setQuantity(s.getQuantity());
             cartDetails.add(cd);
 
-            // ==== ÁP DỤNG FLASH SALE NẾU ĐANG HIỆU LỰC ====
             BigDecimal originalPrice = cd.getBook().getPrice();
             BigDecimal effectivePrice = flashSaleService.getActiveSaleForBook(s.getBookId())
                     .map(FlashSaleDetail::getSalePrice)
@@ -117,10 +111,8 @@ public class CheckoutController {
 
             effectivePriceMap.put(s.getBookId(), effectivePrice);
 
-            // ====== TÍNH SUBTOTAL (theo giá đã áp sale) ======
             BigDecimal lineTotal = effectivePrice.multiply(BigDecimal.valueOf(s.getQuantity()));
             subtotal = subtotal.add(lineTotal);
-
         }
 
         model.addAttribute("items", cartDetails);
@@ -128,8 +120,9 @@ public class CheckoutController {
         model.addAttribute("subtotal", subtotal);
         model.addAttribute("total", subtotal);
 
-        return "checkout";  // form mua hàng
+        return "checkout";
     }
+
     private String generateOrderId() {
         return orService.generateId();
     }
@@ -151,13 +144,10 @@ public class CheckoutController {
         Orders order = new Orders();
         order.setOrderId(generateOrderId());
         order.setStatus("Pending");
-        // 1. Lấy thời gian hiện tại chính xác ở múi giờ Việt Nam
-        ZonedDateTime vietnamTime = ZonedDateTime.now(ZoneId.of("Asia/Ho_Chi_Minh"));
 
-        // 2. Chuyển đổi ZonedDateTime sang Instant (UTC) rồi tạo Date
+        ZonedDateTime vietnamTime = ZonedDateTime.now(ZoneId.of("Asia/Ho_Chi_Minh"));
         Date vietnamDate = Date.from(vietnamTime.toInstant());
 
-        // THÊM NGÀY GIỜ VÀO BẢNG ORDER
         order.setOrderDate(vietnamDate);
         order.setPaymentMethod(form.getPaymentMethod());
         order.setAddress(form.getAddress());
@@ -173,7 +163,6 @@ public class CheckoutController {
             Books book = booksRepository.findById(item.getBookId()).orElse(null);
             if (book == null) continue;
 
-            // Giá thực sự áp dụng: ưu tiên flash sale nếu đang hiệu lực, nếu không lấy giá gốc
             BigDecimal realPrice = flashSaleService.getActiveSaleForBook(item.getBookId())
                     .map(FlashSaleDetail::getSalePrice)
                     .orElse(book.getPrice());
@@ -185,7 +174,7 @@ public class CheckoutController {
             detail.setOrder(order);
             detail.setBook(book);
             detail.setQuantity(item.getQuantity());
-            detail.setUnitPrice(realPrice); // ✔ giá tính lại ở server
+            detail.setUnitPrice(realPrice);
 
             details.add(detail);
 
@@ -194,65 +183,33 @@ public class CheckoutController {
             );
         }
 
-        // ===== PHÍ SHIP: lấy từ input riêng do JS tính theo khoảng cách =====
         BigDecimal shippingFee = form.getShippingFee() != null ? form.getShippingFee() : BigDecimal.ZERO;
-
-        // ===== TỔNG CUỐI CÙNG: TÍNH Ở SERVER, KHÔNG DÙNG form.getTotalAmount() =====
         BigDecimal finalTotal = recalculatedSubtotal.add(shippingFee);
 
         order.setTotalAmount(finalTotal);
-
-        // Set đầy đủ thông tin
         order.setOrderDetail_Order(details);
 
-        System.out.println(order.getOrderId()+order.getOrderDate()+ order.getAddress());
+        System.out.println(order.getOrderId() + order.getOrderDate() + order.getAddress());
 
         // Lưu order
-//        ordersRepo.save(order);
         try {
             orderService.placeOrder(order, details);
         } catch (Exception e) {
-
             if (e.getMessage() != null &&
                     e.getMessage().contains("Số lượng đặt vượt quá số lượng tồn kho")) {
                 return "redirect:/gio_hang?error=out_of_stock";
             }
-            // ❗ MỌI LỖI KHÁC → quay về checkout với lỗi chung
             return "redirect:/gio_hang?error=order_failed";
         }
 
-        // ========== GỬI EMAIL ==========
+        // ===== XÁC ĐỊNH PHƯƠNG THỨC THANH TOÁN =====
+        String pm = form.getPaymentMethod().toLowerCase();
+        boolean isVnpay = pm.contains("vnpay");
 
-        try {
-            Context context = new Context();
-
-            // Tổng tiền sản phẩm (sum(quantity * unitPrice))
-            BigDecimal totalProductAmount = order.getOrderDetail_Order()
-                    .stream()
-                    .map(d -> d.getUnitPrice()
-                            .multiply(BigDecimal.valueOf(d.getQuantity())))
-                    .reduce(BigDecimal.ZERO, BigDecimal::add);
-
-            // Phí ship = totalAmount - tổng tiền sản phẩm
-            BigDecimal emailShippingFee = order.getTotalAmount()
-                    .subtract(totalProductAmount);
-
-            context.setVariable("order", order);
-            context.setVariable("details", order.getOrderDetail_Order());
-            context.setVariable("customer", customer);
-
-            context.setVariable("totalProductAmount", totalProductAmount);
-            context.setVariable("shippingFee", emailShippingFee);
-
-            emailService.sendHtmlEmail(
-                    customer.getEmail(),
-                    "Xác nhận đơn hàng #" + order.getOrderId(),
-                    "order-email",          // file order-email.html
-                    context
-            );
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.out.println("[EMAIL] Gửi email thất bại!");
+        // ===== CHỈ GỬI EMAIL NGAY NẾU LÀ COD =====
+        // VNPay: KHÔNG gửi mail ở đây, chỉ gửi sau khi VNPayReturnController xác nhận thanh toán thành công
+        if (!isVnpay) {
+            orderEmailService.sendOrderConfirmationEmail(order, customer);
         }
 
         // Xóa cart
@@ -263,17 +220,11 @@ public class CheckoutController {
             }
         }
 
-        // ===== XỬ LÝ PHƯƠNG THỨC THANH TOÁN =====
-
-        // Nếu không phải VNPay -> COD => redirect success
-        String pm = form.getPaymentMethod().toLowerCase();
-
-        if (!pm.contains("vnpay")) {
+        if (!isVnpay) {
             return "redirect:/checkout/success?orderId=" + order.getOrderId();
         }
 
-
-        // Nếu là VNPay → tạo URL và redirect
+        // ===== VNPAY: chỉ tạo URL thanh toán, không gửi mail =====
         PaymentDTO pay = new PaymentDTO();
         pay.setAmount(finalTotal.longValue());
         pay.setOrderId(order.getOrderId());
@@ -282,14 +233,10 @@ public class CheckoutController {
         try {
             String paymentUrl = vnPayService.createPaymentUrl(pay, request);
             return "redirect:" + paymentUrl;
-
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
-            // Có thể redirect sang trang báo lỗi
             return "redirect:/checkout/failure";
         }
-
-
     }
 
 
@@ -303,9 +250,6 @@ public class CheckoutController {
             return "error";
         }
 
-        // 2. TÍNH TOÁN
-
-        // a. Tính Tổng tiền sách (Subtotal)
         BigDecimal subtotalBD = BigDecimal.ZERO;
 
         for (OrderDetail d : details) {
@@ -314,10 +258,8 @@ public class CheckoutController {
             subtotalBD = subtotalBD.add(lineTotal);
         }
 
-        // b. Tính Phí Ship bằng BigDecimal
         BigDecimal shippingFeeBD = order.getTotalAmount().subtract(subtotalBD);
 
-        // 3. Đưa dữ liệu đã tính toán vào Model
         model.addAttribute("order", order);
         model.addAttribute("details", details);
 
@@ -338,9 +280,6 @@ public class CheckoutController {
             return "error";
         }
 
-        // 2. TÍNH TOÁN
-
-        // a. Tính Tổng tiền sách (Subtotal)
         BigDecimal subtotalBD = BigDecimal.ZERO;
 
         for (OrderDetail d : details) {
@@ -349,17 +288,14 @@ public class CheckoutController {
             subtotalBD = subtotalBD.add(lineTotal);
         }
 
-        // b. Tính Phí Ship bằng BigDecimal
         BigDecimal shippingFeeBD = order.getTotalAmount().subtract(subtotalBD);
 
-        // 3. Đưa dữ liệu đã tính toán vào Model
         model.addAttribute("order", order);
         model.addAttribute("details", details);
 
         model.addAttribute("subtotal", subtotalBD.longValue());
         model.addAttribute("shippingFee", shippingFeeBD.longValue());
         model.addAttribute("totalAmount", order.getTotalAmount().longValue());
-
 
         return "fallure";
     }
