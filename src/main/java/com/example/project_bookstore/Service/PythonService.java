@@ -54,7 +54,7 @@ public class PythonService {
 
             // build command
             ProcessBuilder pb = new ProcessBuilder();
-            pb.command().add("python3");   // cấu hình PATH trước
+            pb.command().add("python");   // cấu hình PATH trước
             pb.command().add(scriptPath);
 
             for (String arg : args) {

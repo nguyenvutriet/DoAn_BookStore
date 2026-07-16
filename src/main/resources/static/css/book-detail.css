@@ -828,6 +828,33 @@ html {
     }
 }
 
+.recommend-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:20px;
+    margin-top:20px;
+}
+
+.recommend-item{
+    width:100%;
+}
+
+.recommend-item .card{
+    height:100%;
+}
+
+@media(max-width:992px){
+    .recommend-grid{
+        grid-template-columns:repeat(2,1fr);
+    }
+}
+
+@media(max-width:576px){
+    .recommend-grid{
+        grid-template-columns:1fr;
+    }
+}
+
 
 
 

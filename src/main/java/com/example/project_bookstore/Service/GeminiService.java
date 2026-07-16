@@ -88,4 +88,145 @@ public class GeminiService {
             return "Lỗi gọi API Gemini: " + e.getClass().getSimpleName() + ": " + e.getMessage();
         }
     }
+
+    public String askGemini(String prompt) {
+
+        String url =
+                "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key="
+                        + apiKey;
+
+        Map<String, Object> message = Map.of(
+                "contents", List.of(
+                        Map.of(
+                                "parts", List.of(
+                                        Map.of("text", prompt)
+                                )
+                        )
+                )
+        );
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        HttpEntity<Map<String, Object>> request =
+                new HttpEntity<>(message, headers);
+
+        try {
+
+            ResponseEntity<Map> response =
+                    restTemplate.exchange(
+                            url,
+                            HttpMethod.POST,
+                            request,
+                            Map.class
+                    );
+
+            Map<String, Object> res =
+                    response.getBody();
+
+            List candidates =
+                    (List) res.get("candidates");
+
+            if (candidates == null
+                    || candidates.isEmpty()) {
+
+                return "GENERAL";
+            }
+
+            Map firstCandidate =
+                    (Map) candidates.get(0);
+
+            Map content =
+                    (Map) firstCandidate.get("content");
+
+            List parts =
+                    (List) content.get("parts");
+
+            Map part =
+                    (Map) parts.get(0);
+
+            return part.get("text")
+                    .toString()
+                    .trim();
+
+        } catch (Exception e) {
+
+            return "GENERAL";
+        }
+    }
+
+    public String detectIntent(String userMessage) {
+
+        String prompt = """
+        Bạn là bộ phân loại ý định chatbot của nhà sách.
+        
+        Chỉ trả về DUY NHẤT một giá trị:
+        
+        CHECK_STOCK
+        BEST_SELLER
+        ORDER_STATUS
+        GENERAL
+        
+        Ví dụ:
+        
+        Tồn kho hiện tại?
+        CHECK_STOCK
+        
+        Kho còn gì?
+        CHECK_STOCK
+        
+        Có những sách nào đang bán?
+        CHECK_STOCK
+        
+        Liệt kê sách còn hàng
+        CHECK_STOCK
+        
+        Shop còn sản phẩm nào?
+        CHECK_STOCK
+        
+        Sách hot nhất?
+        BEST_SELLER
+        
+        Top sách bán chạy
+        BEST_SELLER
+        
+        Cuốn nào được mua nhiều nhất?
+        BEST_SELLER
+        
+        Đơn hàng của tôi
+        ORDER_STATUS
+        
+        Kiểm tra đơn hàng
+        ORDER_STATUS
+        
+        Tình trạng giao hàng
+        ORDER_STATUS
+        
+        Trạng thái O520
+        ORDER_STATUS
+        
+        Tác giả Clean Code là ai?
+        GENERAL
+        
+        Câu hỏi:
+        """ + userMessage;
+
+        String result = askGemini(prompt);
+
+        result = result.trim().toUpperCase();
+
+        if (result.contains("CHECK_STOCK")) {
+            return "CHECK_STOCK";
+        }
+
+        if (result.contains("BEST_SELLER")) {
+            return "BEST_SELLER";
+        }
+
+        if (result.contains("ORDER_STATUS")) {
+            return "ORDER_STATUS";
+        }
+
+        return "GENERAL";
+    }
 }

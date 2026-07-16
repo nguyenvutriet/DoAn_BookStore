@@ -393,6 +393,116 @@
     </div>
     <!--    </div> &lt;!&ndash; end book-detail &ndash;&gt;-->
 
+    <section class="books-section mb-5">
+
+        <h2 class="section-title mb-3">
+            📚 Có thể bạn cũng thích
+        </h2>
+
+        <div class="books-grid">
+
+            <div class="book-item"
+                 th:each="book : ${recommendedBooks}">
+
+                <a th:href="@{/home/books/{id}(id=${book.bookId})}"
+                   class="card h-100 text-center book-card text-decoration-none text-dark"
+                   th:classappend="${flashSaleMap[book.bookId] != null}
+                               ? ' book-card-sale'">
+
+                    <!-- BADGE SALE -->
+                    <div class="sale-corner-badge"
+                         th:if="${flashSaleMap[book.bookId] != null}">
+                        <span>SALE</span>
+                    </div>
+
+                    <div class="card-body d-flex flex-column align-items-center">
+
+                        <!-- ẢNH -->
+                        <div class="book-image mb-3">
+                            <img th:src="@{'/images/books/' + ${book.picture}}"
+                                 alt="Book Image"
+                                 style="width:150px;height:220px;object-fit:cover;">
+                        </div>
+
+                        <!-- TÊN -->
+                        <h5 class="card-title mb-2"
+                            th:text="${book.title}">
+                        </h5>
+
+                        <!-- TÁC GIẢ -->
+                        <p class="card-text mb-1 text-muted"
+                           th:text="${book.author}">
+                        </p>
+
+                        <!-- GIÁ + FLASH SALE -->
+                        <div th:with="fs=${flashSaleMap[book.bookId]}"
+                             class="w-100 mt-auto">
+
+                            <!-- ĐANG FLASH SALE -->
+                            <div th:if="${fs != null}">
+
+                                <div class="price-row"
+                                     style="display:flex;
+                                        align-items:center;
+                                        justify-content:center;
+                                        gap:0.5rem;
+                                        margin-bottom:4px;">
+
+                                <span class="original-price"
+                                      style="font-size:0.85rem;color:#6c757d;">
+
+                                    <s th:text="${#numbers.formatInteger(book.price,3,'COMMA')} + ' ₫'">
+                                    </s>
+
+                                </span>
+
+                                    <span class="sale-price text-danger"
+                                          style="font-weight:700;"
+                                          th:text="${#numbers.formatInteger(fs.salePrice,3,'COMMA')} + ' ₫'">
+                                </span>
+
+                                </div>
+
+                                <div class="sale-remaining small text-secondary">
+
+                                    🔥 Còn
+                                    <span th:text="${fs.remaining}">
+                                </span>
+
+                                    <span th:if="${currentFlashSale != null}"
+                                          class="countdown ml-1"
+                                          style="background:#ff4757;
+                                             color:#fff;
+                                             padding:1px 6px;
+                                             border-radius:4px;
+                                             font-weight:700;
+                                             font-size:11px;"
+                                          th:attr="data-end-time=${currentFlashSale.endTime}">
+                                    --:--:--
+                                </span>
+
+                                </div>
+
+                            </div>
+
+                            <!-- KHÔNG SALE -->
+                            <p th:unless="${fs != null}"
+                               class="card-text text-danger font-weight-bold mb-0"
+                               th:text="${#numbers.formatInteger(book.price,3,'COMMA')} + ' ₫'">
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </section>
+
 </main>
 
 <!-- JS tăng/giảm số lượng -->
@@ -603,7 +713,7 @@
 
                 <div class="contact-info">
                     <img src="/images/member.png" alt="member icon" class="contact-icon">
-                    <span>H.Bang, D.Ngọc, M.Quỳnh, T.Trà, V.Triết</span>
+                    <span>H.Bang, T.Tú, M.Quỳnh, T.Trà, V.Triết</span>
                 </div>
             </div>
 
@@ -634,7 +744,7 @@
     </div>
 
     <div class="footer-bottom">
-        <p>© 2025 UTE BookStore. All rights reserved.</p>
+        <p>© 2026 UTE BookStore. All rights reserved.</p>
     </div>
 </footer>
 <!-- ===== TOAST SUCCESS ===== -->
@@ -767,6 +877,47 @@
         });
     });
     /*]]>*/
+</script>
+<script>
+    (function(){
+
+        function pad(n){
+            return String(n).padStart(2,'0');
+        }
+
+        function updateCountdown(){
+
+            document.querySelectorAll('.countdown').forEach(el => {
+
+                const endTime = el.dataset.endTime;
+
+                if(!endTime) return;
+
+                const diff =
+                    new Date(endTime).getTime() - Date.now();
+
+                if(diff <= 0){
+                    el.innerText = 'Hết giờ';
+                    return;
+                }
+
+                const total = Math.floor(diff/1000);
+
+                const h = Math.floor(total/3600);
+                const m = Math.floor((total%3600)/60);
+                const s = total%60;
+
+                el.innerText =
+                    pad(h)+':' +
+                    pad(m)+':' +
+                    pad(s);
+            });
+        }
+
+        updateCountdown();
+        setInterval(updateCountdown,1000);
+
+    })();
 </script>
 </body>
 </html>

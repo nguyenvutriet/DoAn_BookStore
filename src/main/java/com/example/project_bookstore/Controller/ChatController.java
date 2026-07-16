@@ -2,6 +2,7 @@ package com.example.project_bookstore.Controller;
 
 import com.example.project_bookstore.Entity.ChatHistory;
 import com.example.project_bookstore.Repository.ChatHistoryRepository;
+import com.example.project_bookstore.Service.ChatbotService;
 import com.example.project_bookstore.Service.GeminiService;
 import com.example.project_bookstore.Service.BooksService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +16,7 @@ import java.util.Map;
 public class ChatController {
 
     @Autowired
-    private GeminiService geminiService;
+    private ChatbotService chatbotService;
 
     @Autowired
     private ChatHistoryRepository chatRepo;
@@ -44,11 +45,7 @@ public class ChatController {
         userMsg.setMessage(message);
         chatRepo.save(userMsg);
 
-        // ⭐ DÙNG CONTEXT ĐÃ CACHE (KHÔNG XÂY LẠI)
-        String bookContext = booksService.getCachedContext();
-
-        // Gọi Gemini
-        String reply = geminiService.askGeminiWithContext(message, bookContext);
+        String reply = chatbotService.ask(message);
 
         // Lưu tin bot
         ChatHistory botMsg = new ChatHistory();

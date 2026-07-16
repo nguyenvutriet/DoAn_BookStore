@@ -1,8 +1,10 @@
 package com.example.project_bookstore.Controller;
 
 import com.example.project_bookstore.Entity.Books;
+import com.example.project_bookstore.Entity.FlashSaleDetail;
 import com.example.project_bookstore.Entity.Review;
 import com.example.project_bookstore.Service.BooksService;
+import com.example.project_bookstore.Service.RecommendationService;
 import com.example.project_bookstore.Service.ReviewService;
 import com.example.project_bookstore.Service.FlashSaleService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -31,6 +33,8 @@ public class HomeController {
     private ReviewService reviewService;
     @Autowired
     private FlashSaleService flashSaleService;
+    @Autowired
+    private RecommendationService recommendationService;
 
 //    @GetMapping
 //    public String home(
@@ -162,6 +166,7 @@ public class HomeController {
 
     @GetMapping("/books/{id}")
     public String bookDetail(@PathVariable("id") String bookId, Model model) {
+
         Books book = booksService.getBookById(bookId);
 
         double avgRating = reviewService.getAverageRatingForBook(bookId);
@@ -175,8 +180,29 @@ public class HomeController {
         model.addAttribute("reviewCount", reviewCount);
         model.addAttribute("reviews", reviews);
 
-        model.addAttribute("flashSaleDetail", flashSaleService.getActiveSaleForBook(bookId).orElse(null));
-        model.addAttribute("currentFlashSale", flashSaleService.getCurrentActive().orElse(null));
+        List<Books> recommendedBooks =
+                recommendationService.recommendBooks(bookId);
+
+        model.addAttribute("recommendedBooks", recommendedBooks);
+
+        Map<String, FlashSaleDetail> flashSaleMap =
+                flashSaleService.getActiveSaleMapForBooks(
+                        recommendedBooks.stream()
+                                .map(Books::getBookId)
+                                .toList()
+                );
+
+        model.addAttribute("flashSaleMap", flashSaleMap);
+
+        model.addAttribute(
+                "flashSaleDetail",
+                flashSaleService.getActiveSaleForBook(bookId).orElse(null)
+        );
+
+        model.addAttribute(
+                "currentFlashSale",
+                flashSaleService.getCurrentActive().orElse(null)
+        );
 
         return "book_detail";
     }

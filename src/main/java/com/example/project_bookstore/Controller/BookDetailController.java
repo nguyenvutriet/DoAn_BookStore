@@ -5,10 +5,7 @@ import com.example.project_bookstore.Entity.Books;
 import com.example.project_bookstore.Entity.Customers;
 import com.example.project_bookstore.Entity.FlashSaleDetail;
 import com.example.project_bookstore.Entity.Users;
-import com.example.project_bookstore.Service.FlashSaleService;
-import com.example.project_bookstore.Service.ReviewService;
-import com.example.project_bookstore.Service.UsersService;
-import com.example.project_bookstore.Service.BooksService;
+import com.example.project_bookstore.Service.*;
 import com.example.project_bookstore.Repository.IBooksRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -40,6 +37,9 @@ public class BookDetailController {
 
     @Autowired
     private FlashSaleService flashSaleService;
+
+    @Autowired
+    private RecommendationService recommendationService;
 
     // ====== POST: Nhận form đánh giá ngay trên trang chi tiết ======
     @PostMapping("/home/books/{id}/review")

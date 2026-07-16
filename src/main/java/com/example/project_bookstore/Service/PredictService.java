@@ -38,53 +38,76 @@ public class PredictService {
     }
 
 
-    public String runPredictModel(){
-        String lastLine = "";
+    public String runPredictModel() {
 
         try {
-            String scriptPath = Paths
-                    .get("src/main/resources/static/python/predict.py")
-                    .toAbsolutePath()
-                    .toString();
+
+            String scriptPath = Paths.get(
+                    "src/main/resources/static/python/predict.py"
+            ).toAbsolutePath().toString();
+
+            System.out.println("================================");
+            System.out.println("Script: " + scriptPath);
+            System.out.println("Exists: " + new File(scriptPath).exists());
+            System.out.println("================================");
 
             ProcessBuilder pb = new ProcessBuilder(
-                    "C:/Users/MSI GF63/AppData/Local/Programs/Python/Python313/python.exe",
-                    "D:/HCMUTE_IT/HK1_2025-2026/Lap_Trinh_Web/ThucHanh/Project_BookStore/src/main/resources/static/python/predict.py"
+                    "python",
+                    scriptPath
             );
 
-            // ❌ KHÔNG gộp stderr nữa
-            // pb.redirectErrorStream(true);
-
-            // Ép Python UTF-8 cho stdout
             pb.environment().put("PYTHONIOENCODING", "utf-8");
 
             Process process = pb.start();
 
-            // ✅ CHỈ ĐỌC STDOUT (JSON)
             BufferedReader stdout = new BufferedReader(
-                    new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8)
+                    new InputStreamReader(
+                            process.getInputStream(),
+                            StandardCharsets.UTF_8
+                    )
             );
 
+            StringBuilder output = new StringBuilder();
             String line;
+
             while ((line = stdout.readLine()) != null) {
-                lastLine = line; // JSON ở dòng cuối
+                output.append(line);
             }
 
-            // 🔍 Đọc stderr để debug (KHÔNG trả về client)
             BufferedReader stderr = new BufferedReader(
-                    new InputStreamReader(process.getErrorStream())
+                    new InputStreamReader(
+                            process.getErrorStream(),
+                            StandardCharsets.UTF_8
+                    )
             );
+
+            StringBuilder error = new StringBuilder();
             String err;
+
             while ((err = stderr.readLine()) != null) {
-                System.err.println("[PYTHON ERROR] " + err);
+                error.append(err).append("\n");
             }
 
-            return lastLine.isEmpty()
-                    ? "{\"error\":\"Python returned empty output\"}"
-                    : lastLine;
+            int exitCode = process.waitFor();
+
+            System.out.println("Exit Code: " + exitCode);
+
+            if (!error.isEmpty()) {
+                System.out.println("Python Error:");
+                System.out.println(error);
+            }
+
+            if (output.isEmpty()) {
+                return "{\"error\":\"Python returned empty output\"}";
+            }
+
+            return output.toString();
 
         } catch (Exception e) {
-            return "{\"error\":\"" + e.getMessage().replace("\"", "'") + "\"}";
+            e.printStackTrace();
+            return "{\"error\":\"" +
+                    e.getMessage().replace("\"", "'")
+                    + "\"}";
         }
     }
 
