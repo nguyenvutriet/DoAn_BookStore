@@ -1,0 +1,360 @@
+/* =========================================================
+   Responsive adjustments for UTEBookStore Mobile View
+   (bản chỉnh sửa — thay thế toàn bộ khối cũ)
+   ========================================================= */
+
+/* ===== CHỐNG TRÀN NGANG TOÀN TRANG (áp dụng mọi kích thước) ===== */
+html, body {
+    max-width: 100%;
+    overflow-x: hidden;
+}
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+@media (max-width: 1024px) {
+    .books-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    }
+}
+
+@media (max-width: 991px) {
+    /* Navbar Container */
+    .navbar-container {
+        flex-direction: column;
+        align-items: center;
+        padding: 10px 0;
+        gap: 10px;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .logo img {
+        height: 50px; /* Nhỏ lại chút xíu cho gọn */
+    }
+
+    /* Menu ngang cuộn được trên mobile */
+    .navbar-menu {
+        position: relative;
+        width: 100%;
+        overflow-x: auto;
+        white-space: nowrap;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none; 
+    }
+    .navbar-menu::-webkit-scrollbar {
+        display: none; 
+    }
+
+    .navbar-menu .navbar-nav {
+        flex-direction: row !important;
+        flex-wrap: nowrap;
+        justify-content: flex-start;
+        padding: 2px 10px 8px 10px;
+        margin: 0;
+        gap: 5px;
+    }
+
+    .navbar-menu .nav-item {
+        display: inline-block;
+    }
+    .navbar-menu .nav-link {
+        font-size: 13px;
+        padding: 6px 12px;
+        border: 1px solid #e0e0e0;
+        border-radius: 20px; /* Làm nút dạng pill cho hiện đại và tiết kiệm chỗ */
+        background-color: #fff;
+        color: #388e3c !important;
+    }
+
+    /* Search bar ở header */
+    .search-bar {
+        width: 100%;
+        padding: 0 15px;
+        display: flex;
+        justify-content: center;
+        gap: 8px;
+        box-sizing: border-box;
+    }
+    
+    .search-bar input {
+        width: 100% !important; /* Ghi đè 200px cứng ở style1.css */
+        flex: 1;
+        max-width: 400px;
+    }
+
+    .search-bar button {
+        white-space: nowrap;
+        flex-shrink: 0;
+    }
+
+    /* Tùy chọn user */
+    .user-options {
+        width: 100%;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 5px;
+        padding: 0 10px;
+        box-sizing: border-box;
+    }
+    
+    /* Canh chỉnh lại user dropdown để không tràn mép màn hình */
+    .user-dropdown .user-menu {
+        right: auto;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+}
+
+@media (max-width: 768px) {
+    .books-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 15px !important;
+    }
+
+    .section-title {
+        font-size: 1.2rem !important;
+        text-align: center;
+        border-left: none !important;
+        border-bottom: 3px solid darkgreen;
+        display: inline-block;
+        padding-left: 0 !important;
+        padding-bottom: 5px;
+        margin-bottom: 16px !important;
+    }
+
+    /* Căn giữa tiêu đề section */
+    .books-section {
+        text-align: center;
+    }
+
+    /* ===== Flash Sale Banner — sửa chữ tràn viền + khoảng trắng thừa ===== */
+    .flash-banner {
+        width: calc(100% - 24px) !important;
+        max-width: 100vw;
+        border-radius: 14px;
+        margin: 12px auto;
+        box-sizing: border-box;
+        overflow: hidden; /* Chắc chắn nội dung không bị tràn ra ngoài viền bo */
+    }
+
+    .fb-track {
+        width: 100%;
+    }
+
+    .fb-slide {
+        flex-direction: column;
+        text-align: center;
+        padding: 44px 20px 36px; /* chừa chỗ trên/dưới cho badge + dots, không đụng nút mũi tên 2 bên */
+        min-height: 0; /* bỏ chiều cao cố định cũ để không dư khoảng trắng */
+        gap: 6px;
+        width: 100% !important; /* Đảm bảo nó vừa khít 100% của flash-banner */
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+    }
+
+    .fb-info {
+        padding: 0;
+        max-width: 100%;
+        width: 100%;
+    }
+
+    .fb-tag {
+        margin-left: 0;
+        font-size: 12px;
+    }
+
+    .fb-title {
+        font-size: 1.05rem;
+        line-height: 1.35;
+        padding: 0 6px; /* ✅ chống chữ sát mép trái/phải */
+        word-break: break-word;
+        margin: 4px 0 8px;
+    }
+
+    .fb-description {
+        max-width: 100%;
+        padding: 0 6px;
+    }
+
+    .fb-price-row {
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .fb-time {
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 6px;
+        padding: 0 6px;
+    }
+
+    .fb-image {
+        margin-top: 10px;
+    }
+
+    .fb-image img {
+        height: 150px;
+        width: auto;
+    }
+
+    /* Badge SALE góc trái: thu nhỏ, không đè lên chữ */
+    .fb-badge {
+        top: 10px;
+        left: 10px;
+        padding: 4px 8px;
+        transform: scale(0.9);
+        transform-origin: top left;
+    }
+
+    /* Nút mũi tên: thu nhỏ + kéo vào trong để không chồng lên bo góc banner */
+    .fb-arrow {
+        width: 30px;
+        height: 30px;
+        font-size: 16px;
+        opacity: 0.85;
+    }
+    .fb-prev { left: 6px; }
+    .fb-next { right: 6px; }
+
+    .fb-dots {
+        bottom: 8px;
+    }
+
+    .fb-cta {
+        padding: 8px 22px;
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 480px) {
+    .books-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 10px !important;
+        padding: 0 10px !important;
+    }
+
+    .book-card .card-body {
+        padding: 10px !important;
+    }
+
+    .book-card .book-image img {
+        width: 100% !important;
+        height: auto !important;
+        aspect-ratio: 2 / 3;
+        object-fit: cover;
+    }
+
+    .card-title {
+        font-size: 0.85rem !important;
+        min-height: 38px !important;
+        line-height: 1.4 !important;
+    }
+
+    .sale-price-row .sale-price-new,
+    .price-row .sale-price {
+        font-size: 14px !important;
+    }
+
+    .sale-price-row .sale-price-old,
+    .price-row .original-price {
+        font-size: 12px !important;
+    }
+
+    .card-text.text-danger.font-weight-bold {
+        font-size: 14px !important;
+    }
+
+    /* Banner: thu nhỏ thêm cho màn hình rất nhỏ */
+    .fb-slide {
+        padding: 40px 14px 30px;
+    }
+
+    .fb-title {
+        font-size: 0.95rem;
+    }
+
+    .fb-image img {
+        height: 130px;
+    }
+
+    .fb-arrow {
+        width: 26px;
+        height: 26px;
+        font-size: 14px;
+    }
+
+    /* Thu nhỏ nút CTA trong flash banner */
+    .fb-cta {
+        padding: 7px 18px;
+        font-size: 13px;
+    }
+}
+
+/* =========================================================
+   CÁC NÚT NỔI (CHAT / ROBOT / SCROLL-TOP) — nguyên nhân che
+   khuất banner trên mobile: chúng dùng position:fixed theo
+   kích thước desktop (110px), trên màn hình nhỏ banner cao
+   gần bằng viewport nên bị đè trực tiếp lên nút mũi tên và
+   ảnh sách. Thu nhỏ + giãn vị trí để không chồng nội dung.
+   ========================================================= */
+@media (max-width: 768px) {
+    /* Icon robot mở chatbot (ảnh advise.gif) — gốc 110x110px quá lớn trên mobile */
+    #openChatBotBtn {
+        width: 58px !important;
+        height: 58px !important;
+        bottom: 14px !important;
+        right: 14px !important;
+    }
+
+    /* Icon Messenger góc trái */
+    #chatLauncher {
+        width: 46px !important;
+        height: 46px !important;
+        bottom: 14px !important;
+        left: 14px !important;
+    }
+
+    /* Nút cuộn lên đầu trang — đẩy lên cao hơn để không đè lên
+       nút robot (2 nút cùng nằm góc phải, dễ chồng nhau) */
+    #scrollTopBtn {
+        width: 38px !important;
+        height: 38px !important;
+        bottom: 82px !important;
+        right: 14px !important;
+        font-size: 18px !important;
+    }
+
+    /* Khung chat popup: co theo chiều rộng màn hình, tránh tràn viền */
+    #chatPopup {
+        width: 92vw !important;
+        max-width: 360px !important;
+        left: 4vw !important;
+        right: 4vw !important;
+        bottom: 78px !important;
+    }
+
+    #chatBotContainer {
+        width: 92vw !important;
+        max-width: 360px !important;
+        right: 4vw !important;
+    }
+}
+
+@media (max-width: 480px) {
+    #openChatBotBtn {
+        width: 50px !important;
+        height: 50px !important;
+    }
+    #chatLauncher {
+        width: 42px !important;
+        height: 42px !important;
+    }
+    #scrollTopBtn {
+        width: 34px !important;
+        height: 34px !important;
+        bottom: 72px !important;
+    }
+}
