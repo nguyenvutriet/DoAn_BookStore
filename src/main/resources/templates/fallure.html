@@ -169,10 +169,9 @@
 
     <div class="success-box">
 
-        <h1>Đặt hàng thất bại!</h1>
-        <p>Cảm ơn bạn đã lựa chọn mua hàng tại <strong>UTE BookStore</strong>.</p>
+        <h1>Thanh toán thất bại!</h1>
+        <p>Đơn hàng của bạn tại <strong>UTE BookStore</strong> chưa được thanh toán thành công.</p>
 
-        <!-- Thông tin đơn hàng -->
         <div class="order-info">
             <h2>Mã đơn hàng: <span th:text="${order.orderId}"></span></h2>
             <p>Ngày đặt: <span th:text="${#dates.format(order.orderDate, 'dd/MM/yyyy HH:mm')}"></span></p>
@@ -190,7 +189,16 @@
             </p>
         </div>
 
-        <!-- Bảng sản phẩm -->
+        <!-- Nút thanh toán lại: chỉ hiện khi còn hạn thanh toán (trong vòng 24h) -->
+        <div th:if="${canRetry}" style="margin: 15px 0;">
+            <p style="color: #e74c3c; font-weight: 500;">⚠️ Đơn hàng này sẽ tự động hủy nếu không được thanh toán trong vòng 24h.</p>
+            <form th:action="@{/checkout/retry/{id}(id=${order.orderId})}" method="post">
+                <button type="submit" class="back-btn" style="border:none;cursor:pointer;">
+                    Thanh toán lại
+                </button>
+            </form>
+        </div>
+
         <table class="order-table">
             <thead>
             <tr>
@@ -213,6 +221,8 @@
         <a href="/home" class="back-btn">Quay lại trang chủ</a>
 
     </div>
+
+
 </main>
 
 <footer id="footer">

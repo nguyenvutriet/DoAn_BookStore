@@ -3,6 +3,7 @@ package com.example.project_bookstore.Entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 @Entity
@@ -17,6 +18,12 @@ public class Payment {
     @NotNull
     @Temporal(TemporalType.TIMESTAMP)
     private Date paymentTime;
+
+    @Column(name = "paymentMethod", length = 50)
+    private String paymentMethod;
+
+    @Column(name = "amount", precision = 12, scale = 0)
+    private BigDecimal amount;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(
@@ -35,25 +42,18 @@ public class Payment {
         this.order = order;
     }
 
-    public String getPaymentId() {
-        return paymentId;
-    }
-    public void setPaymentId(String paymentId) {
-        this.paymentId = paymentId;
-    }
-    public Date getPaymentTime() {
-        return paymentTime;
-    }
-    public void setPaymentTime(Date paymentTime) {
-        this.paymentTime = paymentTime;
-    }
+    public String getPaymentId() { return paymentId; }
+    public void setPaymentId(String paymentId) { this.paymentId = paymentId; }
 
+    public Date getPaymentTime() { return paymentTime; }
+    public void setPaymentTime(Date paymentTime) { this.paymentTime = paymentTime; }
 
-    //
-    public Orders getOrder() {
-        return order;
-    }
-    public void setOrder(Orders order) {
-        this.order = order;
-    }
+    public String getPaymentMethod() { return paymentMethod; }
+    public void setPaymentMethod(String paymentMethod) { this.paymentMethod = paymentMethod; }
+
+    public BigDecimal getAmount() { return amount; }
+    public void setAmount(BigDecimal amount) { this.amount = amount; }
+
+    public Orders getOrder() { return order; }
+    public void setOrder(Orders order) { this.order = order; }
 }

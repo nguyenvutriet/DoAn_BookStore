@@ -5,6 +5,7 @@ import com.example.project_bookstore.Entity.Orders;
 import com.example.project_bookstore.Entity.Users;
 import com.example.project_bookstore.Service.CustomersService;
 import com.example.project_bookstore.Service.OrdersService;
+import com.example.project_bookstore.Service.PaymentService;
 import com.example.project_bookstore.Service.UsersService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -144,9 +145,17 @@ public class UserController {
 
     }
 
+    @Autowired
+    private PaymentService paymentService;
+
     @PostMapping("/order/{id}/received")
     public String recivedOrder(@PathVariable("id") String orderId){
+        Orders order = ordersService.getOrderById(orderId);
         ordersService.updateStatus(orderId, "Delivered");
+
+        if (order != null && !ordersService.isVnpayOrder(order)) {
+            paymentService.saveCodPayment(order);
+        }
         return "redirect:/user/myOrder";
     }
 

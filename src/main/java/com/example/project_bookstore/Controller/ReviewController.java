@@ -195,9 +195,16 @@ public class ReviewController {
             return "redirect:/user/myOrder";
         }
 
+        // Tự động hủy nếu đơn VNPay đã quá 5 phút mà chưa thanh toán lại
+        orderService.expireIfNeeded(order);
+
         // Đẩy order sang view
         model.addAttribute("order", order);
 
-        return "review/order_detail";   // file HTML bạn tạo: order_detail.html
+        // Cho template biết có hiện nút "Thanh toán lại" không, và còn bao nhiêu giây
+        model.addAttribute("canRetry", orderService.canRetryPayment(order));
+        model.addAttribute("remainingSeconds", orderService.getRemainingSeconds(order));
+
+        return "review/order_detail";
     }
 }

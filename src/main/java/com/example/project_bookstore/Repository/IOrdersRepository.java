@@ -111,5 +111,6 @@ public interface IOrdersRepository extends JpaRepository<Orders, String> {
           AND o.status = :status
     """)
     public List<Orders> findByCustomerIdAndStatus(String customerId, String status);
+
 }
 

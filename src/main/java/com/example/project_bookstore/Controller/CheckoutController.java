@@ -57,6 +57,9 @@ public class CheckoutController {
     private final VNPayService vnPayService;
     private final EmailService emailService;
 
+    @Autowired
+    private PaymentService paymentService;
+
 
     @PostMapping("/checkout")
     public ResponseEntity<?> saveSelectedItems(@RequestBody List<CartSelectedItem> selectedItems,
@@ -270,6 +273,37 @@ public class CheckoutController {
         return "success";
     }
 
+
+
+
+
+    // ===== Thanh toán lại đơn VNPay còn trong hạn 5 phút =====
+    @PostMapping("/checkout/retry/{orderId}")
+    public String retryPayment(@PathVariable String orderId, HttpServletRequest request) {
+
+        Orders order = ordersRepo.findById(orderId).orElse(null);
+        if (order == null) return "redirect:/user/myOrder";
+
+        orService.expireIfNeeded(order);
+
+        if (!orService.canRetryPayment(order)) {
+            return "redirect:/checkout/fallure?orderId=" + orderId + "&error=expired";
+        }
+
+        PaymentDTO pay = new PaymentDTO();
+        pay.setAmount(order.getTotalAmount().longValue());
+        pay.setOrderId(order.getOrderId());
+        pay.setOrderInfo("Thanh toan lai don hang #" + order.getOrderId());
+
+        try {
+            String paymentUrl = vnPayService.createPaymentUrl(pay, request);
+            return "redirect:" + paymentUrl;
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+            return "redirect:/checkout/fallure?orderId=" + orderId;
+        }
+    }
+
     @GetMapping("/checkout/fallure")
     public String fallure(@RequestParam("orderId") String orderId, Model model) {
 
@@ -280,22 +314,24 @@ public class CheckoutController {
             return "error";
         }
 
-        BigDecimal subtotalBD = BigDecimal.ZERO;
+        orService.expireIfNeeded(order); // đơn có thể vừa quá hạn khi load trang này
 
+        BigDecimal subtotalBD = BigDecimal.ZERO;
         for (OrderDetail d : details) {
             BigDecimal quantityBD = BigDecimal.valueOf(d.getQuantity());
-            BigDecimal lineTotal = d.getUnitPrice().multiply(quantityBD);
-            subtotalBD = subtotalBD.add(lineTotal);
+            subtotalBD = subtotalBD.add(d.getUnitPrice().multiply(quantityBD));
         }
-
         BigDecimal shippingFeeBD = order.getTotalAmount().subtract(subtotalBD);
 
         model.addAttribute("order", order);
         model.addAttribute("details", details);
-
         model.addAttribute("subtotal", subtotalBD.longValue());
         model.addAttribute("shippingFee", shippingFeeBD.longValue());
         model.addAttribute("totalAmount", order.getTotalAmount().longValue());
+
+        // Mới: cho template biết còn được thanh toán lại không
+        model.addAttribute("canRetry", orService.canRetryPayment(order));
+        model.addAttribute("remainingSeconds", orService.getRemainingSeconds(order));
 
         return "fallure";
     }

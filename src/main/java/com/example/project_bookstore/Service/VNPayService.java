@@ -5,6 +5,7 @@ import com.example.project_bookstore.dto.PaymentDTO;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.io.UnsupportedEncodingException;
@@ -163,6 +164,61 @@ public class VNPayService {
             e.printStackTrace();
             return null;
         }
+    }
+
+    // Thêm vào VNPayService
+
+    @Value("${vnpay.queryUrl}") // https://sandbox.vnpay.vn/merchant_webapi/api/transaction
+    private String queryUrl;
+
+    /**
+     * Gọi API querydr của VNPay để hỏi lại trạng thái giao dịch thật sự.
+     * Dùng khi: đơn đang Pending gần hết hạn 5p nhưng chưa nhận được return/IPN
+     * -> tránh hủy nhầm đơn đã bị trừ tiền nhưng mất kết nối lúc redirect về.
+     */
+    public Map<String, String> queryTransaction(String orderId, Date orderDate) throws Exception {
+
+        String vnp_RequestId = String.valueOf(System.currentTimeMillis());
+        String vnp_Version = "2.1.0";
+        String vnp_Command = "querydr";
+        String vnp_TxnRef = orderId;
+        String vnp_OrderInfo = "Truy van GD ma don hang: " + orderId;
+
+        TimeZone vnTz = TimeZone.getTimeZone("Asia/Ho_Chi_Minh");
+        SimpleDateFormat fmt = new SimpleDateFormat("yyyyMMddHHmmss");
+        fmt.setTimeZone(vnTz);
+
+        String vnp_TransDate = fmt.format(orderDate);
+        Calendar cal = Calendar.getInstance(vnTz);
+        String vnp_CreateDate = fmt.format(cal.getTime());
+        String vnp_IpAddr = "127.0.0.1";
+
+        String hashData = String.join("|",
+                vnp_RequestId, vnp_Version, vnp_Command, tmnCode,
+                vnp_TxnRef, vnp_TransDate, vnp_CreateDate, vnp_IpAddr, vnp_OrderInfo);
+
+        String secureHash = VNPayUtils.hmacSHA512(hashSecret, hashData);
+
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("vnp_RequestId", vnp_RequestId);
+        body.put("vnp_Version", vnp_Version);
+        body.put("vnp_Command", vnp_Command);
+        body.put("vnp_TmnCode", tmnCode);
+        body.put("vnp_TxnRef", vnp_TxnRef);
+        body.put("vnp_OrderInfo", vnp_OrderInfo);
+        body.put("vnp_TransDate", vnp_TransDate);
+        body.put("vnp_CreateDate", vnp_CreateDate);
+        body.put("vnp_IpAddr", vnp_IpAddr);
+        body.put("vnp_SecureHash", secureHash);
+
+        org.springframework.web.client.RestTemplate rt = new org.springframework.web.client.RestTemplate();
+        ResponseEntity<Map> resp = rt.postForEntity(queryUrl, body, Map.class);
+
+        Map<String, String> result = new HashMap<>();
+        if (resp.getBody() != null) {
+            resp.getBody().forEach((k, v) -> result.put(String.valueOf(k), String.valueOf(v)));
+        }
+        return result;
     }
 
 
