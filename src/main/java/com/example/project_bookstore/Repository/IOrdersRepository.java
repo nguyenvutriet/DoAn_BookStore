@@ -112,5 +112,25 @@ public interface IOrdersRepository extends JpaRepository<Orders, String> {
     """)
     public List<Orders> findByCustomerIdAndStatus(String customerId, String status);
 
+    //Đặt quá nhiều đơn trong ngày
+    @Query("""
+        SELECT COUNT(o)
+        FROM Orders o
+        WHERE o.customer.customerId = :customerId
+        AND o.orderDate >= :fromDate
+    """)
+        long countOrdersToday(
+                @Param("customerId") String customerId,
+                @Param("fromDate") Date fromDate);
+
+    long countByDeviceFingerprint(String deviceFingerprint);
+
+    @Query("""
+        SELECT COUNT(DISTINCT o.customer.customerId)
+        FROM Orders o
+        WHERE o.deviceFingerprint = :fingerprint
+    """)
+    long countDistinctCustomersByFingerprint(
+            @Param("fingerprint") String fingerprint);
 }
 

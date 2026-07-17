@@ -43,6 +43,12 @@ public class Orders {
     @Column(name = "device_fingerprint", length = 255)
     private String deviceFingerprint;
 
+    @Column(name = "fraud_flag")
+    private Boolean fraudFlag = false;
+
+    @Column(name = "fraud_reason", length = 500)
+    private String fraudReason;
+
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<OrderDetail> orderDetail_Order = new ArrayList<>();
 
@@ -134,5 +140,21 @@ public class Orders {
 
     public void setDeviceFingerprint(String deviceFingerprint) {
         this.deviceFingerprint = deviceFingerprint;
+    }
+
+    public Boolean getFraudFlag() {
+        return fraudFlag;
+    }
+
+    public void setFraudFlag(Boolean fraudFlag) {
+        this.fraudFlag = fraudFlag;
+    }
+
+    public String getFraudReason() {
+        return fraudReason;
+    }
+
+    public void setFraudReason(String fraudReason) {
+        this.fraudReason = fraudReason;
     }
 }

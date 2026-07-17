@@ -74,6 +74,20 @@
             <label>Device Fingerprint</label>
             <input type="text" th:value="${order.deviceFingerprint}" disabled>
         </div>
+
+        <div class="detail-item">
+            <label>Đơn hàng bất thường</label>
+            <input type="text"
+                   th:value="${order.fraudFlag ? 'Có' : 'Không'}"
+                   disabled>
+        </div>
+
+        <div class="detail-item">
+            <label>Lý do cảnh báo</label>
+            <input type="text"
+                   th:value="${order.fraudReason}"
+                   disabled>
+        </div>
     </div>
 
 

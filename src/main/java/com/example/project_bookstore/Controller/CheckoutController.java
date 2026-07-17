@@ -174,6 +174,54 @@ public class CheckoutController {
         order.setAddress(form.getAddress());
         order.setCustomer(customer);
         order.setDeviceFingerprint(fingerprint);
+        boolean suspicious = false;
+        String reason = "";
+
+        Calendar cal = Calendar.getInstance();
+
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);
+
+        Date startOfDay = cal.getTime();
+
+        long orderCountToday =
+                ordersRepo.countOrdersToday(
+                        customer.getCustomerId(),
+                        startOfDay);
+
+        long fingerprintOrderCount = 0;
+
+        if (fingerprint != null && !fingerprint.isBlank()) {
+            fingerprintOrderCount =
+                    ordersRepo.countByDeviceFingerprint(
+                            fingerprint);
+        }
+
+        if (fingerprintOrderCount >= 5) {
+            suspicious = true;
+            reason += "Thiết bị đã tạo trên 5 đơn hàng; ";
+        }
+
+        long customerCount = 0;
+
+        if (fingerprint != null && !fingerprint.isBlank()) {
+            customerCount =
+                    ordersRepo
+                            .countDistinctCustomersByFingerprint(
+                                    fingerprint);
+        }
+
+        if (customerCount >= 3) {
+            suspicious = true;
+            reason += "Có từ 3 tài khoản trở lên sử dụng cùng thiết bị; ";
+        }
+
+        if (orderCountToday >= 5) {
+            suspicious = true;
+            reason += "Khách đã đặt trên 5 đơn trong ngày; ";
+        }
 
         List<OrderDetail> details = new ArrayList<>();
 
@@ -207,6 +255,24 @@ public class CheckoutController {
 
         BigDecimal shippingFee = form.getShippingFee() != null ? form.getShippingFee() : BigDecimal.ZERO;
         BigDecimal finalTotal = recalculatedSubtotal.add(shippingFee);
+        if (finalTotal.compareTo(BigDecimal.valueOf(5000000)) > 0) {
+            suspicious = true;
+            reason += "Đơn hàng có giá trị lớn (> 5 triệu); ";
+        }
+
+        int totalQuantity = 0;
+
+        for (CartSelectedItem item : form.getItems()) {
+            totalQuantity += item.getQuantity();
+        }
+
+        if (totalQuantity >= 20) {
+            suspicious = true;
+            reason += "Số lượng sách trong đơn quá lớn (>=20); ";
+        }
+
+        order.setFraudFlag(suspicious);
+        order.setFraudReason(reason);
 
         order.setTotalAmount(finalTotal);
         order.setOrderDetail_Order(details);
