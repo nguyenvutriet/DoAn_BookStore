@@ -43,6 +43,8 @@ public class CheckoutController {
     private ICartRepository cartRepo;
     @Autowired
     private IBooksRepository booksRepository;
+    @Autowired
+    private CaptchaService captchaService;
 
     @Autowired
     private OrdersService orService;
@@ -62,11 +64,16 @@ public class CheckoutController {
 
 
     @PostMapping("/checkout")
-    public ResponseEntity<?> saveSelectedItems(@RequestBody List<CartSelectedItem> selectedItems,
-                                               HttpSession session) {
+    public ResponseEntity<?> saveSelectedItems(
+            @RequestBody List<CartSelectedItem> selectedItems,
+            HttpSession session) {
+
+        System.out.println("SAVE CHECKOUT");
+        System.out.println(selectedItems);
 
         session.setAttribute("checkout_items", selectedItems);
-        return ResponseEntity.ok().body("OK");
+
+        return ResponseEntity.ok("OK");
     }
 
     @GetMapping("/checkout")
@@ -132,14 +139,25 @@ public class CheckoutController {
 
 
     @PostMapping("/checkout/submit")
-    public String submitOrder(@ModelAttribute OrderForm form,
-                              HttpSession session,
-                              HttpServletRequest request,
-                              @AuthenticationPrincipal UserDetails userDetails) {
+    public String submitOrder(
+            @ModelAttribute OrderForm form,
+            @RequestParam("g-recaptcha-response")
+            String captchaToken,
+            @RequestParam(required = false)
+            String fingerprint,
+            HttpSession session,
+            HttpServletRequest request,
+            @AuthenticationPrincipal UserDetails userDetails) {
 
         String username = userDetails.getUsername();
         Users user = usersRepository.findById(username).orElse(null);
         if (user == null) return "redirect:/login";
+
+        if (!captchaService.verify(captchaToken)) {
+            return "redirect:/checkout?captchaError";
+        }
+
+        System.out.println("Fingerprint = " + fingerprint);
 
         Customers customer = user.getCustomer();
 

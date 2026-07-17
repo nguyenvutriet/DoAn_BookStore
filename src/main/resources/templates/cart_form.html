@@ -486,11 +486,26 @@
         // Gửi danh sách qua POST để chuyển sang form thanh toán
         fetch("/checkout", {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            headers: {
+                "Content-Type": "application/json"
+            },
             body: JSON.stringify(items)
         })
-            .then(res => window.location.href = "/checkout")
-            .catch(err => console.error(err));
+            .then(res => {
+
+                if (!res.ok) {
+                    throw new Error("Checkout save failed");
+                }
+
+                return res.text();
+            })
+            .then(() => {
+                window.location.href = "/checkout";
+            })
+            .catch(err => {
+                console.error(err);
+                alert("Không thể chuyển sang trang thanh toán");
+            });
 
     });
 </script>

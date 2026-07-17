@@ -44,6 +44,7 @@
 
     <!-- Responsive CSS -->
     <link rel="stylesheet" type="text/css" href="/css/responsive.css">
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 </head>
 
 <body>
@@ -177,6 +178,9 @@
 
     <!-- 🔥 FORM BẮT BUỘC -->
     <form id="checkoutForm" method="post" action="/checkout/submit">
+        <input type="hidden"
+               name="fingerprint"
+               id="fingerprint">
 
         <div class="checkout-container">
 
@@ -298,7 +302,21 @@
                     <input type="hidden" id="totalInput" name="totalAmount" value="">
 
                     <!-- 🔥 BUTTON PHẢI NẰM TRONG FORM -->
-                    <button type="submit" class="checkout-btn" id="orderBtn" disabled>
+                    <div class="g-recaptcha"
+                         data-sitekey="6Leol1gtAAAAAO9kfOlx-fom4scIKy9uuwZSM6gl">
+                    </div>
+
+                    <div th:if="${param.captchaError}"
+                         class="alert alert-danger mt-2">
+                        ⚠️ Vui lòng xác nhận "Tôi không phải người máy" trước khi đặt hàng.
+                    </div>
+
+                    <br>
+
+                    <button type="submit"
+                            class="checkout-btn"
+                            id="orderBtn"
+                            disabled>
                         Xác nhận đặt hàng
                     </button>
                     <div id="toastContainer">
@@ -381,6 +399,16 @@
 
         const form = document.getElementById("checkoutForm");
         form.addEventListener("submit", function (e) {
+
+            const captchaResponse = grecaptcha.getResponse();
+
+            if (!captchaResponse) {
+                e.preventDefault();
+
+                alert("Vui lòng xác nhận CAPTCHA trước khi đặt hàng.");
+
+                return;
+            }
 
             const finalAddressEl = document.getElementById("finalAddress");
             const errorEl = document.getElementById("addressError");
@@ -713,6 +741,18 @@
         });
     });
     /*]]>*/
+</script>
+<script>
+    document.getElementById("fingerprint").value =
+        navigator.userAgent +
+        "|" +
+        screen.width +
+        "x" +
+        screen.height +
+        "|" +
+        Intl.DateTimeFormat()
+            .resolvedOptions()
+            .timeZone;
 </script>
 </body>
 </html>
