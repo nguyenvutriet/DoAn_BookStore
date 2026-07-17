@@ -15,25 +15,25 @@
         gtag('js', new Date());
         gtag('config', 'G-45CLY7KFDQ');
     </script>
-    
+
     <!-- Schema.org for Product -->
     <script type="application/ld+json" th:inline="javascript">
         {
-          "@context": "https://schema.org/",
-          "@type": "Product",
-          "name": /*[[${book.title}]]*/ "Tên sách",
-          "image": /*[[@{'/images/books/' + ${book.picture}}]]*/ "/images/default.png",
-          "description": /*[[${book.description}]]*/ "Mô tả",
-          "brand": {
-            "@type": "Brand",
-            "name": /*[[${book.author}]]*/ "Tác giả"
-          },
-          "offers": {
-            "@type": "Offer",
-            "priceCurrency": "VND",
-            "price": /*[[${flashSaleDetail != null ? flashSaleDetail.salePrice : book.price}]]*/ "0",
-            "availability": "https://schema.org/InStock"
-          }
+            "@context": "https://schema.org/",
+            "@type": "Product",
+            "name": /*[[${book.title}]]*/ "Tên sách",
+            "image": /*[[@{'/images/books/' + ${book.picture}}]]*/ "/images/default.png",
+            "description": /*[[${book.description}]]*/ "Mô tả",
+            "brand": {
+                "@type": "Brand",
+                "name": /*[[${book.author}]]*/ "Tác giả"
+            },
+            "offers": {
+                "@type": "Offer",
+                "priceCurrency": "VND",
+                "price": /*[[${flashSaleDetail != null ? flashSaleDetail.salePrice : book.price}]]*/ "0",
+                "availability": "https://schema.org/InStock"
+            }
         }
     </script>
 
@@ -237,8 +237,102 @@
                     <div th:if="${fs != null}">
                         <p class="original-price text-muted"><s th:text="${#numbers.formatDecimal(book.price,0,'COMMA',0,'POINT')} + ' đ'">0 đ</s></p>
                         <p class="current-price text-danger" th:text="${#numbers.formatDecimal(fs.salePrice,0,'COMMA',0,'POINT')} + ' đ'">0 đ</p>
-                        <p class="small text-secondary">Còn <span th:text="${fs.remaining}">0</span>
-                            <span class="countdown" th:if="${currentFlashSale != null}" th:attr="data-end-time=${currentFlashSale.endTime}">--:--:--</span></p>
+                        <p class="small text-secondary mb-1">Số lượng còn lại: <span th:text="${fs.remaining}" class="font-weight-bold text-dark">0</span></p>
+
+                        <!-- Beautiful Flash Sale Badge -->
+                        <div class="flash-sale-banner" th:if="${currentFlashSale != null}" style="margin-top: 15px; margin-bottom: 20px;">
+                            <style>
+                                @keyframes flashSaleHeartbeat {
+                                    0% { transform: scale(1); }
+                                    14% { transform: scale(1.3); }
+                                    28% { transform: scale(1); }
+                                    42% { transform: scale(1.3); }
+                                    70% { transform: scale(1); }
+                                }
+                                .premium-fs-banner {
+                                    display: flex;
+                                    flex-direction: column;
+                                    align-items: flex-start;
+                                    width: fit-content;
+                                    max-width: 100%;
+                                    padding: 12px 20px;
+                                    border-radius: 8px;
+                                    background: linear-gradient(135deg, #ff4757 0%, #ff6b81 100%);
+                                    box-shadow: 0 5px 15px rgba(255, 71, 87, 0.35);
+                                    border-left: 5px solid #ff2a3f;
+                                    color: white;
+                                }
+                                .premium-fs-left {
+                                    display: flex;
+                                    align-items: center;
+                                    margin-bottom: 10px;
+                                }
+                                .premium-fs-icon {
+                                    font-size: 1.5rem;
+                                    color: #ffc107; /* text-warning */
+                                    animation: flashSaleHeartbeat 2s infinite;
+                                    margin-right: 10px;
+                                }
+                                .premium-fs-title {
+                                    font-weight: 700;
+                                    font-size: 1.25rem;
+                                    letter-spacing: 0.5px;
+                                    text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+                                    margin: 0;
+                                }
+                                .premium-fs-right {
+                                    display: flex;
+                                    align-items: center;
+                                    flex-wrap: wrap;
+                                }
+                                .premium-fs-text {
+                                    font-weight: 700;
+                                    font-size: 0.95rem;
+                                    text-transform: uppercase;
+                                    margin-right: 12px;
+                                }
+                                .premium-fs-time-container {
+                                    display: flex;
+                                    align-items: center;
+                                    margin-top: 2px;
+                                }
+                                .premium-fs-box {
+                                    display: flex;
+                                    align-items: center;
+                                    justify-content: center;
+                                    background-color: white;
+                                    color: #dc3545; /* text-danger */
+                                    font-weight: 700;
+                                    border-radius: 4px;
+                                    width: 36px;
+                                    height: 36px;
+                                    font-size: 1.1rem;
+                                    line-height: 1;
+                                    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                                }
+                                .premium-fs-colon {
+                                    font-weight: 700;
+                                    font-size: 1.2rem;
+                                    margin: 0 5px;
+                                }
+                            </style>
+                            <div class="premium-fs-banner">
+                                <div class="premium-fs-left">
+                                    <i class="fa fa-bolt premium-fs-icon"></i>
+                                    <span class="premium-fs-title">FLASH SALE</span>
+                                </div>
+                                <div class="fs-countdown-wrapper premium-fs-right" th:attr="data-end-time=${currentFlashSale.endTime}">
+                                    <span class="premium-fs-text">Kết thúc trong</span>
+                                    <div class="premium-fs-time-container">
+                                        <div class="premium-fs-box fs-hours">00</div>
+                                        <span class="premium-fs-colon">:</span>
+                                        <div class="premium-fs-box fs-mins">00</div>
+                                        <span class="premium-fs-colon">:</span>
+                                        <div class="premium-fs-box fs-secs">00</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     <div th:unless="${fs != null}">
                         <span class="current-price" th:text="${#numbers.formatDecimal(book.price,0,'COMMA',0,'POINT')} + ' đ'">0 đ</span>
@@ -254,7 +348,7 @@
 
                 <!-- Replaced single button with two equal-sized action buttons -->
                 <div class="button-group mt-3">
-<!--                    <button type="button" class="btn-add-cart">MUA NGAY</button>-->
+                    <!--                    <button type="button" class="btn-add-cart">MUA NGAY</button>-->
                     <form th:action="@{/checkout/fast-buy}" method="post" style="flex: 1;">
                         <input type="hidden" name="bookId" th:value="${book.bookId}">
                         <input type="hidden" name="quantity" class="hidden-qty" value="1">
@@ -887,30 +981,46 @@
 
         function updateCountdown(){
 
+            // Update basic text countdowns
             document.querySelectorAll('.countdown').forEach(el => {
-
                 const endTime = el.dataset.endTime;
-
                 if(!endTime) return;
-
-                const diff =
-                    new Date(endTime).getTime() - Date.now();
-
+                const diff = new Date(endTime).getTime() - Date.now();
                 if(diff <= 0){
                     el.innerText = 'Hết giờ';
                     return;
                 }
-
                 const total = Math.floor(diff/1000);
+                const h = Math.floor(total/3600);
+                const m = Math.floor((total%3600)/60);
+                const s = total%60;
+                el.innerText = pad(h)+':' + pad(m)+':' + pad(s);
+            });
 
+            // Update prominent flash sale countdowns
+            document.querySelectorAll('.fs-countdown-wrapper').forEach(el => {
+                const endTime = el.dataset.endTime;
+                if(!endTime) return;
+                const diff = new Date(endTime).getTime() - Date.now();
+
+                const hEl = el.querySelector('.fs-hours');
+                const mEl = el.querySelector('.fs-mins');
+                const sEl = el.querySelector('.fs-secs');
+
+                if(diff <= 0){
+                    if(hEl) hEl.innerText = '00';
+                    if(mEl) mEl.innerText = '00';
+                    if(sEl) sEl.innerText = '00';
+                    return;
+                }
+                const total = Math.floor(diff/1000);
                 const h = Math.floor(total/3600);
                 const m = Math.floor((total%3600)/60);
                 const s = total%60;
 
-                el.innerText =
-                    pad(h)+':' +
-                    pad(m)+':' +
-                    pad(s);
+                if(hEl) hEl.innerText = pad(h);
+                if(mEl) mEl.innerText = pad(m);
+                if(sEl) sEl.innerText = pad(s);
             });
         }
 
