@@ -173,6 +173,7 @@ public class CheckoutController {
         order.setPaymentMethod(form.getPaymentMethod());
         order.setAddress(form.getAddress());
         order.setCustomer(customer);
+        order.setDeviceFingerprint(fingerprint);
 
         List<OrderDetail> details = new ArrayList<>();
 

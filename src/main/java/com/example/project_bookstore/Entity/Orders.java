@@ -40,6 +40,9 @@ public class Orders {
     @NotNull
     private String status;
 
+    @Column(name = "device_fingerprint", length = 255)
+    private String deviceFingerprint;
+
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<OrderDetail> orderDetail_Order = new ArrayList<>();
 
@@ -125,4 +128,11 @@ public class Orders {
         this.customer = customer;
     }
 
+    public String getDeviceFingerprint() {
+        return deviceFingerprint;
+    }
+
+    public void setDeviceFingerprint(String deviceFingerprint) {
+        this.deviceFingerprint = deviceFingerprint;
+    }
 }
