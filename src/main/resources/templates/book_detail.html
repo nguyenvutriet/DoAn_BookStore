@@ -619,24 +619,24 @@
 
 <!-- JS tăng/giảm số lượng -->
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const qtyInput = document.querySelector('.qty-input');
-        const hiddenQty = document.querySelector('.hidden-qty');
-        document.querySelectorAll('.qty-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                let val = parseInt(qtyInput.value);
-                if (btn.textContent === '+') val++;
-                if (btn.textContent === '-') val = Math.max(1, val - 1);
-                qtyInput.value = val;
-                hiddenQty.value = val;
-            });
-        });
-        qtyInput.addEventListener('input', () => {
-            let val = parseInt(qtyInput.value) || 1;
-            qtyInput.value = val;
-            hiddenQty.value = val;
-        });
-    });
+    // document.addEventListener('DOMContentLoaded', function () {
+    //     const qtyInput = document.querySelector('.qty-input');
+    //     const hiddenQty = document.querySelector('.hidden-qty');
+    //     document.querySelectorAll('.qty-btn').forEach(btn => {
+    //         btn.addEventListener('click', () => {
+    //             let val = parseInt(qtyInput.value);
+    //             if (btn.textContent === '+') val++;
+    //             if (btn.textContent === '-') val = Math.max(1, val - 1);
+    //             qtyInput.value = val;
+    //             hiddenQty.value = val;
+    //         });
+    //     });
+    //     qtyInput.addEventListener('input', () => {
+    //         let val = parseInt(qtyInput.value) || 1;
+    //         qtyInput.value = val;
+    //         hiddenQty.value = val;
+    //     });
+    // });
 
     document.addEventListener('DOMContentLoaded', function () {
 

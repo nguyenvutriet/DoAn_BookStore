@@ -97,9 +97,9 @@ public class OrdersService {
         if (order == null) return;
 
         // Idempotency: nếu đã Confirmed hoặc đã có Payment rồi thì không xử lý lại
-        if ("Confirmed".equals(order.getStatus())) return;
+        if ("Pending".equals(order.getStatus())) return;
 
-        order.setStatus("Confirmed");
+        order.setStatus("Pending");
         repo.save(order);
         paymentService.saveVnpayPayment(order); // bên trong đã check findByOrder_OrderId trước khi save
     }
