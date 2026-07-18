@@ -37,6 +37,9 @@ public class Books {
     @Column(name = "description", length = 20000)
     private String description;
 
+    @Column(name = "aiSummary", columnDefinition = "TEXT")
+    private String aiSummary;
+
     @Column(name = "price", precision = 12, scale = 0)
     @NotNull
     @Min(0)
@@ -164,4 +167,11 @@ public class Books {
         this.category = category;
     }
 
+    public String getAiSummary() {
+        return aiSummary;
+    }
+
+    public void setAiSummary(String aiSummary) {
+        this.aiSummary = aiSummary;
+    }
 }

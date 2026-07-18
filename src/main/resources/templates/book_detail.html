@@ -429,6 +429,24 @@
             </div>
         </div>
 
+        <div class="ai-summary-card"
+             th:if="${book.aiSummary != null and !#strings.isEmpty(book.aiSummary)}">
+
+            <div class="ai-summary-header">
+                <div class="ai-icon">🤖</div>
+
+                <div>
+                    <h5>AI tổng hợp đánh giá</h5>
+                    <span>Dựa trên ý kiến của khách hàng</span>
+                </div>
+            </div>
+
+            <div class="ai-summary-content"
+                 th:text="${book.aiSummary}">
+            </div>
+
+        </div>
+
         <!-- Log đánh giá -->
         <div class="row w-100 mt-4">
             <div class="col-12">

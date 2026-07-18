@@ -5,11 +5,7 @@ import com.example.project_bookstore.Entity.OrderDetail;
 import com.example.project_bookstore.Entity.Orders;
 import com.example.project_bookstore.Entity.Review;
 import com.example.project_bookstore.Entity.Users;
-import com.example.project_bookstore.Service.BooksService;
-import com.example.project_bookstore.Service.CustomersService;
-import com.example.project_bookstore.Service.OrdersService;
-import com.example.project_bookstore.Service.ReviewService;
-import com.example.project_bookstore.Service.UsersService;
+import com.example.project_bookstore.Service.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -39,6 +35,9 @@ public class ReviewController {
 
     @Autowired
     private CustomersService customersService;
+
+    @Autowired
+    private ReviewSummaryService reviewSummaryService;
 
     @Autowired
     private BooksService booksService;
@@ -158,6 +157,8 @@ public class ReviewController {
             // Tạo mới
             reviewService.createReview(bookId, form.getRating(), form.getComment(), customer);
 
+            reviewSummaryService.updateBookSummary(bookId);
+
             return "redirect:/review/order/" + orderId + "?success=" + encodedBookId;
 
         } else {
@@ -166,6 +167,8 @@ public class ReviewController {
             existing.setComment(form.getComment());
             existing.setCreationDate(new Date());
             reviewService.update(existing);
+
+            reviewSummaryService.updateBookSummary(bookId);
 
             return "redirect:/review/order/" + orderId + "?updated=" + encodedBookId;
         }
