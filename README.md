@@ -110,6 +110,21 @@ MySQL Database
 
 ---
 
+# Progressive Web App (PWA)
+
+Website được triển khai dưới dạng Progressive Web App nhằm cải thiện trải nghiệm người dùng trên thiết bị di động.
+
+Các tính năng đã triển khai:
+
+- Web App Manifest
+- Service Worker
+- Installable (Add to Home Screen)
+- Standalone Display Mode
+- Offline Caching cơ bản
+- Responsive trên Desktop và Mobile
+
+---
+
 # Hướng dẫn cài đặt
 
 ## 1. Yêu cầu
