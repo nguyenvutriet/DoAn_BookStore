@@ -73,6 +73,7 @@ MySQL Database
 - **Thanh toán trực tuyến:** Thanh toán thông qua VNPay Sandbox và xử lý kết quả giao dịch tự động.
 - **Lịch sử đơn hàng:** Theo dõi trạng thái, xem chi tiết và lịch sử mua hàng.
 - **Chatbot AI:** Hỗ trợ giải đáp thắc mắc, tìm kiếm sách và tư vấn sản phẩm bằng OpenAI API.
+- **Progressive Web App (PWA):** Website có thể cài đặt lên màn hình chính (Add to Home Screen), hoạt động như ứng dụng độc lập (Standalone), hỗ trợ Service Worker để lưu trữ tài nguyên tĩnh và cho phép hoạt động ngoại tuyến ở mức cơ bản.
 
 ---
 
