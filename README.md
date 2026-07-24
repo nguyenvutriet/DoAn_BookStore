@@ -30,6 +30,7 @@ UTEBookStore là website bán sách trực tuyến được phát triển bằng
 - Google Analytics 4 (GA4)
 - OpenAI API (AI Chatbot)
 - VNPay Sandbox
+- Progressive Web App (PWA)
 
 ## Deploy
 - AWS EC2
